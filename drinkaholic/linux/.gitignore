@@ -1,1 +1,41 @@
+# Flutter/Dart/Pub related
+.dart_tool/
+.packages
+.pub/
+build/
+flutter_*.png
 flutter/ephemeral
+# IDEs
+.idea/
+.vscode/
+
+# System files
+*.iml
+*.log
+
+# Flutter specific
+flutter_*
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/ephemeral/
+android/.gradle/
+android/app/build/
+android/local.properties
+
+# Web
+web/.dart_tool/
+web/build/
+
+# Linux
+linux/flutter/ephemeral/
+linux/build/
+
+# MacOS
+macos/Flutter/ephemeral/
+macos/build/
+
+# Windows
+windows/flutter/ephemeral/
+windows/build/
