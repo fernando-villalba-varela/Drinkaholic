@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import '../models/player.dart';
 import 'dart:io';
-
-class Player {
-  String name;
-  File? avatar;
-  Player(this.name, {this.avatar});
-}
+import 'dart:convert';
 
 class HomeScreen extends StatefulWidget {
   final String title;
@@ -19,11 +16,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final List<Player> _players = [
-    Player('James'),
-    Player('Laura'),
-    Player('Karl'),
-    Player('Helen'),
+    Player(id: 1, nombre: 'James'),
+    Player(id: 2, nombre: 'Laura'),
+    Player(id: 3, nombre: 'Karl'),
+    Player(id: 4, nombre: 'Helen'),
   ];
+  int _nextPlayerId = 5;
   final TextEditingController _controller = TextEditingController();
   final ImagePicker _picker = ImagePicker();
 
@@ -31,16 +29,16 @@ class _HomeScreenState extends State<HomeScreen> {
     final name = _controller.text.trim();
     if (name.isNotEmpty) {
       setState(() {
-        _players.add(Player(name));
+        _players.add(Player(id: _nextPlayerId++, nombre: name));
         _controller.clear();
       });
     }
   }
 
   void _removePlayer(int index) {
-    final avatar = _players[index].avatar;
-    if (avatar != null && avatar.existsSync()) {
-      avatar.deleteSync();
+    final imagen = _players[index].imagen;
+    if (imagen != null && imagen.existsSync()) {
+      imagen.deleteSync();
     }
     setState(() {
       _players.removeAt(index);
@@ -49,10 +47,166 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onAvatarTap(int index) {
     print('Avatar tap en $index');
-    if (_players[index].avatar == null) {
-      _pickImage(index);
+    if (_players[index].imagen == null && _players[index].avatar == null) {
+      _showAvatarOptions(index);
     } else {
       _confirmDeletePhoto(index);
+    }
+  }
+
+  void _showAvatarOptions(int index) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF23606E),
+        title: Text(
+          'Seleccionar avatar para ${_players[index].nombre}',
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.collections, color: Colors.white),
+              title: const Text(
+                'Elegir avatar creado',
+                style: TextStyle(color: Colors.white),
+              ),
+              onTap: () {
+                Navigator.of(context).pop();
+                _chooseAvatar(index);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.camera_alt, color: Colors.white),
+              title: const Text(
+                'Tomar foto',
+                style: TextStyle(color: Colors.white),
+              ),
+              onTap: () {
+                Navigator.of(context).pop();
+                _pickImage(index);
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            child: const Text(
+              'Cancelar',
+              style: TextStyle(color: Colors.white70),
+            ),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _chooseAvatar(int index) async {
+    try {
+      // Load available avatar assets
+      final manifestContent = await rootBundle.loadString('AssetManifest.json');
+      final Map<String, dynamic> manifestMap = Map<String, dynamic>.from(
+        const JsonDecoder().convert(manifestContent) as Map<String, dynamic>,
+      );
+      
+      final avatarPaths = manifestMap.keys
+        .where((String key) => key.startsWith('assets/avatars/') && 
+               (key.endsWith('.png') || key.endsWith('.jpg') || 
+                key.endsWith('.jpeg') || key.endsWith('.gif') || 
+                key.endsWith('.webp')) &&
+               !key.endsWith('.md'))
+        .toList();
+      
+      if (avatarPaths.isEmpty) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('No hay avatars disponibles. Agrega imágenes a assets/avatars/'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
+        return;
+      }
+      
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            backgroundColor: const Color(0xFF23606E),
+            title: Text(
+              'Elegir avatar para ${_players[index].nombre}',
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            content: SizedBox(
+              width: double.maxFinite,
+              height: 300,
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                ),
+                itemCount: avatarPaths.length,
+                itemBuilder: (context, avatarIndex) {
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _players[index] = Player(
+                          id: _players[index].id,
+                          nombre: _players[index].nombre,
+                          avatar: avatarPaths[avatarIndex],
+                        );
+                      });
+                      Navigator.of(context).pop();
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.white24),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.asset(
+                          avatarPaths[avatarIndex],
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            actions: [
+              TextButton(
+                child: const Text(
+                  'Cancelar',
+                  style: TextStyle(color: Colors.white70),
+                ),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          ),
+        );
+      }
+    } catch (e) {
+      print('Error loading avatars: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error al cargar avatars. Asegúrate de tener imágenes en assets/avatars/'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -68,7 +222,11 @@ class _HomeScreenState extends State<HomeScreen> {
       print('Foto tomada: ${photo?.path}');
       if (photo != null && mounted) {
         setState(() {
-          _players[index].avatar = File(photo.path);
+          _players[index] = Player(
+            id: _players[index].id,
+            nombre: _players[index].nombre,
+            imagen: File(photo.path),
+          );
         });
       }
     } else if (status.isDenied || status.isPermanentlyDenied) {
@@ -89,7 +247,7 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF23606E),
         title: Text(
-          '¿Quieres eliminar a ${_players[index].name}?',
+          '¿Quieres eliminar a ${_players[index].nombre}?',
           style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -124,7 +282,7 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF23606E),
         title: Text(
-          '¿Quieres eliminar la foto de ${_players[index].name}?',
+          '¿Quieres eliminar la foto de ${_players[index].nombre}?',
           style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -145,7 +303,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             onPressed: () {
               setState(() {
-                _players[index].avatar = null;
+                _players[index] = Player(
+                  id: _players[index].id,
+                  nombre: _players[index].nombre,
+                );
               });
               Navigator.of(context).pop();
             },
@@ -193,10 +354,12 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: CircleAvatar(
                               radius: 24,
                               backgroundColor: Colors.white,
-                              backgroundImage: _players[index].avatar != null
-                                  ? FileImage(_players[index].avatar!)
-                                  : null,
-                              child: _players[index].avatar == null
+                              backgroundImage: _players[index].imagen != null
+                                  ? FileImage(_players[index].imagen!)
+                                  : _players[index].avatar != null
+                                      ? AssetImage(_players[index].avatar!) as ImageProvider
+                                      : null,
+                              child: (_players[index].imagen == null && _players[index].avatar == null)
                                   ? Icon(
                                       Icons.camera_alt,
                                       color: Colors.teal[700],
@@ -209,7 +372,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: GestureDetector(
                               onTap: () => _confirmDelete(index),
                               child: Text(
-                                _players[index].name,
+                                _players[index].nombre,
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 20,
