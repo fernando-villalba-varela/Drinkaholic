@@ -39,6 +39,11 @@ class GeneratedQuestion {
     required this.categoria,
     required this.usedVariables,
   });
+
+  // Getters
+  String get getQuestion => question;
+  String get getCategoria => categoria;
+  Map<String, String> get getUsedVariables => usedVariables;
 }
 
 class QuestionGenerator {
@@ -89,6 +94,7 @@ class QuestionGenerator {
     }
 
     final template = _templates![_random.nextInt(_templates!.length)];
+    print(  'Generando pregunta de la categoría: ${template.template}');
     return _generateQuestionFromTemplate(template);
   }
 
