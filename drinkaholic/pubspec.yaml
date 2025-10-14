@@ -38,7 +38,10 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/drinkaholic_logo.png
+    - assets/images/drinkaholic_logo.gif
     - assets/avatars/
+    - assets/images/potion_background.png
+    - assets/images/button_background.png
 
 flutter_icons:
   android: true
