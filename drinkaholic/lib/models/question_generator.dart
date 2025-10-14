@@ -81,7 +81,7 @@ class QuestionGenerator {
     }
   }
 
-  /// Generar una pregunta aleatoria
+  /// Generar una pregunta aleatoria (excluyendo templates con PLAYER)
   static Future<GeneratedQuestion> generateRandomQuestion() async {
     await loadTemplates();
     
@@ -93,13 +93,54 @@ class QuestionGenerator {
       );
     }
 
-    final template = _templates![_random.nextInt(_templates!.length)];
-    print(  'Generando pregunta de la categoría: ${template.template}');
+    // Filtrar templates que NO contengan la variable PLAYER
+    final nonPlayerTemplates = _templates!.where((template) {
+      return !template.variables.values.any((values) => values.contains('PLAYER'));
+    }).toList();
+    
+    if (nonPlayerTemplates.isEmpty) {
+      // Si todos los templates requieren PLAYER, usar uno cualquiera
+      final template = _templates![_random.nextInt(_templates!.length)];
+      print('Generando pregunta de la categoría (fallback): ${template.template}');
+      return _generateQuestionFromTemplate(template);
+    }
+
+    final template = nonPlayerTemplates[_random.nextInt(nonPlayerTemplates.length)];
+    print('Generando pregunta de la categoría: ${template.template}');
     return _generateQuestionFromTemplate(template);
   }
 
+  /// Generar una pregunta aleatoria con un jugador específico
+  static Future<GeneratedQuestion> generateRandomQuestionForPlayer(String playerName) async {
+    await loadTemplates();
+    
+    if (_templates == null || _templates!.isEmpty) {
+      return GeneratedQuestion(
+        question: 'Error: No se pudieron cargar las preguntas',
+        categoria: 'Error',
+        usedVariables: {},
+      );
+    }
+
+    // Filtrar solo templates que contengan la variable PLAYER
+    final playerTemplates = _templates!.where((template) {
+      return template.variables.values.any((values) => values.contains('PLAYER'));
+    }).toList();
+    
+    if (playerTemplates.isEmpty) {
+      // Si no hay templates con PLAYER, usar uno normal
+      final template = _templates![_random.nextInt(_templates!.length)];
+      print('Generando pregunta de la categoría (fallback): ${template.template}');
+      return _generateQuestionFromTemplate(template);
+    }
+
+    final template = playerTemplates[_random.nextInt(playerTemplates.length)];
+    print('Generando pregunta de la categoría: ${template.template}');
+    return _generateQuestionFromTemplate(template, playerName: playerName);
+  }
+
   /// Generar una pregunta de una categoría específica
-  static Future<GeneratedQuestion> generateQuestionByCategory(String categoria) async {
+  static Future<GeneratedQuestion> generateQuestionByCategory(String categoria, {String? playerName}) async {
     await loadTemplates();
     
     if (_templates == null || _templates!.isEmpty) {
@@ -115,7 +156,7 @@ class QuestionGenerator {
     }
     
     final template = categoryTemplates[_random.nextInt(categoryTemplates.length)];
-    return _generateQuestionFromTemplate(template);
+    return _generateQuestionFromTemplate(template, playerName: playerName);
   }
 
   /// Obtener todas las categorías disponibles
@@ -130,7 +171,7 @@ class QuestionGenerator {
   }
 
   /// Generar pregunta desde una plantilla específica
-  static GeneratedQuestion _generateQuestionFromTemplate(QuestionTemplate template) {
+  static GeneratedQuestion _generateQuestionFromTemplate(QuestionTemplate template, {String? playerName}) {
     String question = template.template;
     Map<String, String> usedVariables = {};
 
@@ -141,6 +182,10 @@ class QuestionGenerator {
         final drinkAmount = _generateDrinkAmount();
         question = question.replaceAll('{$variableName}', drinkAmount);
         usedVariables[variableName] = drinkAmount;
+      } else if (possibleValues.length == 1 && possibleValues[0] == 'PLAYER' && playerName != null) {
+        // Para variables que solo contienen PLAYER, usar el nombre del jugador
+        question = question.replaceAll('{$variableName}', playerName);
+        usedVariables[variableName] = playerName;
       } else {
         // Para otras variables, selección aleatoria normal
         final selectedValue = possibleValues[_random.nextInt(possibleValues.length)];

@@ -44,6 +44,7 @@ flutter:
     - assets/images/potion_background.png
     - assets/images/button_background.png
     - assets/questions.json
+    - assets/constant_challenges.json
 
 flutter_icons:
   android: true

@@ -1,0 +1,151 @@
+{
+  "templates": [
+    {
+      "id": "no_words_letter",
+      "type": "restriction",
+      "template": "{PLAYER} no puede usar palabras empezadas por la letra {LETTER}",
+      "endTemplate": "{PLAYER} ya puede usar todas las palabras",
+      "punishment": "Si {PLAYER} usa una palabra prohibida, bebe {DRINKS} tragos",
+      "variables": {
+        "LETTER": ["T", "S", "M", "P", "C", "B", "R", "D", "L", "N"],
+        "DRINKS": ["1", "2", "3", "4"]
+      },
+      "categoria": "Restricción de palabras",
+      "minRounds": 5,
+      "maxRounds": 10
+    },
+    {
+      "id": "no_drink_gesture",
+      "type": "restriction", 
+      "template": "{PLAYER} no puede beber con la mano {HAND}",
+      "endTemplate": "{PLAYER} ya puede beber con ambas manos",
+      "punishment": "Si {PLAYER} bebe con la mano prohibida, bebe {DRINKS} tragos adicionales",
+      "variables": {
+        "HAND": ["izquierda", "derecha"],
+        "DRINKS": ["1", "2", "3", "4"]
+      },
+      "categoria": "Restricción física",
+      "minRounds": 5,
+      "maxRounds": 8
+    },
+    {
+      "id": "must_drink_standing",
+      "type": "obligation",
+      "template": "{PLAYER} debe beber siempre de pie",
+      "endTemplate": "{PLAYER} ya puede beber sentado",
+      "punishment": "Si {PLAYER} bebe sentado, bebe {DRINKS} tragos adicionales",
+      "variables": {
+        "DRINKS": ["1", "2", "3", "4"]
+      },
+      "categoria": "Obligación física",
+      "minRounds": 4,
+      "maxRounds": 7
+    },
+    {
+      "id": "must_say_phrase",
+      "type": "obligation",
+      "template": "{PLAYER} debe decir '{PHRASE}' antes de cada trago",
+      "endTemplate": "{PLAYER} ya no necesita decir frases antes de beber",
+      "punishment": "Si {PLAYER} olvida la frase, bebe {DRINKS} tragos adicionales",
+      "variables": {
+        "PHRASE": [
+          "¡Salud y pesetas!",
+          "Por la salud",
+          "¡Que viva la fiesta!",
+          "¡Arriba, abajo, al centro y adentro!",
+          "Sin prisa pero sin pausa"
+        ],
+        "DRINKS": ["1", "2", "3", "4"]
+      },
+      "categoria": "Obligación verbal",
+      "minRounds": 5,
+      "maxRounds": 9
+    },
+    {
+      "id": "no_laugh_rule",
+      "type": "restriction",
+      "template": "{PLAYER} no puede reírse durante {ROUNDS} rondas",
+      "endTemplate": "{PLAYER} ya puede reírse libremente",
+      "punishment": "Si {PLAYER} se ríe, bebe {DRINKS} tragos",
+      "variables": {
+        "ROUNDS": ["3", "4", "5"],
+        "DRINKS": ["1", "2", "3", "4"]
+      },
+      "categoria": "Restricción emocional",
+      "minRounds": 3,
+      "maxRounds": 6
+    },
+    {
+      "id": "speak_accent",
+      "type": "obligation",
+      "template": "{PLAYER} debe hablar con acento {ACCENT}",
+      "endTemplate": "{PLAYER} ya puede hablar normalmente",
+      "punishment": "Si {PLAYER} habla sin acento, bebe {DRINKS} tragos",
+      "variables": {
+        "ACCENT": [
+          "argentino",
+          "mexicano", 
+          "español",
+          "chileno",
+          "colombiano"
+        ],
+        "DRINKS": ["1", "2", "3", "4"]
+      },
+      "categoria": "Obligación verbal",
+      "minRounds": 5,
+      "maxRounds": 8
+    },
+    {
+      "id": "no_point_gesture",
+      "type": "restriction",
+      "template": "{PLAYER} no puede señalar a nadie con el dedo",
+      "endTemplate": "{PLAYER} ya puede señalar normalmente",
+      "punishment": "Si {PLAYER} señala con el dedo, bebe {DRINKS} tragos",
+      "variables": {
+        "DRINKS": ["1", "2", "3", "4"]
+      },
+      "categoria": "Restricción gestual",
+      "minRounds": 4,
+      "maxRounds": 7
+    },
+    {
+      "id": "must_rhyme",
+      "type": "obligation",
+      "template": "{PLAYER} debe terminar cada frase con una palabra que rime",
+      "endTemplate": "{PLAYER} ya no necesita rimar sus frases",
+      "punishment": "Si {PLAYER} no rima, bebe {DRINKS} tragos",
+      "variables": {
+        "DRINKS": ["1", "2", "3", "4"]
+      },
+      "categoria": "Obligación verbal",
+      "minRounds": 5,
+      "maxRounds": 8
+    },
+    {
+      "id": "no_name_rule",
+      "type": "restriction",
+      "template": "{PLAYER} no puede decir nombres de personas durante el juego",
+      "endTemplate": "{PLAYER} ya puede decir nombres libremente",
+      "punishment": "Si {PLAYER} dice un nombre, bebe {DRINKS} tragos",
+      "variables": {
+        "DRINKS": ["1", "2", "3", "4"]
+      },
+      "categoria": "Restricción verbal",
+      "minRounds": 6,
+      "maxRounds": 10
+    },
+    {
+      "id": "must_dance_before_drink",
+      "type": "obligation",
+      "template": "{PLAYER} debe hacer un pequeño baile antes de cada trago",
+      "endTemplate": "{PLAYER} ya no necesita bailar antes de beber",
+      "punishment": "Si {PLAYER} no baila, bebe {DRINKS} tragos adicionales",
+      "variables": {
+        "DRINKS": ["1", "2", "3", "4"]
+      },
+      "categoria": "Obligación física",
+      "minRounds": 4,
+      "maxRounds": 6
+    }
+  ]
+}

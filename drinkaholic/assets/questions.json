@@ -176,6 +176,243 @@
         ]
       },
       "categoria": "Nombres"
+    },
+    {
+      "id": "generico_bebe_simple",
+      "template": "{X} bebe {Y} tragos",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1", "2", "3", "4", "5"
+        ]
+      },
+      "categoria": "Genérico - Bebe"
+    },
+    {
+      "id": "generico_reparte_simple",
+      "template": "{X} reparte {Y} tragos",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1", "2", "3", "4", "5"
+        ]
+      },
+      "categoria": "Genérico - Reparte"
+    },
+    {
+      "id": "generico_reto_exito",
+      "template": "{X} reparte {Y} tragos si logra {Z}",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1", "2", "3", "4", "5"
+        ],
+        "Z": [
+          "nombrar 5 países en 15 segundos", "hacer 10 flexiones seguidas", "cantar una canción completa",
+          "contar hasta 20 al revés", "nombrar 7 animales que empiecen por la misma letra", "imitar 3 animales diferentes",
+          "decir el abecedario al revés", "hacer el pino durante 10 segundos", "silbar una melodía reconocible",
+          "decir 5 palabras que rimen con 'fiesta'", "nombrar 10 marcas de coches", "hacer una voltereta",
+          "tocar la punta de su nariz con la lengua", "bailar durante 30 segundos sin parar", "contar una broma que haga reír a todos"
+        ]
+      },
+      "categoria": "Genérico - Reto Éxito"
+    },
+    {
+      "id": "generico_reto_fallo",
+      "template": "{X} bebe {Y} tragos si no puede {Z}",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1", "2", "3", "4", "5"
+        ],
+        "Z": [
+          "nombrar 3 países en 10 segundos", "decir el abecedario al revés sin errores", "tocar la punta de su nariz con la lengua",
+          "hacer 5 flexiones", "cantar una canción infantil entera", "nombrar 5 animales que empiecen por M",
+          "decir 3 palabras que rimen con amor", "contar hasta 20 en otro idioma", "nombrar 5 marcas de coches",
+          "imitar a un animal durante 30 segundos", "decir 5 colores en inglés", "silbar una melodía reconocible",
+          "hacer el equilibrio sobre un pie durante 20 segundos", "nombrar 3 capitales europeas", "recitar las tablas de multiplicar del 7"
+        ]
+      },
+      "categoria": "Genérico - Reto Fallo"
+    },
+    {
+      "id": "generico_pregunta_exito",
+      "template": "{X} reparte {Y} tragos si responde correctamente: {Z}",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1", "2", "3", "4", "5"
+        ],
+        "Z": [
+          "¿Cuál es la capital de Francia? (París)", "¿En qué año comenzó la Segunda Guerra Mundial? (1939)", "¿Cuántos días tiene febrero en año bisiesto? (29)",
+          "¿Cuál es el planeta más grande del sistema solar? (Júpiter)", "¿Quién pintó La Mona Lisa? (Leonardo da Vinci)", "¿Cuál es el río más largo del mundo? (Nilo)",
+          "¿Cuántos huesos tiene el cuerpo humano adulto? (206)", "¿En qué continente está Egipto? (África)", "¿Cuál es la montaña más alta del mundo? (Everest)",
+          "¿Qué gas respiramos principalmente? (Oxígeno)", "¿Cuántos corazones tiene un pulpo? (3)", "¿Cuál es el océano más grande? (Pacífico)",
+          "¿En qué año llegó el hombre a la luna? (1969)", "¿Quién escribió Don Quijote? (Cervantes)", "¿Cuál es la capital de Australia? (Canberra)"
+        ]
+      },
+      "categoria": "Genérico - Conocimiento Éxito"
+    },
+    {
+      "id": "generico_pregunta_fallo",
+      "template": "{X} bebe {Y} tragos si no sabe: {Z}",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1", "2", "3", "4", "5"
+        ],
+        "Z": [
+          "¿Cuál es la capital de Australia?", "¿En qué año comenzó la Segunda Guerra Mundial?", "¿Cuántos huesos tiene el cuerpo humano?",
+          "¿Cuál es el río más largo del mundo?", "¿Quién pintó La Mona Lisa?", "¿Cuál es el planeta más grande del sistema solar?",
+          "¿En qué continente está Egipto?", "¿Cuántos días tiene un año bisiesto?", "¿Cuál es la montaña más alta del mundo?",
+          "¿Qué gas respiramos principalmente?", "¿Cuántos corazones tiene un pulpo?", "¿Cuál es el océano más grande?",
+          "¿En qué año llegó el hombre a la luna?", "¿Quién escribió Don Quijote?", "¿Cuál es el metal más abundante en la Tierra?"
+        ]
+      },
+      "categoria": "Genérico - Conocimiento Fallo"
+    },
+    {
+      "id": "generico_matematicas_exito",
+      "template": "{X} reparte {Y} tragos si resuelve: {Z}",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1", "2", "3", "4", "5"
+        ],
+        "Z": [
+          "25 x 4", "144 ÷ 12", "15% de 200", "√81", "2³ + 3²", "50 - 23",
+          "7 x 9", "100 ÷ 4", "8² - 10", "3 x 15", "200 - 87", "6 x 7",
+          "45 ÷ 9", "12 + 28", "9 x 6"
+        ]
+      },
+      "categoria": "Genérico - Matemáticas Éxito"
+    },
+    {
+      "id": "generico_matematicas_fallo",
+      "template": "{X} bebe {Y} tragos si no resuelve: {Z}",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1", "2", "3", "4", "5"
+        ],
+        "Z": [
+          "25 x 4", "144 ÷ 12", "15% de 200", "√81", "2³ + 3²", "50 - 23", "7 x 9", "100 ÷ 4",
+          "8² - 10", "3 x 15", "200 - 87", "6 x 7", "45 ÷ 9", "12 + 28", "9 x 6"
+        ]
+      },
+      "categoria": "Genérico - Matemáticas Fallo"
+    },
+    {
+      "id": "generico_imitacion_exito",
+      "template": "{X} reparte {Y} tragos si todos aplauden su imitación de {Z}",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1", "2", "3", "4", "5"
+        ],
+        "Z": [
+          "un famoso cantante", "un animal salvaje", "un robot", "un bebé", "un anciano", "un superhéroe",
+          "una persona borracha", "un deportista famoso", "una sirena", "un alien", "un zombie", "un ninja",
+          "una persona muy elegante", "alguien muy tímido", "una persona con mucha prisa"
+        ]
+      },
+      "categoria": "Genérico - Imitación Éxito"
+    },
+    {
+      "id": "generico_memoria_exito",
+      "template": "{X} reparte {Y} tragos si recuerda {Z}",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1", "2", "3", "4", "5"
+        ],
+        "Z": [
+          "el nombre completo de su primer amor", "su dirección de la infancia completa", "el nombre de su profesor de primaria favorito",
+          "qué regalo recibió en su último cumpleaños", "la primera película que vio en el cine", "su primera mascota",
+          "el nombre de su mejor amigo de la infancia", "su primer número de teléfono", "su primer trabajo",
+          "el nombre de su primera escuela", "su comida favorita de niño", "su programa de TV favorito de pequeño",
+          "su juguete favorito de la infancia", "dónde conoció a su mejor amigo actual", "su primera mascota"
+        ]
+      },
+      "categoria": "Genérico - Memoria Éxito"
+    },
+    {
+      "id": "generico_actuacion_exito",
+      "template": "{X} reparte {Y} tragos si actúa como {Z} y hace reír a todos",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1", "2", "3", "4", "5"
+        ],
+        "Z": [
+          "un presentador de televisión", "un alien visitando la Tierra", "un detective muy serio",
+          "alguien con superpoderes", "un chef muy exigente", "una persona de la realeza",
+          "un guía turístico entusiasta", "un profesor muy estricto", "un vendedor insistente",
+          "un reportero de noticias", "un entrenador deportivo motivador", "un médico muy preocupado",
+          "un camarero muy elegante", "un disc jockey", "un meteorológo exagerado"
+        ]
+      },
+      "categoria": "Genérico - Actuación Éxito"
+    },
+    {
+      "id": "generico_bebe_razon",
+      "template": "{X} bebe {Y} tragos por {Z}",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1", "2", "3", "4", "5"
+        ],
+        "Z": [
+          "ser demasiado guapo", "tener una sonrisa perfecta", "ser el más divertido del grupo", "tener los mejores chistes",
+          "ser demasiado inteligente", "tener el mejor estilo", "ser el más carismático", "tener la mejor risa",
+          "ser demasiado bueno en este juego", "tener demasiada suerte", "ser el más popular", "tener los ojos más bonitos",
+          "ser demasiado talentoso", "tener la mejor personalidad", "ser el favorito de todos"
+        ]
+      },
+      "categoria": "Genérico - Bebe por Razón"
+    },
+    {
+      "id": "generico_reparte_razon",
+      "template": "{X} reparte {Y} tragos por {Z}",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1", "2", "3", "4", "5"
+        ],
+        "Z": [
+          "organizar esta fiesta increíble", "tener la mejor actitud", "animar a todo el grupo", "ser tan buen amigo",
+          "hacer que todos se diviertan", "tener las mejores ideas", "ser el alma de la fiesta", "mantener el buen rollo",
+          "ser tan generoso", "hacer reír a todos", "tener tanta energía positiva", "ser tan divertido",
+          "cuidar tan bien del grupo", "tener el mejor corazón", "ser tan especial"
+        ]
+      },
+      "categoria": "Genérico - Reparte por Razón"
     }
    
   ]
