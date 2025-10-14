@@ -1,62 +1,84 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:drinkaholic/models/player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
-import '../models/player.dart';
-import 'dart:io';
-import 'dart:convert';
 
-class HomeScreen extends StatefulWidget {
-  final String title;
-  const HomeScreen({super.key, required this.title});
+class ParticipantsViewmodel extends ChangeNotifier {
+  BuildContext? _context;
 
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
+  // Getter y setter para el contexto
+  BuildContext? get context => _context;
+  set context(BuildContext? ctx) => _context = ctx;
 
-class _HomeScreenState extends State<HomeScreen> {
   final List<Player> _players = [
     Player(id: 1, nombre: 'James'),
     Player(id: 2, nombre: 'Laura'),
     Player(id: 3, nombre: 'Karl'),
     Player(id: 4, nombre: 'Helen'),
   ];
+
   int _nextPlayerId = 5;
   final TextEditingController _controller = TextEditingController();
   final ImagePicker _picker = ImagePicker();
 
-  void _addPlayer() {
+  // Getters
+  List<Player> get players => _players;
+  TextEditingController get controller => _controller;
+  ImagePicker get picker => _picker;
+
+  // Setters
+  set players(List<Player> value) {
+    _players
+      ..clear()
+      ..addAll(value);
+    notifyListeners();
+  }
+
+  set controller(TextEditingController value) {
+    // No es común cambiar el controller, pero si lo necesitas:
+    // _controller = value; // Si _controller no es final
+    notifyListeners();
+  }
+
+  set picker(ImagePicker value) {
+    // No es común cambiar el picker, pero si lo necesitas:
+    // _picker = value; // Si _picker no es final
+    notifyListeners();
+  }
+
+  void addPlayer() {
     final name = _controller.text.trim();
     if (name.isNotEmpty) {
-      setState(() {
-        _players.add(Player(id: _nextPlayerId++, nombre: name));
-        _controller.clear();
-      });
+      _players.add(Player(id: _nextPlayerId++, nombre: name));
+      _controller.clear();
+      notifyListeners();
     }
   }
 
-  void _removePlayer(int index) {
+  void removePlayer(int index) {
     final imagen = _players[index].imagen;
     if (imagen != null && imagen.existsSync()) {
       imagen.deleteSync();
     }
-    setState(() {
-      _players.removeAt(index);
-    });
+    _players.removeAt(index);
+    notifyListeners();
   }
 
-  void _onAvatarTap(int index) {
+   void onAvatarTap(int index) {
     print('Avatar tap en $index');
     if (_players[index].imagen == null && _players[index].avatar == null) {
-      _showAvatarOptions(index);
+      showAvatarOptions(index);
     } else {
-      _confirmDeletePhoto(index);
+      confirmDeletePhoto(index);
     }
   }
 
-  void _showAvatarOptions(int index) {
+  void showAvatarOptions(int index) {
     showDialog(
-      context: context,
+      context: _context!,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF23606E),
         title: Text(
@@ -77,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               onTap: () {
                 Navigator.of(context).pop();
-                _chooseAvatar(index);
+                chooseAvatar(index);
               },
             ),
             ListTile(
@@ -88,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               onTap: () {
                 Navigator.of(context).pop();
-                _pickImage(index);
+                pickImage(index);
               },
             ),
           ],
@@ -105,8 +127,9 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+  
 
-  Future<void> _chooseAvatar(int index) async {
+  Future<void> chooseAvatar(int index) async {
     try {
       // Load available avatar assets
       final manifestContent = await rootBundle.loadString('AssetManifest.json');
@@ -123,8 +146,8 @@ class _HomeScreenState extends State<HomeScreen> {
         .toList();
       
       if (avatarPaths.isEmpty) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
+        if (context != null) {
+          ScaffoldMessenger.of(context!).showSnackBar(
             const SnackBar(
               content: Text('No hay avatars disponibles. Agrega imágenes a assets/avatars/'),
               backgroundColor: Colors.orange,
@@ -142,9 +165,9 @@ class _HomeScreenState extends State<HomeScreen> {
           .map((entry) => entry.value.avatar!)
           .toSet();
       
-      if (mounted) {
+      if (context != null) {
         showDialog(
-          context: context,
+          context: context!,
           builder: (context) => AlertDialog(
             backgroundColor: const Color(0xFF23606E),
             title: Text(
@@ -171,13 +194,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   
                   return GestureDetector(
                     onTap: isUsed && !isCurrentlySelected ? null : () {
-                      setState(() {
-                        _players[index] = Player(
-                          id: _players[index].id,
-                          nombre: _players[index].nombre,
-                          avatar: avatarPath,
-                        );
-                      });
+                      _players[index] = Player(
+                        id: _players[index].id,
+                        nombre: _players[index].nombre,
+                        avatar: avatarPath,
+                      );
+                      notifyListeners(); // Notifica a la UI el cambio
                       Navigator.of(context).pop();
                     },
                     child: Container(
@@ -253,8 +275,8 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     } catch (e) {
       print('Error loading avatars: $e');
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
+      if (context != null) {
+        ScaffoldMessenger.of(context!).showSnackBar(
           const SnackBar(
             content: Text('Error al cargar avatars. Asegúrate de tener imágenes en assets/avatars/'),
             backgroundColor: Colors.red,
@@ -264,7 +286,8 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Future<void> _pickImage(int index) async {
+
+  Future<void> pickImage(int index) async {
     print('Intentando pedir permiso de cámara');
     final status = await Permission.camera.request();
     print('Permiso de cámara: $status');
@@ -274,18 +297,17 @@ class _HomeScreenState extends State<HomeScreen> {
         imageQuality: 60,
       );
       print('Foto tomada: ${photo?.path}');
-      if (photo != null && mounted) {
-        setState(() {
-          _players[index] = Player(
-            id: _players[index].id,
-            nombre: _players[index].nombre,
-            imagen: File(photo.path),
-          );
-        });
+      if (photo != null && context != null) {
+        _players[index] = Player(
+          id: _players[index].id,
+          nombre: _players[index].nombre,
+          imagen: File(photo.path),
+        );
+        notifyListeners(); // Notifica a la UI el cambio
       }
     } else if (status.isDenied || status.isPermanentlyDenied) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
+      if (context != null) {
+        ScaffoldMessenger.of(context!).showSnackBar(
           const SnackBar(
             content: Text('Debes dar permiso de cámara para tomar una foto.'),
             backgroundColor: Colors.redAccent,
@@ -293,46 +315,11 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       }
     }
-  }
+   }
 
-  void _confirmDelete(int index) {
+  void confirmDeletePhoto(int index) {
     showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF23606E),
-        title: Text(
-          '¿Quieres eliminar a ${_players[index].nombre}?',
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        actions: [
-          TextButton(
-            child: const Text(
-              'Cancelar',
-              style: TextStyle(color: Colors.white70),
-            ),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          TextButton(
-            child: const Text(
-              'Eliminar',
-              style: TextStyle(color: Colors.redAccent),
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-              _removePlayer(index);
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _confirmDeletePhoto(int index) {
-    showDialog(
-      context: context,
+      context: context!,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF23606E),
         title: Text(
@@ -356,12 +343,11 @@ class _HomeScreenState extends State<HomeScreen> {
               style: TextStyle(color: Colors.redAccent),
             ),
             onPressed: () {
-              setState(() {
-                _players[index] = Player(
-                  id: _players[index].id,
-                  nombre: _players[index].nombre,
-                );
-              });
+              _players[index] = Player(
+                id: _players[index].id,
+                nombre: _players[index].nombre,
+              );
+              notifyListeners(); // Notifica a la UI el cambio
               Navigator.of(context).pop();
             },
           ),
@@ -370,143 +356,39 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+   void confirmDelete(int index) {
+  showDialog(
+    context: context!,
+    builder: (context) => AlertDialog(
       backgroundColor: const Color(0xFF23606E),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Text(
-          'Drinkaholic',
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 36,
-            letterSpacing: 2,
+      title: Text(
+        '¿Quieres eliminar a ${_players[index].nombre}?',
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      actions: [
+        TextButton(
+          child: const Text(
+            'Cancelar',
+            style: TextStyle(color: Colors.white70),
           ),
+          onPressed: () => Navigator.of(context).pop(),
         ),
-        centerTitle: true,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(height: 24),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _players.length + 1,
-                itemBuilder: (context, index) {
-                  if (index < _players.length) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: Row(
-                        children: [
-                          GestureDetector(
-                            onTap: () => _onAvatarTap(index),
-                            child: CircleAvatar(
-                              radius: 24,
-                              backgroundColor: Colors.white,
-                              backgroundImage: _players[index].imagen != null
-                                  ? FileImage(_players[index].imagen!)
-                                  : _players[index].avatar != null
-                                      ? AssetImage(_players[index].avatar!) as ImageProvider
-                                      : null,
-                              child: (_players[index].imagen == null && _players[index].avatar == null)
-                                  ? Icon(
-                                      Icons.camera_alt,
-                                      color: Colors.teal[700],
-                                    )
-                                  : null,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () => _confirmDelete(index),
-                              child: Text(
-                                _players[index].nombre,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  } else {
-                    // en este padding va el TextField para añadir jugadores
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: Row(
-                        children: [
-                          const CircleAvatar(
-                            backgroundColor: Colors.white24,
-                            child: Icon(
-                              Icons.person_add,
-                              color: Colors.white70,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: TextField(
-                              controller: _controller,
-                              style: const TextStyle(color: Colors.white),
-                              decoration: const InputDecoration(
-                                hintText: 'Añadir participante',
-                                hintStyle: TextStyle(color: Colors.white54),
-                                enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white38),
-                                ),
-                                focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white),
-                                ),
-                              ),
-                              onSubmitted: (_) => _addPlayer(),
-                            ),
-                          ),
-                          IconButton(
-                            icon: const Icon(
-                              Icons.add_circle,
-                              color: Colors.white,
-                              size: 32,
-                            ),
-                            onPressed: _addPlayer,
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-                },
-              ),
-            ),
-            const SizedBox(height: 32),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.teal[800],
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 4,
-              ),
-              onPressed: () {
-                // Acción al presionar el botón de la guerraaa
-              },
-              child: const Text(
-                'Vamos a la guerra',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ),
-            const SizedBox(height: 24),
-          ],
+        TextButton(
+          child: const Text(
+            'Eliminar',
+            style: TextStyle(color: Colors.redAccent),
+          ),
+          onPressed: () {
+            removePlayer(index); // Usa removePlayer que llama a notifyListeners()
+            Navigator.of(context).pop();
+          },
         ),
-      ),
-    );
-  }
+      ],
+    ),
+  );
+}
+
 }
