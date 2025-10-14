@@ -67,7 +67,7 @@ class ParticipantsViewmodel extends ChangeNotifier {
     notifyListeners();
   }
 
-   void onAvatarTap(int index) {
+  void onAvatarTap(int index) {
     print('Avatar tap en $index');
     if (_players[index].imagen == null && _players[index].avatar == null) {
       showAvatarOptions(index);
@@ -127,7 +127,6 @@ class ParticipantsViewmodel extends ChangeNotifier {
       ),
     );
   }
-  
 
   Future<void> chooseAvatar(int index) async {
     try {
@@ -136,20 +135,27 @@ class ParticipantsViewmodel extends ChangeNotifier {
       final Map<String, dynamic> manifestMap = Map<String, dynamic>.from(
         const JsonDecoder().convert(manifestContent) as Map<String, dynamic>,
       );
-      
+
       final avatarPaths = manifestMap.keys
-        .where((String key) => key.startsWith('assets/avatars/') && 
-               (key.endsWith('.png') || key.endsWith('.jpg') || 
-                key.endsWith('.jpeg') || key.endsWith('.gif') || 
-                key.endsWith('.webp')) &&
-               !key.endsWith('.md'))
-        .toList();
-      
+          .where(
+            (String key) =>
+                key.startsWith('assets/avatars/') &&
+                (key.endsWith('.png') ||
+                    key.endsWith('.jpg') ||
+                    key.endsWith('.jpeg') ||
+                    key.endsWith('.gif') ||
+                    key.endsWith('.webp')) &&
+                !key.endsWith('.md'),
+          )
+          .toList();
+
       if (avatarPaths.isEmpty) {
         if (context != null) {
           ScaffoldMessenger.of(context!).showSnackBar(
             const SnackBar(
-              content: Text('No hay avatars disponibles. Agrega imágenes a assets/avatars/'),
+              content: Text(
+                'No hay avatars disponibles. Agrega imágenes a assets/avatars/',
+              ),
               backgroundColor: Colors.orange,
             ),
           );
@@ -164,7 +170,7 @@ class ParticipantsViewmodel extends ChangeNotifier {
           .where((entry) => entry.key != index && entry.value.avatar != null)
           .map((entry) => entry.value.avatar!)
           .toSet();
-      
+
       if (context != null) {
         showDialog(
           context: context!,
@@ -190,27 +196,30 @@ class ParticipantsViewmodel extends ChangeNotifier {
                 itemBuilder: (context, avatarIndex) {
                   final avatarPath = avatarPaths[avatarIndex];
                   final isUsed = usedAvatars.contains(avatarPath);
-                  final isCurrentlySelected = _players[index].avatar == avatarPath;
-                  
+                  final isCurrentlySelected =
+                      _players[index].avatar == avatarPath;
+
                   return GestureDetector(
-                    onTap: isUsed && !isCurrentlySelected ? null : () {
-                      _players[index] = Player(
-                        id: _players[index].id,
-                        nombre: _players[index].nombre,
-                        avatar: avatarPath,
-                      );
-                      notifyListeners(); // Notifica a la UI el cambio
-                      Navigator.of(context).pop();
-                    },
+                    onTap: isUsed && !isCurrentlySelected
+                        ? null
+                        : () {
+                            _players[index] = Player(
+                              id: _players[index].id,
+                              nombre: _players[index].nombre,
+                              avatar: avatarPath,
+                            );
+                            notifyListeners(); // Notifica a la UI el cambio
+                            Navigator.of(context).pop();
+                          },
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
-                          color: isCurrentlySelected 
+                          color: isCurrentlySelected
                               ? Colors.greenAccent
-                              : isUsed 
-                                  ? Colors.redAccent
-                                  : Colors.white24,
+                              : isUsed
+                              ? Colors.redAccent
+                              : Colors.white24,
                           width: isCurrentlySelected || isUsed ? 3 : 1,
                         ),
                       ),
@@ -278,14 +287,15 @@ class ParticipantsViewmodel extends ChangeNotifier {
       if (context != null) {
         ScaffoldMessenger.of(context!).showSnackBar(
           const SnackBar(
-            content: Text('Error al cargar avatars. Asegúrate de tener imágenes en assets/avatars/'),
+            content: Text(
+              'Error al cargar avatars. Asegúrate de tener imágenes en assets/avatars/',
+            ),
             backgroundColor: Colors.red,
           ),
         );
       }
     }
   }
-
 
   Future<void> pickImage(int index) async {
     print('Intentando pedir permiso de cámara');
@@ -315,7 +325,7 @@ class ParticipantsViewmodel extends ChangeNotifier {
         );
       }
     }
-   }
+  }
 
   void confirmDeletePhoto(int index) {
     showDialog(
@@ -356,39 +366,40 @@ class ParticipantsViewmodel extends ChangeNotifier {
     );
   }
 
-   void confirmDelete(int index) {
-  showDialog(
-    context: context!,
-    builder: (context) => AlertDialog(
-      backgroundColor: const Color(0xFF23606E),
-      title: Text(
-        '¿Quieres eliminar a ${_players[index].nombre}?',
-        style: const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
+  void confirmDelete(int index) {
+    showDialog(
+      context: context!,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF23606E),
+        title: Text(
+          '¿Quieres eliminar a ${_players[index].nombre}?',
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
+        actions: [
+          TextButton(
+            child: const Text(
+              'Cancelar',
+              style: TextStyle(color: Colors.white70),
+            ),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          TextButton(
+            child: const Text(
+              'Eliminar',
+              style: TextStyle(color: Colors.redAccent),
+            ),
+            onPressed: () {
+              removePlayer(
+                index,
+              ); // Usa removePlayer que llama a notifyListeners()
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
       ),
-      actions: [
-        TextButton(
-          child: const Text(
-            'Cancelar',
-            style: TextStyle(color: Colors.white70),
-          ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        TextButton(
-          child: const Text(
-            'Eliminar',
-            style: TextStyle(color: Colors.redAccent),
-          ),
-          onPressed: () {
-            removePlayer(index); // Usa removePlayer que llama a notifyListeners()
-            Navigator.of(context).pop();
-          },
-        ),
-      ],
-    ),
-  );
-}
-
+    );
+  }
 }
