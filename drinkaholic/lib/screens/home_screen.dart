@@ -133,6 +133,14 @@ class _HomeScreenState extends State<HomeScreen> {
         }
         return;
       }
+
+      // Get list of already used avatars (excluding current player)
+      final usedAvatars = _players
+          .asMap()
+          .entries
+          .where((entry) => entry.key != index && entry.value.avatar != null)
+          .map((entry) => entry.value.avatar!)
+          .toSet();
       
       if (mounted) {
         showDialog(
@@ -157,13 +165,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 itemCount: avatarPaths.length,
                 itemBuilder: (context, avatarIndex) {
+                  final avatarPath = avatarPaths[avatarIndex];
+                  final isUsed = usedAvatars.contains(avatarPath);
+                  final isCurrentlySelected = _players[index].avatar == avatarPath;
+                  
                   return GestureDetector(
-                    onTap: () {
+                    onTap: isUsed && !isCurrentlySelected ? null : () {
                       setState(() {
                         _players[index] = Player(
                           id: _players[index].id,
                           nombre: _players[index].nombre,
-                          avatar: avatarPaths[avatarIndex],
+                          avatar: avatarPath,
                         );
                       });
                       Navigator.of(context).pop();
@@ -171,14 +183,56 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.white24),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.asset(
-                          avatarPaths[avatarIndex],
-                          fit: BoxFit.cover,
+                        border: Border.all(
+                          color: isCurrentlySelected 
+                              ? Colors.greenAccent
+                              : isUsed 
+                                  ? Colors.redAccent
+                                  : Colors.white24,
+                          width: isCurrentlySelected || isUsed ? 3 : 1,
                         ),
+                      ),
+                      child: Stack(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: ColorFiltered(
+                              colorFilter: isUsed && !isCurrentlySelected
+                                  ? ColorFilter.mode(
+                                      Colors.black.withOpacity(0.6),
+                                      BlendMode.darken,
+                                    )
+                                  : const ColorFilter.mode(
+                                      Colors.transparent,
+                                      BlendMode.multiply,
+                                    ),
+                              child: Image.asset(
+                                avatarPath,
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: double.infinity,
+                              ),
+                            ),
+                          ),
+                          if (isUsed && !isCurrentlySelected)
+                            const Center(
+                              child: Icon(
+                                Icons.block,
+                                color: Colors.redAccent,
+                                size: 32,
+                              ),
+                            ),
+                          if (isCurrentlySelected)
+                            const Positioned(
+                              top: 4,
+                              right: 4,
+                              child: Icon(
+                                Icons.check_circle,
+                                color: Colors.greenAccent,
+                                size: 20,
+                              ),
+                            ),
+                        ],
                       ),
                     ),
                   );
