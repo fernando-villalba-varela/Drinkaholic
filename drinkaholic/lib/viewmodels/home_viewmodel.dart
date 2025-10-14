@@ -121,10 +121,10 @@ class HomeViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void _setLoading(bool loading) {
-    _isLoading = loading;
-    notifyListeners();
-  }
+  //void _setLoading(bool loading) {
+   // _isLoading = loading;
+    //notifyListeners();
+  //}
 
   // Cleanup
   @override
