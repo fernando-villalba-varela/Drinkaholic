@@ -43,6 +43,7 @@ flutter:
     - assets/avatars/
     - assets/images/potion_background.png
     - assets/images/button_background.png
+    - assets/questions.json
 
 flutter_icons:
   android: true
