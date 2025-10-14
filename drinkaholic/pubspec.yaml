@@ -38,15 +38,12 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/drinkaholic_logo.png
+    - assets/avatars/
 
 flutter_icons:
   android: true
   ios: true
   image_path: "assets/images/drinkaholic_logo.png"
-
-  # To add assets to your application, add an assets section, like this:
-  assets:
-    - assets/avatars/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
