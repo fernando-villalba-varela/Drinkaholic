@@ -1,0 +1,19 @@
+Sample Avatar Images to Add
+============================
+
+To test the avatar selection functionality, add some image files to this directory:
+
+Recommended sample avatars:
+1. avatar_pirate.png - A pirate character
+2. avatar_ninja.png - A ninja character  
+3. avatar_robot.png - A robot character
+4. avatar_wizard.png - A wizard character
+5. avatar_viking.png - A viking character
+
+You can download free avatar images from:
+- OpenGameArt.org
+- Kenney.nl (free game assets)
+- Flaticon.com
+- Or create your own simple avatars
+
+Once you add image files to this folder, they will automatically appear in the avatar selection dialog when you tap on a player's avatar circle.
