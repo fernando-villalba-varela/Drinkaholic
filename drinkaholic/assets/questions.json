@@ -1,0 +1,181 @@
+{
+  "templates": [
+    {
+      "id": "ropa_beber",
+      "template": "Cualquiera que lleve {X} bebe {Y}",
+      "variables": {
+        "X": [
+          "pantalones", "vaqueros", "pantalones cortos", "una camiseta", "una sudadera",
+          "zapatillas", "botas", "un sombrero", "gafas", "un reloj", "joyas",
+          "calcetines", "una chaqueta", "un jersey", "sandalias", "un vestido"
+        ],
+        "Y": [
+          "tragos"
+        ]
+      },
+      "categoria": "Ropa"
+    },
+    {
+      "id": "color_ropa_beber",
+      "template": "Cualquiera que lleve {Y} {X} bebe 3 tragos",
+      "variables": {
+        "X": [
+          "negro", "blanco", "azul", "rojo", "verde", "amarillo", "rosa",
+          "morado", "naranja", "marrón", "gris", "marino"
+        ],
+        "Y": [
+          "camiseta", "pantalones", "zapatos", "calcetines", "chaqueta",
+          "sombrero", "jersey", "vestido", "pantalones cortos"
+        ]
+      },
+      "categoria": "Ropa"
+    },
+    {
+      "id": "caracteristica_fisica",
+      "template": "Cualquiera con {X} bebe {Y}",
+      "variables": {
+        "X": [
+          "ojos marrones", "ojos azules", "ojos verdes", "pelo rubio", "pelo oscuro",
+          "pelo rizado", "pelo liso", "barba", "gafas", "pelo largo",
+          "pelo corto", "uñas pintadas", "pendientes", "tatuajes"
+        ],
+        "Y": [
+          "tragos"
+        ]
+      },
+      "categoria": "Físico"
+    },
+    {
+      "id": "edad_condicion",
+      "template": "Cualquiera que {X} bebe {Y}",
+      "variables": {
+        "X": [
+          "sea mayor de 25", "sea menor de 25", "sea mayor de 30", "sea menor de 20",
+          "haya nacido en los 90", "haya nacido en los 2000", "cumpla años este mes",
+          "haya cumplido años este año"
+        ],
+        "Y": [
+          "tragos"
+        ]
+      },
+      "categoria": "Edad"
+    },
+    {
+      "id": "estado_sentimental",
+      "template": "Cualquiera que {X} bebe {Y}",
+      "variables": {
+        "X": [
+          "esté soltero", "esté en una relación", "esté casado", "haya tenido una cita este mes",
+          "tenga un ex con el que aún hable", "use apps de citas", "esté buscando el amor",
+          "haya estado en una relación de más de 2 años"
+        ],
+        "Y": [
+          "tragos"
+        ]
+      },
+      "categoria": "Relaciones"
+    },
+    {
+      "id": "tecnologia",
+      "template": "Cualquiera que {X} bebe {Y}",
+      "variables": {
+        "X": [
+          "tenga un iPhone", "tenga un Android", "haya publicado en redes hoy",
+          "tenga TikTok instalado", "use Instagram a diario", "tenga más de 500 seguidores",
+          "haya mirado su móvil en los últimos 10 minutos", "tenga un smartwatch"
+        ],
+        "Y": [
+          "tragos"
+        ]
+      },
+      "categoria": "Tecnología"
+    },
+    {
+      "id": "comida_preferencias",
+      "template": "Cualquiera que {X} bebe {Y}",
+      "variables": {
+        "X": [
+          "ame la pizza", "sea vegetariano", "sea vegano", "beba café a diario",
+          "prefiera el té al café", "ame la comida picante", "odie las verduras",
+          "sea goloso", "beba bebidas energéticas", "ame el chocolate"
+        ],
+        "Y": [
+          "tragos"
+        ]
+      },
+      "categoria": "Comida"
+    },
+    {
+      "id": "hobbies_actividades",
+      "template": "Cualquiera que {X} bebe {Y}",
+      "variables": {
+        "X": [
+          "juegue videojuegos", "haga ejercicio regularmente", "lea libros", "vea Netflix a diario",
+          "toque un instrumento musical", "hable más de un idioma", "haya viajado a otro país",
+          "sepa cocinar bien", "conduzca un coche", "practique algún deporte"
+        ],
+        "Y": [
+          "tragos"
+        ]
+      },
+      "categoria": "Hobbies"
+    },
+    {
+      "id": "trabajo_estudio",
+      "template": "Cualquiera que {X} bebe {Y}",
+      "variables": {
+        "X": [
+          "trabaje desde casa", "trabaje los fines de semana", "sea estudiante", "tenga jefe",
+          "trabaje en una oficina", "trabaje con ordenadores", "tenga compañeros de trabajo",
+          "vaya al trabajo en transporte público", "trabaje por turnos"
+        ],
+        "Y": [
+          "tragos"
+        ]
+      },
+      "categoria": "Trabajo"
+    },
+    {
+      "id": "habitos_personales",
+      "template": "Cualquiera que {X} bebe {Y}",
+      "variables": {
+        "X": [
+          "se haya levantado antes de las 8 hoy", "se haya acostado después de medianoche anoche",
+          "haya olvidado algo importante esta semana", "haya perdido las llaves recientemente",
+          "haya cantado en la ducha esta semana", "haya hablado solo hoy",
+          "haya procrastinado algo importante", "haya mirado el tiempo hoy"
+        ],
+        "Y": [
+          "tragos"
+        ]
+      },
+      "categoria": "Hábitos"
+    },
+    {
+      "id": "situaciones_divertidas",
+      "template": "Cualquiera que {X} bebe {Y}",
+      "variables": {
+        "X": [
+          "haya enviado un mensaje al chat equivocado", "haya tropezado en público esta semana",
+          "haya olvidado el nombre de alguien hoy", "haya mentido sobre su edad",
+          "haya fingido estar enfermo para no ir a trabajar", "haya espiado a su ex en redes",
+          "haya llorado viendo una película este mes", "haya bailado solo en casa"
+        ],
+        "Y": [
+          "tragos"
+        ]
+      },
+      "categoria": "Diversión"
+    },
+    {
+      "id": "vocal_nombre",
+      "template": "Cualquiera con la vocal {X} en su nombre bebe 3 tragos por cada vocal {X}",
+      "variables": {
+        "X": [
+          "A", "E", "I", "O", "U"
+        ]
+      },
+      "categoria": "Nombres"
+    }
+  ]
+}

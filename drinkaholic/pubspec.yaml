@@ -39,6 +39,7 @@ flutter:
   assets:
     - assets/images/drinkaholic_logo.png
     - assets/avatars/
+    - assets/questions.json
 
 flutter_icons:
   android: true
