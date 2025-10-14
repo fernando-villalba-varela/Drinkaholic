@@ -1,3 +1,4 @@
+import 'package:drinkaholic/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'screens/participants_screen.dart';
 
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
       ),
-      home: const HomeScreen(title: 'Bienvenido a Drinkaholic'),
+      home: const HomeScreen(),
     );
   }
 }
