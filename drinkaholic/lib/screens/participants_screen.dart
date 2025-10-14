@@ -4,7 +4,6 @@ import 'package:provider/provider.dart'; // <-- Añade esta línea
 import '../viewmodels/participants_viewmodel.dart'; // <-- Añade esta línea
 import '../models/player.dart';
 
-
 class ParticipantsScreen extends StatelessWidget {
   final String title;
   const ParticipantsScreen({super.key, required this.title});
@@ -22,21 +21,24 @@ class _ParticipantsScreenBody extends StatefulWidget {
   const _ParticipantsScreenBody({Key? key}) : super(key: key);
 
   @override
-  State<_ParticipantsScreenBody> createState() => _ParticipantsScreenBodyState();
+  State<_ParticipantsScreenBody> createState() =>
+      _ParticipantsScreenBodyState();
 }
-class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody> {
-  
-  List<Player> get _players => Provider.of<ParticipantsViewmodel>(context).players;
-  TextEditingController get _controller => Provider.of<ParticipantsViewmodel>(context).controller;
- 
-  
 
+class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody> {
+  List<Player> get _players =>
+      Provider.of<ParticipantsViewmodel>(context).players;
+  TextEditingController get _controller =>
+      Provider.of<ParticipantsViewmodel>(context).controller;
 
   @override
   Widget build(BuildContext context) {
-     final viewModel = Provider.of<ParticipantsViewmodel>(context, listen: false);
+    final viewModel = Provider.of<ParticipantsViewmodel>(
+      context,
+      listen: false,
+    );
     viewModel.context = context;
-    
+
     return Scaffold(
       backgroundColor: const Color(0xFF23606E),
       appBar: AppBar(
@@ -69,16 +71,22 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody> {
                       child: Row(
                         children: [
                           GestureDetector(
-                            onTap: () => Provider.of<ParticipantsViewmodel>(context, listen: false).onAvatarTap(index),
+                            onTap: () => Provider.of<ParticipantsViewmodel>(
+                              context,
+                              listen: false,
+                            ).onAvatarTap(index),
                             child: CircleAvatar(
                               radius: 24,
                               backgroundColor: Colors.white,
                               backgroundImage: _players[index].imagen != null
                                   ? FileImage(_players[index].imagen!)
                                   : _players[index].avatar != null
-                                      ? AssetImage(_players[index].avatar!) as ImageProvider
-                                      : null,
-                              child: (_players[index].imagen == null && _players[index].avatar == null)
+                                  ? AssetImage(_players[index].avatar!)
+                                        as ImageProvider
+                                  : null,
+                              child:
+                                  (_players[index].imagen == null &&
+                                      _players[index].avatar == null)
                                   ? Icon(
                                       Icons.camera_alt,
                                       color: Colors.teal[700],
@@ -89,7 +97,10 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody> {
                           const SizedBox(width: 16),
                           Expanded(
                             child: GestureDetector(
-                              onTap: () => Provider.of<ParticipantsViewmodel>(context, listen: false).confirmDelete(index),
+                              onTap: () => Provider.of<ParticipantsViewmodel>(
+                                context,
+                                listen: false,
+                              ).confirmDelete(index),
                               child: Text(
                                 _players[index].nombre,
                                 style: const TextStyle(
@@ -131,7 +142,11 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody> {
                                   borderSide: BorderSide(color: Colors.white),
                                 ),
                               ),
-                              onSubmitted: (_) => Provider.of<ParticipantsViewmodel>(context, listen: false).addPlayer(),
+                              onSubmitted: (_) =>
+                                  Provider.of<ParticipantsViewmodel>(
+                                    context,
+                                    listen: false,
+                                  ).addPlayer(),
                             ),
                           ),
                           IconButton(
@@ -140,7 +155,10 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody> {
                               color: Colors.white,
                               size: 32,
                             ),
-                            onPressed: Provider.of<ParticipantsViewmodel>(context, listen: false).addPlayer,
+                            onPressed: Provider.of<ParticipantsViewmodel>(
+                              context,
+                              listen: false,
+                            ).addPlayer,
                           ),
                         ],
                       ),
@@ -175,5 +193,3 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody> {
     );
   }
 }
-
-

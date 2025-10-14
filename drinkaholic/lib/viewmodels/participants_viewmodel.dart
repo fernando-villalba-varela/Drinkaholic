@@ -203,71 +203,57 @@ class ParticipantsViewmodel extends ChangeNotifier {
                       Navigator.of(context).pop();
                     },
                     child: Container(
+                      width: 200,
+                      height: 60,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: isCurrentlySelected 
-                              ? Colors.greenAccent
-                              : isUsed 
-                                  ? Colors.redAccent
-                                  : Colors.white24,
-                          width: isCurrentlySelected || isUsed ? 3 : 1,
+                        image: const DecorationImage(
+                          image: AssetImage(
+                            'assets/images/button_background.png',
+                          ),
+                          fit: BoxFit.cover,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      alignment: Alignment.center,
+                      child: const Text(
+                        'Liga',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      child: Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: ColorFiltered(
-                              colorFilter: isUsed && !isCurrentlySelected
-                                  ? ColorFilter.mode(
-                                      Colors.black.withOpacity(0.6),
-                                      BlendMode.darken,
-                                    )
-                                  : const ColorFilter.mode(
-                                      Colors.transparent,
-                                      BlendMode.multiply,
-                                    ),
-                              child: Image.asset(
-                                avatarPath,
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                height: double.infinity,
-                              ),
-                            ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  GestureDetector(
+                    onTap: () {
+                      _showExitConfirmationDialog(context);
+                    },
+                    child: Container(
+                      width: 200,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        image: const DecorationImage(
+                          image: AssetImage(
+                            'assets/images/button_background.png',
                           ),
-                          if (isUsed && !isCurrentlySelected)
-                            const Center(
-                              child: Icon(
-                                Icons.block,
-                                color: Colors.redAccent,
-                                size: 32,
-                              ),
-                            ),
-                          if (isCurrentlySelected)
-                            const Positioned(
-                              top: 4,
-                              right: 4,
-                              child: Icon(
-                                Icons.check_circle,
-                                color: Colors.greenAccent,
-                                size: 20,
-                              ),
-                            ),
-                        ],
+                          fit: BoxFit.cover,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      alignment: Alignment.center,
+                      child: const Text(
+                        'Salir',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  );
-                },
-              ),
-            ),
-            actions: [
-              TextButton(
-                child: const Text(
-                  'Cancelar',
-                  style: TextStyle(color: Colors.white70),
-                ),
-                onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
               ),
             ],
           ),
