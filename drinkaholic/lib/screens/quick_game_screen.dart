@@ -1,7 +1,10 @@
+import 'package:drinkaholic/models/question_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:math';
 import '../models/player.dart';
+import '../widgets/quick_game_widgets.dart'; // Añade este import arriba
+
 
 class QuickGameScreen extends StatefulWidget {
   final List<Player> players;
@@ -19,32 +22,13 @@ class _QuickGameScreenState extends State<QuickGameScreen>
     with TickerProviderStateMixin {
   late AnimationController _cardAnimationController;
   late AnimationController _glowAnimationController;
-  late Animation<double> _cardFlipAnimation;
-  late Animation<double> _glowAnimation;
+  
+late Animation<double> _glowAnimation;
   
   int _currentPlayerIndex = 0;
   String _currentChallenge = '';
   bool _gameStarted = false;
   Map<int, int> _playerWeights = {}; // Track how many times each player has been selected
-
-  // Lista de desafíos para el juego rápido
-  final List<String> _challenges = [
-    "Bebe 2 tragos",
-    "Elige a alguien para que beba",
-    "Todos beben excepto tú",
-    "Bebe si tienes más de 25 años",
-    "El jugador a tu izquierda bebe",
-    "Bebe y cuenta un secreto",
-    "Haz una pregunta, quien no responda bebe",
-    "Imita a otro jugador, si adivinan bebes tú",
-    "Bebe si usas gafas",
-    "Todos los que tengan pareja beben",
-    "Bebe si tu nombre empieza por vocal",
-    "El más joven de la mesa bebe",
-    "Bebe si tienes hermanos",
-    "Elige dos personas para que beban",
-    "Bebe si llevas algo azul puesto",
-  ];
 
   @override
   void initState() {
@@ -66,13 +50,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
       vsync: this,
     );
     
-    _cardFlipAnimation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(CurvedAnimation(
-      parent: _cardAnimationController,
-      curve: Curves.easeInOut,
-    ));
+    
     
     _glowAnimation = Tween<double>(
       begin: 0.3,
@@ -105,11 +83,14 @@ class _QuickGameScreenState extends State<QuickGameScreen>
     super.dispose();
   }
 
-  void _generateNewChallenge() {
-    setState(() {
-      _currentChallenge = _challenges[Random().nextInt(_challenges.length)];
-    });
-  }
+Future<void> _generateNewChallenge() async {
+  
+  //numero aleatorio de 1 a 3  
+   final question = await QuestionGenerator.generateRandomQuestion();
+  setState(() {
+    _currentChallenge = question.question;
+  });
+}
 
   void _selectWeightedRandomPlayer() {
     // Find the minimum weight (players who have been selected least)
@@ -142,13 +123,20 @@ class _QuickGameScreenState extends State<QuickGameScreen>
     });
   }
 
-  void _nextChallenge() {
+  void _nextChallenge() async {
     setState(() {
       _gameStarted = true;
     });
-    
-    _generateNewChallenge();
-    _selectWeightedRandomPlayer();
+    await _generateNewChallenge();
+
+    // Solo selecciona jugador si el reto NO es para todos
+    if (!isChallengeForAll(_currentChallenge)) {
+      _selectWeightedRandomPlayer();
+    } else {
+      setState(() {
+        _currentPlayerIndex = -1; // Valor especial para "todos"
+      });
+    }
   }
 
   Widget _buildPlayerAvatar(Player player, {bool isActive = false}) {
@@ -199,120 +187,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
     );
   }
 
-  Widget _buildCenterContent() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        // Current player indicator with glow
-        AnimatedBuilder(
-          animation: _glowAnimation,
-          builder: (context, child) {
-            return Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.white.withOpacity(_glowAnimation.value * 0.6),
-                    blurRadius: 20,
-                    spreadRadius: 5,
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.person_pin,
-                size: 50,
-                color: Colors.white.withOpacity(_glowAnimation.value),
-              ),
-            );
-          },
-        ),
-        
-        const SizedBox(height: 20),
-        
-        // Player name
-        Text(
-          widget.players[_currentPlayerIndex].nombre.toUpperCase(),
-          style: const TextStyle(
-            fontSize: 36,
-            fontWeight: FontWeight.w900,
-            color: Colors.white,
-            letterSpacing: 3,
-            shadows: [
-              Shadow(
-                color: Colors.black38,
-                offset: Offset(2, 2),
-                blurRadius: 4,
-              ),
-            ],
-          ),
-          textAlign: TextAlign.center,
-        ),
-        
-        const SizedBox(height: 40),
-        
-        // Challenge text
-        Container(
-          padding: const EdgeInsets.all(30),
-          margin: const EdgeInsets.symmetric(horizontal: 20),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.15),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: Colors.white.withOpacity(0.3),
-              width: 2,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                blurRadius: 15,
-                offset: const Offset(0, 5),
-              ),
-            ],
-          ),
-          child: Column(
-            children: [
-              const Icon(
-                Icons.local_drink,
-                size: 50,
-                color: Colors.white,
-              ),
-              const SizedBox(height: 20),
-              Text(
-                _currentChallenge,
-                style: const TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  height: 1.4,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
-        
-        const SizedBox(height: 30),
-        
-        // Selection count display (for testing)
-        if (_gameStarted)
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Text(
-              'Turnos: ${_playerWeights.values.join(", ")}',
-              style: const TextStyle(
-                color: Colors.white70,
-                fontSize: 12,
-              ),
-            ),
-          ),
-      ],
-    );
-  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -330,7 +205,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
         ),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(18),
             child: Column(
               children: [
                 // Top section with exit button and players
@@ -360,8 +235,8 @@ class _QuickGameScreenState extends State<QuickGameScreen>
                     
                     // Players row
                     Expanded(
-                      child: Container(
-                        height: 100,
+                      child: SizedBox(
+                        height: 150,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: widget.players.asMap().entries.map((entry) {
@@ -374,7 +249,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
                                   player,
                                   isActive: index == _currentPlayerIndex,
                                 ),
-                                const SizedBox(height: 8),
+                                const SizedBox(height: 10),
                                 Text(
                                   player.nombre,
                                   style: TextStyle(
@@ -400,12 +275,21 @@ class _QuickGameScreenState extends State<QuickGameScreen>
                 // Center content area
                 Expanded(
                   child: Center(
-                    child: _buildCenterContent(),
+                    child: buildCenterContent(
+  widget,
+  widget.players,
+  _currentPlayerIndex,
+  _currentChallenge,
+  _glowAnimation,
+  _playerWeights,
+  _gameStarted,
+  null
+),
                   ),
                 ),
                 
                 // Bottom button
-                Container(
+                SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: _nextChallenge,

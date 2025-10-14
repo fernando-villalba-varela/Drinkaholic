@@ -1,6 +1,6 @@
 import 'package:drinkaholic/screens/home_screen.dart';
 import 'package:flutter/material.dart';
-import 'screens/participants_screen.dart';
+
 
 void main() {
   runApp(const MyApp());
