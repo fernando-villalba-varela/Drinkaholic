@@ -26,9 +26,18 @@ class _QuickGameScreenState extends State<QuickGameScreen>
   late AnimationController _cardAnimationController;
   late AnimationController _glowAnimationController;
   late AnimationController _tapAnimationController;
+  late AnimationController _backgroundAnimationController;
+  late AnimationController _rippleAnimationController;
+  late AnimationController _pulseAnimationController;
   
   late Animation<double> _glowAnimation;
   late Animation<double> _tapAnimation;
+  late Animation<double> _backgroundAnimation;
+  late Animation<double> _rippleAnimation;
+  late Animation<double> _pulseAnimation;
+  
+  List<Offset> _ripplePositions = [];
+  List<double> _rippleOpacities = [];
   
   int _currentPlayerIndex = -1; // Start with no player selected
   String _currentChallenge = '';
@@ -63,6 +72,21 @@ class _QuickGameScreenState extends State<QuickGameScreen>
       vsync: this,
     );
     
+    _backgroundAnimationController = AnimationController(
+      duration: const Duration(seconds: 20),
+      vsync: this,
+    );
+    
+    _rippleAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+    
+    _pulseAnimationController = AnimationController(
+      duration: const Duration(milliseconds: 1200),
+      vsync: this,
+    );
+    
     _glowAnimation = Tween<double>(
       begin: 0.3,
       end: 1.0,
@@ -79,7 +103,33 @@ class _QuickGameScreenState extends State<QuickGameScreen>
       curve: Curves.easeInOut,
     ));
     
+    _backgroundAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _backgroundAnimationController,
+      curve: Curves.linear,
+    ));
+    
+    _rippleAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _rippleAnimationController,
+      curve: Curves.easeOut,
+    ));
+    
+    _pulseAnimation = Tween<double>(
+      begin: 1.0,
+      end: 1.15,
+    ).animate(CurvedAnimation(
+      parent: _pulseAnimationController,
+      curve: Curves.easeInOut,
+    ));
+    
     _glowAnimationController.repeat(reverse: true);
+    _backgroundAnimationController.repeat();
+    _pulseAnimationController.repeat(reverse: true);
     
     // Initialize player weights (all start at 0)
     for (int i = 0; i < widget.players.length; i++) {
@@ -99,6 +149,9 @@ class _QuickGameScreenState extends State<QuickGameScreen>
     _cardAnimationController.dispose();
     _glowAnimationController.dispose();
     _tapAnimationController.dispose();
+    _backgroundAnimationController.dispose();
+    _rippleAnimationController.dispose();
+    _pulseAnimationController.dispose();
     super.dispose();
   }
 
@@ -196,6 +249,74 @@ Future<void> _initializeFirstChallenge() async {
       // Increment the weight for the selected player
       _playerWeights[selectedPlayer] = (_playerWeights[selectedPlayer] ?? 0) + 1;
     });
+  }
+
+  void _addRippleEffect(Offset position) {
+    if (_rippleAnimationController.isAnimating) return; // Prevent duplicates
+    
+    setState(() {
+      _ripplePositions.clear(); // Clear previous ripples
+      _rippleOpacities.clear();
+      _ripplePositions.add(position);
+      _rippleOpacities.add(1.0);
+    });
+    
+    _rippleAnimationController.reset();
+    _rippleAnimationController.forward().then((_) {
+      setState(() {
+        _ripplePositions.clear();
+        _rippleOpacities.clear();
+      });
+    });
+  }
+  
+  Widget _buildAnimatedBackground() {
+    return Positioned.fill(
+      child: AnimatedBuilder(
+        animation: _backgroundAnimation,
+        builder: (context, child) {
+          return CustomPaint(
+            painter: FloatingShapesPainter(_backgroundAnimation.value),
+            child: Container(),
+          );
+        },
+      ),
+    );
+  }
+  
+  Widget _buildRippleEffects() {
+    if (_ripplePositions.isEmpty) return const SizedBox.shrink();
+    
+    return AnimatedBuilder(
+      animation: _rippleAnimation,
+      builder: (context, child) {
+        return Stack(
+          children: _ripplePositions.asMap().entries.map((entry) {
+            final index = entry.key;
+            final position = entry.value;
+            final opacity = _rippleOpacities.length > index ? _rippleOpacities[index] : 0.0;
+            final animationValue = _rippleAnimation.value;
+            final size = 150.0 * animationValue;
+            
+            return Positioned(
+              left: position.dx - (size / 2),
+              top: position.dy - (size / 2),
+              child: Container(
+                width: size,
+                height: size,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.white.withOpacity(opacity * (1 - animationValue) * 0.6),
+                    width: 3,
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        );
+      },
+    );
   }
 
   void _nextChallenge() async {
@@ -303,50 +424,74 @@ Future<void> _initializeFirstChallenge() async {
   }
 
   Widget _buildPlayerAvatar(Player player, {bool isActive = false}) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      padding: EdgeInsets.all(isActive ? 4 : 2),
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(
-          color: isActive ? Colors.white : Colors.white.withOpacity(0.5),
-          width: isActive ? 3 : 1,
-        ),
-        boxShadow: isActive ? [
-          BoxShadow(
-            color: Colors.white.withOpacity(0.6),
-            blurRadius: 15,
-            spreadRadius: 3,
-          ),
-        ] : null,
-      ),
-      child: Container(
-        width: 60,
-        height: 60,
-        decoration: const BoxDecoration(
-          shape: BoxShape.circle,
-        ),
-        child: ClipOval(
-          child: player.imagen != null
-              ? Image.file(
-                  player.imagen!,
-                  fit: BoxFit.cover,
-                )
-              : player.avatar != null
-              ? Image.asset(
-                  player.avatar!,
-                  fit: BoxFit.cover,
-                )
-              : Container(
-                  color: Colors.white.withOpacity(0.2),
-                  child: const Icon(
-                    Icons.person,
-                    color: Colors.white,
-                    size: 30,
-                  ),
+    return AnimatedBuilder(
+      animation: isActive ? _pulseAnimation : _glowAnimation,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: isActive ? _pulseAnimation.value : 1.0,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            padding: EdgeInsets.all(isActive ? 4 : 2),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: isActive ? Colors.white : Colors.white.withOpacity(0.5),
+                width: isActive ? 3 : 1,
+              ),
+              boxShadow: isActive ? [
+                BoxShadow(
+                  color: Colors.white.withOpacity(0.8),
+                  blurRadius: 25,
+                  spreadRadius: 5,
                 ),
-        ),
-      ),
+                BoxShadow(
+                  color: Colors.cyan.withOpacity(0.6),
+                  blurRadius: 15,
+                  spreadRadius: 3,
+                ),
+                BoxShadow(
+                  color: Colors.blue.withOpacity(0.4),
+                  blurRadius: 35,
+                  spreadRadius: 8,
+                ),
+              ] : [
+                BoxShadow(
+                  color: Colors.white.withOpacity(0.2),
+                  blurRadius: 5,
+                  spreadRadius: 1,
+                ),
+              ],
+            ),
+            child: Container(
+              width: 60,
+              height: 60,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+              ),
+              child: ClipOval(
+                child: player.imagen != null
+                    ? Image.file(
+                        player.imagen!,
+                        fit: BoxFit.cover,
+                      )
+                    : player.avatar != null
+                    ? Image.asset(
+                        player.avatar!,
+                        fit: BoxFit.cover,
+                      )
+                    : Container(
+                        color: Colors.white.withOpacity(0.2),
+                        child: const Icon(
+                          Icons.person,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                      ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -355,163 +500,270 @@ Future<void> _initializeFirstChallenge() async {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF00C9FF), // Cyan
-              Color(0xFF92FE9D), // Green
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(18),
-            child: Column(
-              children: [
-                // Top section with exit button and players
-                Row(
-                  children: [
-                    // Exit button
-                    GestureDetector(
-                      onTap: () => Navigator.of(context).pop(),
-                      child: Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.3),
-                            width: 1,
-                          ),
-                        ),
-                        child: const Icon(
-                          Icons.close,
-                          color: Colors.white,
-                          size: 24,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                    
-                    // Players row
-                    Expanded(
-                      child: SizedBox(
-                        height: 150,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: widget.players.asMap().entries.map((entry) {
-                            final index = entry.key;
-                            final player = entry.value;
-                            return Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                _buildPlayerAvatar(
-                                  player,
-                                  isActive: index == _currentPlayerIndex,
-                                ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  player.nombre,
-                                  style: TextStyle(
-                                    color: index == _currentPlayerIndex
-                                        ? Colors.white
-                                        : Colors.white.withOpacity(0.7),
-                                    fontSize: 14,
-                                    fontWeight: index == _currentPlayerIndex
-                                        ? FontWeight.bold
-                                        : FontWeight.normal,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                
-                // Center content area (tappable)
-                Expanded(
-                  child: AnimatedBuilder(
-                    animation: _tapAnimation,
-                    builder: (context, child) {
-                      return Transform.scale(
-                        scale: _tapAnimation.value,
-                        child: GestureDetector(
-                          onTap: _nextChallenge,
-                          behavior: HitTestBehavior.opaque,
-                          child: Container(
-                            width: double.infinity,
-                            child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            buildCenterContent(_createGameState()),
-                            const SizedBox(height: 40),
-                            // Tap indicator (only show at the beginning)
-                            if (!_gameStarted)
-                              AnimatedBuilder(
-                                animation: _glowAnimation,
-                                builder: (context, child) {
-                                  return Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(25),
-                                      border: Border.all(
-                                        color: Colors.white.withOpacity(_glowAnimation.value * 0.8),
-                                        width: 2,
-                                      ),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.white.withOpacity(_glowAnimation.value * 0.3),
-                                          blurRadius: 15,
-                                          spreadRadius: 2,
-                                        ),
-                                      ],
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          Icons.touch_app,
-                                          color: Colors.white.withOpacity(_glowAnimation.value),
-                                          size: 20,
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          'TOCA LA PANTALLA',
-                                          style: TextStyle(
-                                            color: Colors.white.withOpacity(_glowAnimation.value),
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                            letterSpacing: 1.2,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
-                          ],
-                            ),
-                          ),
-                        ),
-                          ),
-                      );
-                    },
-                  ),
-                ),
-              ],
+      body: Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xFF00C9FF), // Cyan
+                  Color(0xFF92FE9D), // Green
+                ],
+              ),
             ),
           ),
-        ),
+          _buildAnimatedBackground(),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(18),
+              child: Column(
+                children: [
+                  // Top section with exit button and players
+                  Row(
+                    children: [
+                      // Exit button
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).pop(),
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.3),
+                              width: 1,
+                            ),
+                          ),
+                          child: const Icon(
+                            Icons.close,
+                            color: Colors.white,
+                            size: 24,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                      
+                      // Players row
+                      Expanded(
+                        child: SizedBox(
+                          height: 150,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: widget.players.asMap().entries.map((entry) {
+                              final index = entry.key;
+                              final player = entry.value;
+                              return Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  _buildPlayerAvatar(
+                                    player,
+                                    isActive: index == _currentPlayerIndex,
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    player.nombre,
+                                    style: TextStyle(
+                                      color: index == _currentPlayerIndex
+                                          ? Colors.white
+                                          : Colors.white.withOpacity(0.7),
+                                      fontSize: 14,
+                                      fontWeight: index == _currentPlayerIndex
+                                          ? FontWeight.bold
+                                          : FontWeight.normal,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  
+                  // Center content area (tappable)
+                  Expanded(
+                    child: AnimatedBuilder(
+                      animation: _tapAnimation,
+                      builder: (context, child) {
+                        return Transform.scale(
+                          scale: _tapAnimation.value,
+                          child: GestureDetector(
+                            onTapDown: (details) {
+                              final RenderBox renderBox = context.findRenderObject() as RenderBox;
+                              final localPosition = renderBox.globalToLocal(details.globalPosition);
+                              _addRippleEffect(localPosition);
+                            },
+                            onTap: _nextChallenge,
+                            behavior: HitTestBehavior.opaque,
+                            child: Stack(
+                              children: [
+                                Container(
+                                  width: double.infinity,
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        buildCenterContent(_createGameState()),
+                                        const SizedBox(height: 40),
+                                        // Tap indicator (only show at the beginning)
+                                        if (!_gameStarted)
+                                          AnimatedBuilder(
+                                            animation: _glowAnimation,
+                                            builder: (context, child) {
+                                              return Container(
+                                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white.withOpacity(0.1),
+                                                  borderRadius: BorderRadius.circular(25),
+                                                  border: Border.all(
+                                                    color: Colors.white.withOpacity(_glowAnimation.value * 0.8),
+                                                    width: 2,
+                                                  ),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.white.withOpacity(_glowAnimation.value * 0.3),
+                                                      blurRadius: 15,
+                                                      spreadRadius: 2,
+                                                    ),
+                                                  ],
+                                                ),
+                                                child: Row(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    Icon(
+                                                      Icons.touch_app,
+                                                      color: Colors.white.withOpacity(_glowAnimation.value),
+                                                      size: 20,
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    Text(
+                                                      'TOCA LA PANTALLA',
+                                                      style: TextStyle(
+                                                        color: Colors.white.withOpacity(_glowAnimation.value),
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.bold,
+                                                        letterSpacing: 1.2,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                _buildRippleEffects(),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
+}
+
+class FloatingShapesPainter extends CustomPainter {
+  final double animationValue;
+  
+  FloatingShapesPainter(this.animationValue);
+  
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..style = PaintingStyle.fill;
+      
+    // Create multiple floating shapes with different speeds and sizes
+    final shapes = [
+      // Large circles
+      _FloatingShape(
+        Offset(size.width * 0.1 + (sin(animationValue * 2 * pi) * 30),
+               size.height * 0.2 + (cos(animationValue * 2 * pi) * 20)),
+        30,
+        Colors.white.withOpacity(0.05),
+      ),
+      _FloatingShape(
+        Offset(size.width * 0.8 + (sin(animationValue * 2 * pi + 1) * 40),
+               size.height * 0.7 + (cos(animationValue * 2 * pi + 1) * 30)),
+        25,
+        Colors.white.withOpacity(0.08),
+      ),
+      // Medium circles
+      _FloatingShape(
+        Offset(size.width * 0.3 + (sin(animationValue * 2 * pi + 2) * 50),
+               size.height * 0.5 + (cos(animationValue * 2 * pi + 2) * 25)),
+        20,
+        Colors.white.withOpacity(0.04),
+      ),
+      _FloatingShape(
+        Offset(size.width * 0.7 + (sin(animationValue * 2 * pi + 3) * 35),
+               size.height * 0.3 + (cos(animationValue * 2 * pi + 3) * 40)),
+        18,
+        Colors.cyan.withOpacity(0.06),
+      ),
+      // Small circles
+      _FloatingShape(
+        Offset(size.width * 0.5 + (sin(animationValue * 2 * pi + 4) * 60),
+               size.height * 0.8 + (cos(animationValue * 2 * pi + 4) * 15)),
+        12,
+        Colors.white.withOpacity(0.03),
+      ),
+      _FloatingShape(
+        Offset(size.width * 0.9 + (sin(animationValue * 2 * pi + 5) * 25),
+               size.height * 0.1 + (cos(animationValue * 2 * pi + 5) * 35)),
+        15,
+        Colors.green.withOpacity(0.05),
+      ),
+    ];
+    
+    // Draw all shapes
+    for (final shape in shapes) {
+      paint.color = shape.color;
+      canvas.drawCircle(shape.position, shape.radius, paint);
+    }
+    
+    // Add some triangular shapes for variety
+    final trianglePaint = Paint()
+      ..color = Colors.white.withOpacity(0.02)
+      ..style = PaintingStyle.fill;
+      
+    final trianglePath = Path();
+    final triangleCenter = Offset(
+      size.width * 0.6 + (sin(animationValue * 2 * pi + 6) * 45),
+      size.height * 0.4 + (cos(animationValue * 2 * pi + 6) * 30),
+    );
+    
+    trianglePath.moveTo(triangleCenter.dx, triangleCenter.dy - 15);
+    trianglePath.lineTo(triangleCenter.dx - 13, triangleCenter.dy + 10);
+    trianglePath.lineTo(triangleCenter.dx + 13, triangleCenter.dy + 10);
+    trianglePath.close();
+    
+    canvas.drawPath(trianglePath, trianglePaint);
+  }
+  
+  @override
+  bool shouldRepaint(FloatingShapesPainter oldDelegate) {
+    return oldDelegate.animationValue != animationValue;
+  }
+}
+
+class _FloatingShape {
+  final Offset position;
+  final double radius;
+  final Color color;
+  
+  _FloatingShape(this.position, this.radius, this.color);
 }

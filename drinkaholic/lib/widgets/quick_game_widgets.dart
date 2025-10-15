@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/game_state.dart';
+import 'dart:math';
 
 Widget buildCenterContent(GameState gameState) {
   
@@ -64,45 +65,98 @@ Widget buildCenterContent(GameState gameState) {
       
       const SizedBox(height: 40),
       
-      // Challenge text
-      Container(
-        padding: const EdgeInsets.all(30),
-        margin: const EdgeInsets.symmetric(horizontal: 20),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.15),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: Colors.white.withOpacity(0.3),
-            width: 2,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 15,
-              offset: const Offset(0, 5),
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            const Icon(
-              Icons.local_drink,
-              size: 50,
-              color: Colors.white,
-            ),
-            const SizedBox(height: 20),
-            Text(
-              gameState.currentChallenge!,
-              style: const TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                height: 1.4,
+      // Enhanced Challenge text container
+      TweenAnimationBuilder<double>(
+        duration: const Duration(milliseconds: 600),
+        tween: Tween(begin: 0.0, end: 1.0),
+        builder: (context, value, child) {
+          return Transform.scale(
+            scale: 0.9 + (0.1 * value),
+            child: Container(
+              padding: const EdgeInsets.all(30),
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.white.withOpacity(0.25),
+                    Colors.white.withOpacity(0.10),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(25),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.4),
+                  width: 2,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.3),
+                    blurRadius: 25,
+                    offset: const Offset(0, 8),
+                    spreadRadius: 2,
+                  ),
+                  BoxShadow(
+                    color: Colors.white.withOpacity(0.1),
+                    blurRadius: 15,
+                    offset: const Offset(0, -5),
+                    spreadRadius: 1,
+                  ),
+                  BoxShadow(
+                    color: Colors.cyan.withOpacity(0.2),
+                    blurRadius: 30,
+                    offset: const Offset(0, 0),
+                    spreadRadius: -5,
+                  ),
+                ],
               ),
-              textAlign: TextAlign.center,
+              child: Column(
+                children: [
+                  TweenAnimationBuilder<double>(
+                    duration: const Duration(milliseconds: 800),
+                    tween: Tween(begin: 0.0, end: 1.0),
+                    builder: (context, iconValue, child) {
+                      return Transform.rotate(
+                        angle: iconValue * 2 * pi,
+                        child: Icon(
+                          _getDynamicIcon(gameState.currentChallenge!),
+                          size: 50 + (sin(iconValue * 2 * pi) * 5),
+                          color: Colors.white.withOpacity(0.9 + (0.1 * iconValue)),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  AnimatedDefaultTextStyle(
+                    duration: const Duration(milliseconds: 400),
+                    style: TextStyle(
+                      fontSize: 26 + (sin(value * pi) * 2),
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      height: 1.4,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black.withOpacity(0.5),
+                          offset: const Offset(2, 2),
+                          blurRadius: 4,
+                        ),
+                        Shadow(
+                          color: Colors.cyan.withOpacity(0.3),
+                          offset: const Offset(-1, -1),
+                          blurRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      gameState.currentChallenge!,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
+          );
+        },
       ),
       
       const SizedBox(height: 30),
@@ -410,4 +464,61 @@ List<Widget> _buildPunishmentInfo(GameState gameState) {
       ),
     ),
   ];
+}
+
+IconData _getDynamicIcon(String challenge) {
+  final lowerChallenge = challenge.toLowerCase();
+  
+  // Drinking related
+  if (lowerChallenge.contains('bebe') || lowerChallenge.contains('trago') || lowerChallenge.contains('shot')) {
+    return Icons.local_drink;
+  }
+  
+  // Party/celebration related
+  if (lowerChallenge.contains('baila') || lowerChallenge.contains('canta') || lowerChallenge.contains('música')) {
+    return Icons.music_note;
+  }
+  
+  // Truth or questions
+  if (lowerChallenge.contains('pregunta') || lowerChallenge.contains('cuenta') || lowerChallenge.contains('confiesa')) {
+    return Icons.quiz;
+  }
+  
+  // Social/group activities
+  if (lowerChallenge.contains('todos') || lowerChallenge.contains('grupo') || lowerChallenge.contains('equipo')) {
+    return Icons.group;
+  }
+  
+  // Game/challenge related
+  if (lowerChallenge.contains('juego') || lowerChallenge.contains('reto') || lowerChallenge.contains('desafío')) {
+    return Icons.sports_esports;
+  }
+  
+  // Love/romantic related
+  if (lowerChallenge.contains('amor') || lowerChallenge.contains('besa') || lowerChallenge.contains('pareja')) {
+    return Icons.favorite;
+  }
+  
+  // Action/movement related
+  if (lowerChallenge.contains('salta') || lowerChallenge.contains('corre') || lowerChallenge.contains('mueve')) {
+    return Icons.directions_run;
+  }
+  
+  // Phone/social media related
+  if (lowerChallenge.contains('teléfono') || lowerChallenge.contains('mensaje') || lowerChallenge.contains('llamada')) {
+    return Icons.phone;
+  }
+  
+  // Time related
+  if (lowerChallenge.contains('minutos') || lowerChallenge.contains('tiempo') || lowerChallenge.contains('segundo')) {
+    return Icons.timer;
+  }
+  
+  // Star/special challenges
+  if (lowerChallenge.contains('especial') || lowerChallenge.contains('estrella') || lowerChallenge.contains('premio')) {
+    return Icons.star;
+  }
+  
+  // Default drink icon
+  return Icons.local_drink;
 }
