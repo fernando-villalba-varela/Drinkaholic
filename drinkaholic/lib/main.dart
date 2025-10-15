@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'viewmodels/league_list_viewmodel.dart';
 
+
 void main() {
   runApp(
     MultiProvider(

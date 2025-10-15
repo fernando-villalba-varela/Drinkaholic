@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart'; // <-- Añade esta línea
 import '../viewmodels/participants_viewmodel.dart'; // <-- Añade esta línea
 import '../models/player.dart';
+import 'quick_game_screen.dart';
 
 class ParticipantsScreen extends StatelessWidget {
   final String title;
@@ -136,11 +137,7 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody> {
               // Modern start game button
               Padding(
                 padding: const EdgeInsets.all(20),
-                child: GestureDetector(
-                  onTap: () {
-                    // Start game action
-                  },
-                  child: Container(
+                child: Container(
                     width: double.infinity,
                     height: 65,
                     decoration: BoxDecoration(
@@ -167,7 +164,15 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody> {
                       child: InkWell(
                         borderRadius: BorderRadius.circular(32),
                         onTap: () {
-                          // Start game action
+                          final viewModel = Provider.of<ParticipantsViewmodel>(context, listen: false);
+                          if (viewModel.players.isNotEmpty) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => QuickGameScreen(players: viewModel.players),
+                              ),
+                            );
+                          }
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -196,7 +201,6 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody> {
                     ),
                   ),
                 ),
-              ),
             ],
           ),
         ),
