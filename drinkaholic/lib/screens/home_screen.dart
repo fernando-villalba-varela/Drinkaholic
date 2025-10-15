@@ -1,3 +1,4 @@
+import 'package:drinkaholic/screens/league_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 import '../viewmodels/home_viewmodel.dart';
@@ -17,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late Animation<double> _iconMoveAnimation;
   late Animation<double> _iconScaleAnimation;
   late Animation<double> _iconRotationAnimation;
-  
+
   bool _isAnimating = false;
   Gradient? _currentGradient;
   String? _animatingButtonText;
@@ -31,46 +32,33 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    
-    _scaleAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.5,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
-    
-    _opacityAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeIn,
-    ));
-    
-    _iconMoveAnimation = Tween<double>(
-      begin: 0.0,
-      end: -200.0, // Move upward for rocket launch
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutQuart,
-    ));
-    
-    _iconScaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 2.5,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.elasticOut,
-    ));
-    
-    _iconRotationAnimation = Tween<double>(
-      begin: 0.0,
-      end: 360.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+
+    _scaleAnimation = Tween<double>(begin: 0.0, end: 1.5).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+
+    _opacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeIn),
+    );
+
+    _iconMoveAnimation =
+        Tween<double>(
+          begin: 0.0,
+          end: -200.0, // Move upward for rocket launch
+        ).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: Curves.easeOutQuart,
+          ),
+        );
+
+    _iconScaleAnimation = Tween<double>(begin: 1.0, end: 2.5).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.elasticOut),
+    );
+
+    _iconRotationAnimation = Tween<double>(begin: 0.0, end: 360.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
   }
 
   @override
@@ -80,22 +68,27 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  Future<void> _startAnimatedNavigation(Gradient gradient, String buttonText, IconData icon, VoidCallback onComplete) async {
+  Future<void> _startAnimatedNavigation(
+    Gradient gradient,
+    String buttonText,
+    IconData icon,
+    VoidCallback onComplete,
+  ) async {
     setState(() {
       _isAnimating = true;
       _currentGradient = gradient;
       _animatingButtonText = buttonText;
       _animatingIcon = icon;
     });
-    
+
     await _animationController.forward();
-    
+
     // Wait a bit for the full effect
     await Future.delayed(const Duration(milliseconds: 200));
-    
+
     // Execute the navigation
     onComplete();
-    
+
     // Reset animation after navigation
     await Future.delayed(const Duration(milliseconds: 100));
     _animationController.reset();
@@ -111,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
-    
+
     return Scaffold(
       body: ListenableBuilder(
         listenable: _viewModel,
@@ -136,7 +129,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               Container(
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: const AssetImage('assets/images/potion_background.png'),
+                    image: const AssetImage(
+                      'assets/images/potion_background.png',
+                    ),
                     fit: BoxFit.cover,
                     opacity: 0.3,
                     colorFilter: ColorFilter.mode(
@@ -147,8 +142,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 ),
               ),
               // Floating particles effect
-              ...List.generate(6, (index) => _buildFloatingParticle(screenWidth, screenHeight, index)),
-              
+              ...List.generate(
+                6,
+                (index) =>
+                    _buildFloatingParticle(screenWidth, screenHeight, index),
+              ),
+
               // Main content
               SafeArea(
                 child: Column(
@@ -166,7 +165,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(0xFFD4A373).withOpacity(0.3),
+                                    color: const Color(
+                                      0xFFD4A373,
+                                    ).withOpacity(0.3),
                                     blurRadius: 30,
                                     spreadRadius: 10,
                                   ),
@@ -179,7 +180,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               ),
                             ),
                             const SizedBox(height: 30),
-                            
+
                             // Title with enhanced styling
                             ShaderMask(
                               shaderCallback: (bounds) => const LinearGradient(
@@ -208,7 +209,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                 ),
                               ),
                             ),
-                            
+
                             const SizedBox(height: 8),
                             Text(
                               'A beber como los duendes',
@@ -223,7 +224,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         ),
                       ),
                     ),
-                    
+
                     // Buttons section
                     Expanded(
                       flex: 2,
@@ -235,7 +236,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             _buildModernButton(
                               onTap: () {
                                 const gradient = LinearGradient(
-                                  colors: [Color(0xFF00C9FF), Color(0xFF92FE9D)],
+                                  colors: [
+                                    Color(0xFF00C9FF),
+                                    Color(0xFF92FE9D),
+                                  ],
                                 );
                                 _startAnimatedNavigation(
                                   gradient,
@@ -251,17 +255,25 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               ),
                             ),
                             const SizedBox(height: 20),
-                            
+
                             _buildModernButton(
                               onTap: () {
                                 const gradient = LinearGradient(
-                                  colors: [Color(0xFFFC466B), Color(0xFF3F5EFB)],
+                                  colors: [
+                                    Color(0xFFFC466B),
+                                    Color(0xFF3F5EFB),
+                                  ],
                                 );
                                 _startAnimatedNavigation(
                                   gradient,
                                   'LIGA',
                                   Icons.emoji_events,
-                                  () => _viewModel.navigateToLeague(context),
+                                  () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => const LeagueListScreen(),
+                                    ),
+                                  ),
                                 );
                               },
                               text: 'LIGA',
@@ -271,9 +283,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               ),
                             ),
                             const SizedBox(height: 20),
-                            
+
                             _buildModernButton(
-                              onTap: () => _viewModel.showExitConfirmation(context),
+                              onTap: () =>
+                                  _viewModel.showExitConfirmation(context),
                               text: 'SALIR',
                               icon: Icons.exit_to_app,
                               gradient: const LinearGradient(
@@ -314,11 +327,17 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                         opacity: _opacityAnimation,
                                         child: Center(
                                           child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
                                             children: [
-                                              const SizedBox(height: 200), // Space for icon animation
+                                              const SizedBox(
+                                                height: 200,
+                                              ), // Space for icon animation
                                               const CircularProgressIndicator(
-                                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                                valueColor:
+                                                    AlwaysStoppedAnimation<
+                                                      Color
+                                                    >(Colors.white),
                                                 strokeWidth: 3,
                                               ),
                                               const SizedBox(height: 24),
@@ -354,10 +373,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [
-                          Colors.red.shade600,
-                          Colors.red.shade800,
-                        ],
+                        colors: [Colors.red.shade600, Colors.red.shade800],
                       ),
                       borderRadius: BorderRadius.circular(15),
                       boxShadow: [
@@ -432,11 +448,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    icon,
-                    color: Colors.white,
-                    size: isSmaller ? 20 : 24,
-                  ),
+                  Icon(icon, color: Colors.white, size: isSmaller ? 20 : 24),
                   const SizedBox(width: 12),
                   Text(
                     text,
@@ -458,7 +470,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   Widget _buildAnimatedIcon() {
     if (_animatingIcon == null) return const SizedBox.shrink();
-    
+
     // Different animations based on icon type
     if (_animatingIcon == Icons.flash_on) {
       // Rocket launch animation - moves up with trail effect
@@ -492,11 +504,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   scale: _iconScaleAnimation.value,
                   child: Transform.rotate(
                     angle: (_iconRotationAnimation.value * 3.14159) / 180,
-                    child: Icon(
-                      _animatingIcon,
-                      size: 80,
-                      color: Colors.white,
-                    ),
+                    child: Icon(_animatingIcon, size: 80, color: Colors.white),
                   ),
                 ),
               ),
@@ -520,7 +528,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.yellow.withOpacity(0.6 * _opacityAnimation.value),
+                      color: Colors.yellow.withOpacity(
+                        0.6 * _opacityAnimation.value,
+                      ),
                       blurRadius: 30,
                       spreadRadius: 10,
                     ),
@@ -547,14 +557,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               }),
               // Main trophy icon with bounce
               Transform.translate(
-                offset: Offset(0, sin(_iconRotationAnimation.value * 3.14159 / 180) * 20),
+                offset: Offset(
+                  0,
+                  sin(_iconRotationAnimation.value * 3.14159 / 180) * 20,
+                ),
                 child: Transform.scale(
                   scale: _iconScaleAnimation.value,
-                  child: Icon(
-                    _animatingIcon,
-                    size: 80,
-                    color: Colors.yellow,
-                  ),
+                  child: Icon(_animatingIcon, size: 80, color: Colors.yellow),
                 ),
               ),
             ],
@@ -562,17 +571,21 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         },
       );
     }
-    
+
     return const SizedBox.shrink();
   }
 
-  Widget _buildFloatingParticle(double screenWidth, double screenHeight, int index) {
+  Widget _buildFloatingParticle(
+    double screenWidth,
+    double screenHeight,
+    int index,
+  ) {
     final random = (index * 1234) % 1000;
     final size = 4.0 + (random % 8);
     final left = (random * 0.7) % screenWidth;
     final top = (random * 0.8) % screenHeight;
     final opacity = 0.1 + (random % 40) / 100;
-    
+
     return Positioned(
       left: left,
       top: top,
