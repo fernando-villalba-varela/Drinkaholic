@@ -594,22 +594,6 @@ Future<void> _initializeFirstChallenge() async {
       _playerWeights[_dualPlayerIndex!] = (_playerWeights[_dualPlayerIndex!] ?? 0) + 1;
     });
   }
-      confirmedPlayer2.nombre
-    );
-    
-    setState(() {
-      _currentChallenge = question.question;
-      _currentPlayerIndex = player1Index;
-      _dualPlayerIndex = player2Index;
-      
-      print('📊 DEBUG: Set _currentPlayerIndex: $_currentPlayerIndex, _dualPlayerIndex: $_dualPlayerIndex');
-      print('📊 DEBUG: Storing dual player names: "${player1.nombre}", "${player2.nombre}"');
-      
-      // Incrementar pesos para ambos jugadores
-      _playerWeights[_currentPlayerIndex] = (_playerWeights[_currentPlayerIndex] ?? 0) + 1;
-      _playerWeights[_dualPlayerIndex!] = (_playerWeights[_dualPlayerIndex!] ?? 0) + 1;
-    });
-  }
 
   Future<void> _generateNewDualConstantChallenge() async {
     // Seleccionar dos jugadores diferentes
@@ -737,8 +721,6 @@ Future<void> _initializeFirstChallenge() async {
       },
     );
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
