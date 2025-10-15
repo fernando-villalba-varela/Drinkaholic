@@ -19,17 +19,13 @@ class HomeViewModel extends ChangeNotifier {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => const ParticipantsScreen(title: 'Partida Rápida'),
+          builder: (context) =>
+              const ParticipantsScreen(title: 'Partida Rápida'),
         ),
       );
     } catch (e) {
       _setError('Error al navegar a Partida Rápida: ${e.toString()}');
     }
-  }
-
-  void navigateToLeague(BuildContext context) {
-    // TODO: Implement league navigation when league screen is ready
-    _showComingSoonDialog(context, 'Liga');
   }
 
   // Exit functionality
@@ -41,10 +37,7 @@ class HomeViewModel extends ChangeNotifier {
           backgroundColor: const Color(0xFF23606E),
           title: const Text(
             '¿Deseas salir de la aplicación?',
-            style: TextStyle(
-              color: Colors.white, 
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
           actions: [
             TextButton(
@@ -56,10 +49,7 @@ class HomeViewModel extends ChangeNotifier {
             ),
             TextButton(
               onPressed: () => _confirmExit(),
-              child: const Text(
-                'Aceptar', 
-                style: TextStyle(color: Colors.red),
-              ),
+              child: const Text('Aceptar', style: TextStyle(color: Colors.red)),
             ),
           ],
         );
@@ -100,10 +90,7 @@ class HomeViewModel extends ChangeNotifier {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text(
-                'OK',
-                style: TextStyle(color: Colors.white),
-              ),
+              child: const Text('OK', style: TextStyle(color: Colors.white)),
             ),
           ],
         );
