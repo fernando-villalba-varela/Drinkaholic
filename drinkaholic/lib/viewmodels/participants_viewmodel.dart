@@ -80,7 +80,7 @@ class ParticipantsViewmodel extends ChangeNotifier {
     showDialog(
       context: _context!,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF23606E),
+        backgroundColor: const Color(0xFF00C9FF).withOpacity(0.95),
         title: Text(
           'Seleccionar avatar para ${_players[index].nombre}',
           style: const TextStyle(
@@ -175,7 +175,10 @@ class ParticipantsViewmodel extends ChangeNotifier {
         showDialog(
           context: context!,
           builder: (context) => AlertDialog(
-            backgroundColor: const Color(0xFF23606E),
+            backgroundColor: const Color(0xFF00C9FF).withOpacity(0.95),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
             title: Text(
               'Elegir avatar para ${_players[index].nombre}',
               style: const TextStyle(
@@ -213,20 +216,26 @@ class ParticipantsViewmodel extends ChangeNotifier {
                           },
                     child: Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
+                        shape: BoxShape.circle,
                         border: Border.all(
                           color: isCurrentlySelected
-                              ? Colors.greenAccent
+                              ? Colors.white
                               : isUsed
-                              ? Colors.redAccent
-                              : Colors.white24,
+                              ? Colors.red.shade300
+                              : Colors.white.withOpacity(0.3),
                           width: isCurrentlySelected || isUsed ? 3 : 1,
                         ),
+                        boxShadow: isCurrentlySelected ? [
+                          BoxShadow(
+                            color: Colors.white.withOpacity(0.5),
+                            blurRadius: 10,
+                            spreadRadius: 2,
+                          ),
+                        ] : null,
                       ),
                       child: Stack(
                         children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
+                          ClipOval(
                             child: ColorFiltered(
                               colorFilter: isUsed && !isCurrentlySelected
                                   ? ColorFilter.mode(
@@ -331,7 +340,10 @@ class ParticipantsViewmodel extends ChangeNotifier {
     showDialog(
       context: context!,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF23606E),
+        backgroundColor: const Color(0xFF00C9FF).withOpacity(0.95),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
         title: Text(
           '¿Quieres eliminar la foto de ${_players[index].nombre}?',
           style: const TextStyle(
@@ -370,7 +382,10 @@ class ParticipantsViewmodel extends ChangeNotifier {
     showDialog(
       context: context!,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF23606E),
+        backgroundColor: const Color(0xFF00C9FF).withOpacity(0.95),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
         title: Text(
           '¿Quieres eliminar a ${_players[index].nombre}?',
           style: const TextStyle(
