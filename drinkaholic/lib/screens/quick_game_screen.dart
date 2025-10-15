@@ -2,10 +2,13 @@ import 'package:drinkaholic/models/question_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:math';
+import 'dart:math' as math show Random;
 import '../models/player.dart';
 import '../models/game_state.dart';
 import '../models/constant_challenge.dart';
 import '../models/constant_challenge_generator.dart';
+import '../models/event.dart';
+import '../models/event_generator.dart';
 import '../widgets/quick_game_widgets.dart'; // Añade este import arriba
 
 
@@ -40,12 +43,15 @@ class _QuickGameScreenState extends State<QuickGameScreen>
   List<double> _rippleOpacities = [];
   
   int _currentPlayerIndex = -1; // Start with no player selected
+  int? _dualPlayerIndex; // Second player for dual challenges
   String _currentChallenge = '';
   bool _gameStarted = false;
   Map<int, int> _playerWeights = {}; // Track how many times each player has been selected
   int _currentRound = 1;
   List<ConstantChallenge> _constantChallenges = [];
   ConstantChallengeEnd? _currentChallengeEnd;
+  List<Event> _events = [];
+  EventEnd? _currentEventEnd;
 
   @override
   void initState() {
@@ -181,9 +187,9 @@ Future<void> _generateNewChallenge() async {
 Future<void> _initializeFirstChallenge() async {
   await _generateNewChallenge();
   
-  // Solo selecciona jugador si el reto NO es para todos Y no es una pregunta genérica ya asignada
+  // Solo selecciona jugador si el reto NO es para todos Y no es una pregunta genérica ya asignada Y no es un reto dual
   final gameState = _createGameState();
-  if (!gameState.isChallengeForAll && !_isGenericPlayerQuestion()) {
+  if (!gameState.isChallengeForAll && !_isGenericPlayerQuestion() && !gameState.isDualChallenge) {
     _selectWeightedRandomPlayer();
   } else if (gameState.isChallengeForAll) {
     // Para desafíos que son para todos, mantener _currentPlayerIndex en -1
@@ -195,6 +201,20 @@ Future<void> _initializeFirstChallenge() async {
 }
 
   GameState _createGameState() {
+    // Get dual player names if it's a dual challenge
+    String? dualPlayer1Name;
+    String? dualPlayer2Name;
+    
+    if (_dualPlayerIndex != null && _currentPlayerIndex >= 0) {
+      // Get names from player indices
+      if (_currentPlayerIndex < widget.players.length) {
+        dualPlayer1Name = widget.players[_currentPlayerIndex].nombre;
+      }
+      if (_dualPlayerIndex! < widget.players.length) {
+        dualPlayer2Name = widget.players[_dualPlayerIndex!].nombre;
+      }
+    }
+    
     return GameState(
       players: widget.players,
       currentPlayerIndex: _currentPlayerIndex,
@@ -206,6 +226,11 @@ Future<void> _initializeFirstChallenge() async {
       currentRound: _currentRound,
       constantChallenges: _constantChallenges,
       currentChallengeEnd: _currentChallengeEnd,
+      events: _events,
+      currentEventEnd: _currentEventEnd,
+      dualPlayerIndex: _dualPlayerIndex,
+      dualPlayer1Name: dualPlayer1Name,
+      dualPlayer2Name: dualPlayer2Name,
     );
   }
 
@@ -376,39 +401,70 @@ Future<void> _initializeFirstChallenge() async {
       _gameStarted = true;
       _currentRound++; // Incrementar el contador de rondas
       _currentChallengeEnd = null; // Limpiar cualquier fin de reto constante
+      _currentEventEnd = null; // Limpiar cualquier fin de evento
+      _dualPlayerIndex = null; // Limpiar jugador dual previo
     });
 
-    // 1. Verificar si debemos terminar algún reto constante
+    // 1. Verificar si debemos terminar algún evento
+    await _checkForEventEnding();
+    
+    // 2. Si estamos mostrando un fin de evento, no generamos nuevo reto
+    if (_currentEventEnd != null) {
+      return;
+    }
+    
+    // 3. Verificar si debemos terminar algún reto constante
     await _checkForConstantChallengeEnding();
     
-    // 2. Si estamos mostrando un fin de reto, no generamos nuevo reto normal
+    // 4. Si estamos mostrando un fin de reto, no generamos nuevo reto normal
     if (_currentChallengeEnd != null) {
       return;
     }
 
-    // 3. Verificar si debemos generar un nuevo reto constante
+    // 5. Verificar si debemos generar un nuevo evento (prioridad alta)
     final gameState = _createGameState();
+    if (gameState.canHaveEvents &&
+        EventGenerator.shouldGenerateEvent(
+          _currentRound,
+          gameState.activeEvents,
+        )) {
+      await _generateNewEvent();
+      return;
+    }
+    
+    // 6. Verificar si debemos generar un nuevo reto constante (incluyendo duales)
     if (gameState.canHaveConstantChallenges &&
         ConstantChallengeGenerator.shouldGenerateConstantChallenge(
           _currentRound,
           gameState.activeChallenges,
         )) {
-      await _generateNewConstantChallenge();
+      // 20% probabilidad de reto constante dual si hay suficientes jugadores
+      if (widget.players.length >= 2 && math.Random().nextDouble() < 0.2) {
+        await _generateNewDualConstantChallenge();
+      } else {
+        await _generateNewConstantChallenge();
+      }
       return;
     }
 
-    // 4. Si no hay retos constantes, generar un reto normal
-    await _generateNewChallenge();
+    // 7. Si no hay eventos ni retos constantes, generar un reto normal (incluyendo duales)
+    // 15% probabilidad de challenge dual si hay suficientes jugadores
+    if (widget.players.length >= 2 && math.Random().nextDouble() < 0.15) {
+      await _generateNewDualChallenge();
+    } else {
+      await _generateNewChallenge();
+    }
 
-    // 5. Solo selecciona jugador si el reto NO es para todos Y no es una pregunta genérica ya asignada
+    // 8. Solo selecciona jugador si el reto NO es para todos Y no es una pregunta genérica ya asignada Y no es un reto dual
     final gameState2 = _createGameState();
-    if (!gameState2.isChallengeForAll && !_isGenericPlayerQuestion()) {
+    if (!gameState2.isChallengeForAll && !_isGenericPlayerQuestion() && !gameState2.isDualChallenge) {
       _selectWeightedRandomPlayer();
     } else if (gameState2.isChallengeForAll) {
       setState(() {
         _currentPlayerIndex = -1; // Valor especial para "todos"
       });
     }
+    // Si es un reto dual, los jugadores ya fueron asignados en _generateNewDualChallenge
     // Si es una pregunta genérica, el jugador ya fue asignado en _generateNewChallenge
   }
 
@@ -438,7 +494,6 @@ Future<void> _initializeFirstChallenge() async {
           _currentPlayerIndex = -1; // No hay jugador específico para este tipo de mensaje
         });
         
-        print('Terminando reto constante: ${challenge.description}');
         return; // Solo terminamos un reto por ronda
       }
     }
@@ -466,267 +521,395 @@ Future<void> _initializeFirstChallenge() async {
       _currentChallenge = constantChallenge.description;
       _currentPlayerIndex = widget.players.indexWhere((p) => p.id == eligiblePlayer.id);
     });
+  }
 
-    print('Nuevo reto constante: ${constantChallenge.description}');
+  Future<void> _checkForEventEnding() async {
+    final activeEvents = _events
+        .where((e) => e.isActiveAtRound(_currentRound))
+        .toList();
+
+    for (final event in activeEvents) {
+      if (EventGenerator.shouldEndEvent(event, _currentRound)) {
+        final eventEnd = EventGenerator.generateEventEnd(event, _currentRound);
+        
+        setState(() {
+          // Marcar el evento como terminado
+          _events = _events.map((e) {
+            if (e.id == event.id) {
+              return e.copyWith(
+                status: EventStatus.ended,
+                endRound: _currentRound,
+              );
+            }
+            return e;
+          }).toList();
+          
+          _currentEventEnd = eventEnd;
+          _currentChallenge = eventEnd.endDescription;
+          _currentPlayerIndex = -1; // Eventos son globales, no hay jugador específico
+        });
+        
+        return; // Solo terminamos un evento por ronda
+      }
+    }
+  }
+
+  Future<void> _generateNewEvent() async {
+    final event = await EventGenerator.generateRandomEvent(_currentRound);
+
+    setState(() {
+      _events.add(event);
+      _currentChallenge = '${event.typeIcon} ${event.title}: ${event.description}';
+      _currentPlayerIndex = -1; // Eventos son globales, no hay jugador específico
+    });
+  }
+
+  Future<void> _generateNewDualChallenge() async {
+    // Seleccionar dos jugadores diferentes
+    final selectedPlayers = _selectTwoRandomPlayers();
+    if (selectedPlayers.length < 2) {
+      // Fallback a challenge normal si no hay suficientes jugadores
+      await _generateNewChallenge();
+      return;
+    }
+
+    final player1 = selectedPlayers[0];
+    final player2 = selectedPlayers[1];
+    
+    final question = await QuestionGenerator.generateRandomDualQuestion(
+      player1.nombre, 
+      player2.nombre
+    );
+    
+    final player1Index = widget.players.indexOf(player1);
+    final player2Index = widget.players.indexOf(player2);
+    
+    setState(() {
+      _currentChallenge = question.question;
+      _currentPlayerIndex = player1Index;
+      _dualPlayerIndex = player2Index;
+      
+      // Incrementar pesos para ambos jugadores
+      _playerWeights[_currentPlayerIndex] = (_playerWeights[_currentPlayerIndex] ?? 0) + 1;
+      _playerWeights[_dualPlayerIndex!] = (_playerWeights[_dualPlayerIndex!] ?? 0) + 1;
+    });
+  }
+
+  Future<void> _generateNewDualConstantChallenge() async {
+    // Seleccionar dos jugadores diferentes
+    final selectedPlayers = _selectTwoRandomPlayers();
+    if (selectedPlayers.length < 2) {
+      // Fallback a challenge constante normal
+      await _generateNewConstantChallenge();
+      return;
+    }
+
+    final player1 = selectedPlayers[0];
+    final player2 = selectedPlayers[1];
+    
+    final constantChallenge = await ConstantChallengeGenerator.generateRandomDualConstantChallenge(
+      player1, 
+      player2, 
+      _currentRound
+    );
+    
+    setState(() {
+      _constantChallenges.add(constantChallenge);
+      _currentChallenge = constantChallenge.description;
+      _currentPlayerIndex = widget.players.indexOf(player1);
+      _dualPlayerIndex = widget.players.indexOf(player2);
+    });
+  }
+
+  List<Player> _selectTwoRandomPlayers() {
+    if (widget.players.length < 2) return [];
+    
+    // Crear una lista de jugadores elegibles basada en pesos
+    List<Player> eligiblePlayers = [];
+    
+    // Encontrar el peso mínimo
+    int minWeight = _playerWeights.values.isEmpty 
+        ? 0 
+        : _playerWeights.values.reduce((a, b) => a < b ? a : b);
+    
+    // Añadir jugadores con peso mínimo
+    for (int i = 0; i < widget.players.length; i++) {
+      int weight = _playerWeights[i] ?? 0;
+      if (weight <= minWeight + 1) { // Permitir hasta 1 más que el mínimo
+        eligiblePlayers.add(widget.players[i]);
+      }
+    }
+    
+    // Si no hay suficientes jugadores elegibles, usar todos
+    if (eligiblePlayers.length < 2) {
+      eligiblePlayers = List.from(widget.players);
+    }
+    
+    // Seleccionar dos jugadores diferentes aleatoriamente
+    eligiblePlayers.shuffle(math.Random());
+    return eligiblePlayers.take(2).toList();
   }
 
   Widget _buildPlayerAvatar(Player player, {bool isActive = false}) {
-    return AnimatedBuilder(
-      animation: isActive ? _pulseAnimation : _glowAnimation,
-      builder: (context, child) {
-        return Transform.scale(
-          scale: isActive ? _pulseAnimation.value : 1.0,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            padding: EdgeInsets.all(isActive ? 4 : 2),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: isActive ? Colors.white : Colors.white.withOpacity(0.5),
-                width: isActive ? 3 : 1,
-              ),
-              boxShadow: isActive ? [
-                BoxShadow(
-                  color: Colors.white.withOpacity(0.8),
-                  blurRadius: 25,
-                  spreadRadius: 5,
-                ),
-                BoxShadow(
-                  color: Colors.cyan.withOpacity(0.6),
-                  blurRadius: 15,
-                  spreadRadius: 3,
-                ),
-                BoxShadow(
-                  color: Colors.blue.withOpacity(0.4),
-                  blurRadius: 35,
-                  spreadRadius: 8,
-                ),
-              ] : [
-                BoxShadow(
-                  color: Colors.white.withOpacity(0.2),
-                  blurRadius: 5,
-                  spreadRadius: 1,
-                ),
-              ],
-            ),
-            child: Container(
-              width: 60,
-              height: 60,
-              decoration: const BoxDecoration(
+    return LayoutBuilder( 
+      builder: (context, constraints) {
+
+      final screenSize = MediaQuery.of(context).size;
+      final isSmallScreen = screenSize.width < 600;
+
+      // Ajustar tamaños según el espacio disponible
+      final double iconSize = isSmallScreen ? 15 : 25;
+      final double fontSize = isSmallScreen ? 20 : 26;
+      final double padding = isSmallScreen ? 15 : 30;
+
+
+      return  AnimatedBuilder(
+        animation: isActive ? _pulseAnimation : _glowAnimation,
+        builder: (context, child) {
+          return Transform.scale(
+            scale: isActive ? _pulseAnimation.value : 1.0,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              padding: EdgeInsets.all(isActive ? 4 : 2),
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
+                border: Border.all(
+                  color: isActive ? Colors.white : Colors.white.withOpacity(0.5),
+                  width: isActive ? 3 : 1,
+                ),
+                boxShadow: isActive ? [
+                  BoxShadow(
+                    color: Colors.white.withOpacity(0.8),
+                    blurRadius: 25,
+                    spreadRadius: 5,
+                  ),
+                  BoxShadow(
+                    color: Colors.cyan.withOpacity(0.6),
+                    blurRadius: 15,
+                    spreadRadius: 3,
+                  ),
+                  BoxShadow(
+                    color: Colors.blue.withOpacity(0.4),
+                    blurRadius: 35,
+                    spreadRadius: 8,
+                  ),
+                ] : [
+                  BoxShadow(
+                    color: Colors.white.withOpacity(0.2),
+                    blurRadius: 5,
+                    spreadRadius: 1,
+                  ),
+                ],
               ),
-              child: ClipOval(
-                child: player.imagen != null
-                    ? Image.file(
-                        player.imagen!,
-                        fit: BoxFit.cover,
-                      )
-                    : player.avatar != null
-                    ? Image.asset(
-                        player.avatar!,
-                        fit: BoxFit.cover,
-                      )
-                    : Container(
-                        color: Colors.white.withOpacity(0.2),
-                        child: const Icon(
-                          Icons.person,
-                          color: Colors.white,
-                          size: 30,
+              child: Container(
+                width: 30,
+                height: 30,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                ),
+                child: ClipOval(
+                  child: player.imagen != null
+                      ? Image.file(
+                          player.imagen!,
+                          fit: BoxFit.cover,
+                        )
+                      : player.avatar != null
+                      ? Image.asset(
+                          player.avatar!,
+                          fit: BoxFit.cover,
+                        )
+                      : Container(
+                          color: Colors.white.withOpacity(0.2),
+                          child: Icon(
+                            Icons.person,
+                            color: Colors.white,
+                            size: iconSize,
+                          ),
                         ),
-                      ),
+                ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      );}
     );
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFF00C9FF), // Cyan
-                  Color(0xFF92FE9D), // Green
-                ],
+    return SafeArea(
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFF00C9FF), // Cyan
+                    Color(0xFF92FE9D), // Green
+                  ],
+                ),
               ),
             ),
-          ),
-          _buildAnimatedBackground(),
-          // Floating particles effect like home_screen
-          ...List.generate(
-            8,
-            (index) => _buildFloatingParticle(
-              MediaQuery.of(context).size.width,
-              MediaQuery.of(context).size.height,
-              index,
+            _buildAnimatedBackground(),
+            // Floating particles effect like home_screen
+            ...List.generate(
+              8,
+              (index) => _buildFloatingParticle(
+                MediaQuery.of(context).size.width,
+                MediaQuery.of(context).size.height,
+                index,
+              ),
             ),
-          ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(18),
-              child: Column(
-                children: [
-                  // Top section with exit button and players
-                  Row(
-                    children: [
-                      // Exit button
-                      GestureDetector(
-                        onTap: () => Navigator.of(context).pop(),
-                        child: Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: Colors.white.withOpacity(0.3),
-                              width: 1,
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(18),
+                child: Row(
+                  children: [
+                     GestureDetector(
+                          onTap: () => Navigator.of(context).pop(),
+                          child: Container(
+                            margin: const EdgeInsets.only(bottom: 357),
+                           
+                            padding: const EdgeInsets.all(7),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.3),
+                                width: 1,
+                              ),
+                            ),
+                            child: const Icon(
+                              Icons.close,
+                              color: Colors.white,
+                              size: 24,
                             ),
                           ),
-                          child: const Icon(
-                            Icons.close,
-                            color: Colors.white,
-                            size: 24,
-                          ),
                         ),
-                      ),
-                      const SizedBox(width: 20),
-                      
-                      // Players row
-                      Expanded(
-                        child: SizedBox(
-                          height: 150,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: widget.players.asMap().entries.map((entry) {
-                              final index = entry.key;
-                              final player = entry.value;
-                              return Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                    Expanded(
+                      child: AnimatedBuilder(
+                        animation: _tapAnimation,
+                        builder: (context, child) {
+                          return Transform.scale(
+                            scale: _tapAnimation.value,
+                            child: GestureDetector(
+                              onTapDown: (details) {
+                                final RenderBox renderBox = context.findRenderObject() as RenderBox;
+                                final localPosition = renderBox.globalToLocal(details.globalPosition);
+                                _addRippleEffect(localPosition);
+                              },
+                              onTap: _nextChallenge,
+                              behavior: HitTestBehavior.opaque,
+                              child: Stack(
                                 children: [
-                                  _buildPlayerAvatar(
-                                    player,
-                                    isActive: index == _currentPlayerIndex,
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Text(
-                                    player.nombre,
-                                    style: TextStyle(
-                                      color: index == _currentPlayerIndex
-                                          ? Colors.white
-                                          : Colors.white.withOpacity(0.7),
-                                      fontSize: 14,
-                                      fontWeight: index == _currentPlayerIndex
-                                          ? FontWeight.bold
-                                          : FontWeight.normal,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  
-                  // Center content area (tappable)
-                  Expanded(
-                    child: AnimatedBuilder(
-                      animation: _tapAnimation,
-                      builder: (context, child) {
-                        return Transform.scale(
-                          scale: _tapAnimation.value,
-                          child: GestureDetector(
-                            onTapDown: (details) {
-                              final RenderBox renderBox = context.findRenderObject() as RenderBox;
-                              final localPosition = renderBox.globalToLocal(details.globalPosition);
-                              _addRippleEffect(localPosition);
-                            },
-                            onTap: _nextChallenge,
-                            behavior: HitTestBehavior.opaque,
-                            child: Stack(
-                              children: [
-                                Container(
-                                  width: double.infinity,
-                                  child: Center(
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        buildCenterContent(_createGameState()),
-                                        const SizedBox(height: 40),
-                                        // Tap indicator (only show at the beginning)
-                                        if (!_gameStarted)
-                                          AnimatedBuilder(
-                                            animation: _glowAnimation,
-                                            builder: (context, child) {
-                                              return Container(
-                                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white.withOpacity(0.1),
-                                                  borderRadius: BorderRadius.circular(25),
-                                                  border: Border.all(
-                                                    color: Colors.white.withOpacity(_glowAnimation.value * 0.8),
-                                                    width: 2,
-                                                  ),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: Colors.white.withOpacity(_glowAnimation.value * 0.3),
-                                                      blurRadius: 15,
-                                                      spreadRadius: 2,
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: Center(
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          buildCenterContent(_createGameState()),
+                                          const SizedBox(height: 20),
+                                          // Tap indicator (only show at the beginning)
+                                          if (!_gameStarted)
+                                            AnimatedBuilder(
+                                              animation: _glowAnimation,
+                                              builder: (context, child) {
+                                                return Container(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white.withOpacity(0.1),
+                                                    borderRadius: BorderRadius.circular(25),
+                                                    border: Border.all(
+                                                      color: Colors.white.withOpacity(_glowAnimation.value * 0.8),
+                                                      width: 2,
                                                     ),
-                                                  ],
-                                                ),
-                                                child: Row(
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  children: [
-                                                    Icon(
-                                                      Icons.touch_app,
-                                                      color: Colors.white.withOpacity(_glowAnimation.value),
-                                                      size: 20,
-                                                    ),
-                                                    const SizedBox(width: 8),
-                                                    Text(
-                                                      'TOCA LA PANTALLA',
-                                                      style: TextStyle(
-                                                        color: Colors.white.withOpacity(_glowAnimation.value),
-                                                        fontSize: 14,
-                                                        fontWeight: FontWeight.bold,
-                                                        letterSpacing: 1.2,
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Colors.white.withOpacity(_glowAnimation.value * 0.3),
+                                                        blurRadius: 15,
+                                                        spreadRadius: 2,
                                                       ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                      ],
+                                                    ],
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Icon(
+                                                        Icons.touch_app,
+                                                        color: Colors.white.withOpacity(_glowAnimation.value),
+                                                        size: 20,
+                                                      ),
+                                                      const SizedBox(width: 8),
+                                                      Text(
+                                                        'TOCA LA PANTALLA',
+                                                        style: TextStyle(
+                                                          color: Colors.white.withOpacity(_glowAnimation.value),
+                                                          fontSize: 14,
+                                                          fontWeight: FontWeight.bold,
+                                                          letterSpacing: 1.2,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                                _buildRippleEffects(),
-                              ],
+                                  _buildRippleEffects(),
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                ],
+                    // // Players row
+                        //  SizedBox(
+                        //    width: 50,
+                        //    child: Column(
+                        //      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        //      children: widget.players.asMap().entries.map((entry) {
+                        //        final index = entry.key;
+                        //        final player = entry.value;
+                        //        return Column(
+                        //          mainAxisAlignment: MainAxisAlignment.center,
+                        //          children: [
+                        //            _buildPlayerAvatar(
+                        //              player,
+                        //              isActive: index == _currentPlayerIndex,
+                        //            ),
+                        //            const SizedBox(height: 5),
+                        //            Text(
+                        //              player.nombre,
+                        //              style: TextStyle(
+                        //                color: index == _currentPlayerIndex
+                        //                    ? Colors.white
+                        //                    : Colors.white.withOpacity(0.7),
+                        //                fontSize: 14,
+                        //                fontWeight: index == _currentPlayerIndex
+                        //                    ? FontWeight.bold
+                        //                    : FontWeight.normal,
+                        //              ),
+                        //              textAlign: TextAlign.center,
+                        //            ),
+                        //          ],
+                        //        );
+                        //      }).toList(),
+                        //    ),
+                        //  ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
