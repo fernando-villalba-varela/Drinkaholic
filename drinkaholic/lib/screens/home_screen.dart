@@ -125,22 +125,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   ),
                 ),
               ),
-              // Overlay pattern for depth
-              Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: const AssetImage(
-                      'assets/images/potion_background.png',
-                    ),
-                    fit: BoxFit.cover,
-                    opacity: 0.3,
-                    colorFilter: ColorFilter.mode(
-                      Colors.purple.withOpacity(0.2),
-                      BlendMode.overlay,
-                    ),
-                  ),
-                ),
-              ),
               // Floating particles effect
               ...List.generate(
                 6,
@@ -281,18 +265,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               gradient: const LinearGradient(
                                 colors: [Color(0xFFFC466B), Color(0xFF3F5EFB)],
                               ),
-                            ),
-                            const SizedBox(height: 20),
-
-                            _buildModernButton(
-                              onTap: () =>
-                                  _viewModel.showExitConfirmation(context),
-                              text: 'SALIR',
-                              icon: Icons.exit_to_app,
-                              gradient: const LinearGradient(
-                                colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-                              ),
-                              isSmaller: true,
                             ),
                             const SizedBox(height: 30),
                           ],

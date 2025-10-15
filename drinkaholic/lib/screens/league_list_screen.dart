@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:ui';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -8,8 +9,56 @@ import '../viewmodels/league_detail_viewmodel.dart';
 import '../models/league.dart';
 import 'league_detail_screen.dart';
 
-class LeagueListScreen extends StatelessWidget {
+class LeagueListScreen extends StatefulWidget {
   const LeagueListScreen({super.key});
+
+  @override
+  State<LeagueListScreen> createState() => _LeagueListScreenState();
+}
+
+class _LeagueListScreenState extends State<LeagueListScreen>
+    with TickerProviderStateMixin {
+  late AnimationController _backgroundAnimationController;
+  late Animation<double> _backgroundAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _backgroundAnimationController = AnimationController(
+      duration: const Duration(seconds: 20),
+      vsync: this,
+    );
+    
+    _backgroundAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _backgroundAnimationController,
+      curve: Curves.linear,
+    ));
+    
+    _backgroundAnimationController.repeat();
+  }
+
+  @override
+  void dispose() {
+    _backgroundAnimationController.dispose();
+    super.dispose();
+  }
+
+  Widget _buildAnimatedBackground() {
+    return Positioned.fill(
+      child: AnimatedBuilder(
+        animation: _backgroundAnimation,
+        builder: (context, child) {
+          return CustomPaint(
+            painter: FloatingShapesPainter(_backgroundAnimation.value),
+            child: Container(),
+          );
+        },
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,54 +78,123 @@ class LeagueListScreen extends StatelessWidget {
         extendBody: true,
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          backgroundColor: Colors.black.withOpacity(.55),
+          backgroundColor: Colors.transparent,
           elevation: 0,
-          centerTitle: false,
-          iconTheme: const IconThemeData(color: Colors.white),
-          titleTextStyle: const TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
+          toolbarHeight: 80,
+          automaticallyImplyLeading: false,
+          title: Row(
+            children: [
+              // Back button with quick_game_screen style
+              GestureDetector(
+                onTap: () => Navigator.of(context).pop(),
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.3),
+                      width: 1,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              // Title with enhanced styling
+              const Expanded(
+                child: Text(
+                  'LIGAS',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white,
+                    letterSpacing: 1.5,
+                    shadows: [
+                      Shadow(
+                        color: Colors.black45,
+                        offset: Offset(2, 2),
+                        blurRadius: 4,
+                      ),
+                      Shadow(
+                        color: Colors.purple,
+                        offset: Offset(-1, -1),
+                        blurRadius: 2,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              // Import button with quick_game_screen style
+              GestureDetector(
+                onTap: () => _importLeagueDialog(context),
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.3),
+                      width: 1,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.download,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                ),
+              ),
+            ],
           ),
-          title: const Text('Ligas'),
-          actions: [
-            IconButton(
-              tooltip: 'Importar liga',
-              color: Colors.white,
-              onPressed: () => _importLeagueDialog(context),
-              icon: const Icon(Icons.download),
-            ),
-          ],
         ),
-        body: Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/images/potion_background.png'),
-              fit: BoxFit.cover,
-              alignment: Alignment.center,
-            ),
-          ),
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Colors.black.withOpacity(.55),
-                  Colors.black.withOpacity(.30),
-                  Colors.black.withOpacity(.55),
-                ],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
+        body: Stack(
+          children: [
+            // Background gradient with Liga button colors
+            Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFFFC466B), // Pink/Red from Liga button
+                    Color(0xFF3F5EFB), // Purple/Blue from Liga button
+                  ],
+                ),
               ),
             ),
-            child: vm.leagues.isEmpty
-                ? const _EmptyState()
-                : ListView.separated(
-                    padding: const EdgeInsets.fromLTRB(16, 120, 16, 140),
-                    itemCount: vm.leagues.length,
-                    separatorBuilder: (_, _) => const SizedBox(height: 18),
-                    itemBuilder: (_, i) => _LeagueCard(league: vm.leagues[i]),
-                  ),
-          ),
+            // Animated background
+            _buildAnimatedBackground(),
+            // Main content
+            SafeArea(
+              child: vm.leagues.isEmpty
+                  ? const _EmptyState()
+                  : ListView.separated(
+                      padding: const EdgeInsets.fromLTRB(16, 120, 16, 140),
+                      itemCount: vm.leagues.length,
+                      separatorBuilder: (_, _) => const SizedBox(height: 18),
+                      itemBuilder: (_, i) => _LeagueCard(league: vm.leagues[i]),
+                    ),
+            ),
+          ],
         ),
         floatingActionButton: _FabNewLeague(
           onPressed: () => _createLeagueDialog(context),
@@ -234,6 +352,98 @@ class _EmptyState extends StatelessWidget {
       ),
     );
   }
+}
+
+class FloatingShapesPainter extends CustomPainter {
+  final double animationValue;
+  
+  FloatingShapesPainter(this.animationValue);
+  
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..style = PaintingStyle.fill;
+      
+    // Create multiple floating shapes with different speeds and sizes
+    final shapes = [
+      // Large circles
+      _FloatingShape(
+        Offset(size.width * 0.1 + (sin(animationValue * 2 * pi) * 30),
+               size.height * 0.2 + (cos(animationValue * 2 * pi) * 20)),
+        30,
+        Colors.white.withOpacity(0.05),
+      ),
+      _FloatingShape(
+        Offset(size.width * 0.8 + (sin(animationValue * 2 * pi + 1) * 40),
+               size.height * 0.7 + (cos(animationValue * 2 * pi + 1) * 30)),
+        25,
+        Colors.white.withOpacity(0.08),
+      ),
+      // Medium circles
+      _FloatingShape(
+        Offset(size.width * 0.3 + (sin(animationValue * 2 * pi + 2) * 50),
+               size.height * 0.5 + (cos(animationValue * 2 * pi + 2) * 25)),
+        20,
+        Colors.white.withOpacity(0.04),
+      ),
+      _FloatingShape(
+        Offset(size.width * 0.7 + (sin(animationValue * 2 * pi + 3) * 35),
+               size.height * 0.3 + (cos(animationValue * 2 * pi + 3) * 40)),
+        18,
+        Colors.pink.withOpacity(0.06),
+      ),
+      // Small circles
+      _FloatingShape(
+        Offset(size.width * 0.5 + (sin(animationValue * 2 * pi + 4) * 60),
+               size.height * 0.8 + (cos(animationValue * 2 * pi + 4) * 15)),
+        12,
+        Colors.white.withOpacity(0.03),
+      ),
+      _FloatingShape(
+        Offset(size.width * 0.9 + (sin(animationValue * 2 * pi + 5) * 25),
+               size.height * 0.1 + (cos(animationValue * 2 * pi + 5) * 35)),
+        15,
+        Colors.purple.withOpacity(0.05),
+      ),
+    ];
+    
+    // Draw all shapes
+    for (final shape in shapes) {
+      paint.color = shape.color;
+      canvas.drawCircle(shape.position, shape.radius, paint);
+    }
+    
+    // Add some triangular shapes for variety
+    final trianglePaint = Paint()
+      ..color = Colors.white.withOpacity(0.02)
+      ..style = PaintingStyle.fill;
+      
+    final trianglePath = Path();
+    final triangleCenter = Offset(
+      size.width * 0.6 + (sin(animationValue * 2 * pi + 6) * 45),
+      size.height * 0.4 + (cos(animationValue * 2 * pi + 6) * 30),
+    );
+    
+    trianglePath.moveTo(triangleCenter.dx, triangleCenter.dy - 15);
+    trianglePath.lineTo(triangleCenter.dx - 13, triangleCenter.dy + 10);
+    trianglePath.lineTo(triangleCenter.dx + 13, triangleCenter.dy + 10);
+    trianglePath.close();
+    
+    canvas.drawPath(trianglePath, trianglePaint);
+  }
+  
+  @override
+  bool shouldRepaint(FloatingShapesPainter oldDelegate) {
+    return oldDelegate.animationValue != animationValue;
+  }
+}
+
+class _FloatingShape {
+  final Offset position;
+  final double radius;
+  final Color color;
+  
+  _FloatingShape(this.position, this.radius, this.color);
 }
 
 class _LeagueCard extends StatelessWidget {
