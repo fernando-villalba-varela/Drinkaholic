@@ -191,6 +191,84 @@
       "categoria": "Genérico - Bebe"
     },
     {
+      "id": "dual_comparacion_fisica",
+      "template": "El que sea más {TRAIT} entre {PLAYER1} y {PLAYER2} {ACTION} {AMOUNT} tragos",
+      "variables": {
+        "PLAYER1": ["DUAL_PLAYER1"],
+        "PLAYER2": ["DUAL_PLAYER2"],
+        "TRAIT": [
+          "alto", "bajo", "fuerte", "joven", "mayor", "delgado", "moreno", "rubio"
+        ],
+        "ACTION": ["bebe", "reparte"],
+        "AMOUNT": ["2", "3", "4", "5"]
+      },
+      "categoria": "Dual - Comparación"
+    },
+    {
+      "id": "dual_quien_primero",
+      "template": "Entre {PLAYER1} y {PLAYER2}, quien {CONDITION} primero {ACTION} {AMOUNT} tragos",
+      "variables": {
+        "PLAYER1": ["DUAL_PLAYER1"],
+        "PLAYER2": ["DUAL_PLAYER2"],
+        "CONDITION": [
+          "se levante mañana", "hable", "vaya al baño", "mire el móvil", "se ría", "tose", "estornude", "bostecer"
+        ],
+        "ACTION": ["bebe", "reparte"],
+        "AMOUNT": ["2", "3", "4"]
+      },
+      "categoria": "Dual - Condición"
+    },
+    {
+      "id": "dual_batalla_conocimiento",
+      "template": "Entre {PLAYER1} y {PLAYER2}, quien {CHALLENGE} mejor {ACTION} {AMOUNT} tragos",
+      "variables": {
+        "PLAYER1": ["DUAL_PLAYER1"],
+        "PLAYER2": ["DUAL_PLAYER2"],
+        "CHALLENGE": [
+          "cante una canción", "baile", "imite a un animal", "diga trabalenguas", "cuente un chiste", "haga flexiones", "rapee"
+        ],
+        "ACTION": ["bebe", "reparte"],
+        "AMOUNT": ["3", "4", "5"]
+      },
+      "categoria": "Dual - Batalla"
+    },
+    {
+      "id": "dual_verdad_mentira",
+      "template": "Entre {PLAYER1} y {PLAYER2}, quien {CONDITION} {ACTION} {AMOUNT} tragos",
+      "variables": {
+        "PLAYER1": ["DUAL_PLAYER1"],
+        "PLAYER2": ["DUAL_PLAYER2"],
+        "CONDITION": [
+          "haya viajado más lejos", "tenga más seguidores en redes", "sepa cocinar mejor", "sea mejor conduciendo", "haya besado a más personas", "sea más organizado", "duerma menos horas"
+        ],
+        "ACTION": ["bebe", "reparte"],
+        "AMOUNT": ["2", "3", "4"]
+      },
+      "categoria": "Dual - Verdad"
+    },
+    {
+      "id": "dual_piedra_papel_tijera",
+      "template": "{PLAYER1} y {PLAYER2} juegan piedra, papel o tijera. El perdedor {ACTION} {AMOUNT} tragos",
+      "variables": {
+        "PLAYER1": ["DUAL_PLAYER1"],
+        "PLAYER2": ["DUAL_PLAYER2"],
+        "ACTION": ["bebe"],
+        "AMOUNT": ["2", "3", "4", "5"]
+      },
+      "categoria": "Dual - Juego"
+    },
+    {
+      "id": "dual_adivinanza",
+      "template": "{PLAYER1} piensa un número del 1 al 10, {PLAYER2} debe adivinarlo. Si acierta, {PLAYER1} bebe {AMOUNT1} tragos. Si falla, {PLAYER2} bebe {AMOUNT2} tragos",
+      "variables": {
+        "PLAYER1": ["DUAL_PLAYER1"],
+        "PLAYER2": ["DUAL_PLAYER2"],
+        "AMOUNT1": ["3", "4", "5"],
+        "AMOUNT2": ["2", "3"]
+      },
+      "categoria": "Dual - Adivinanza"
+    },
+    {
       "id": "generico_reparte_simple",
       "template": "{X} reparte {Y} tragos",
       "variables": {

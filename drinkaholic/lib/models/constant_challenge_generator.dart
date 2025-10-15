@@ -100,8 +100,58 @@ class ConstantChallengeGenerator {
       );
     }
 
-    final template = _templates![_random.nextInt(_templates!.length)];
+    // Filter only single-player templates (exclude dual templates)
+    final singlePlayerTemplates = _templates!.where((template) {
+      return !(template.variables.containsKey('PLAYER1') &&
+               template.variables.containsKey('PLAYER2') &&
+               template.variables['PLAYER1']!.contains('DUAL_PLAYER1') &&
+               template.variables['PLAYER2']!.contains('DUAL_PLAYER2'));
+    }).toList();
+    
+    if (singlePlayerTemplates.isEmpty) {
+      return _generateChallengeFromTemplate(_templates!.first, targetPlayer, currentRound);
+    }
+    
+    final template = singlePlayerTemplates[_random.nextInt(singlePlayerTemplates.length)];
     return _generateChallengeFromTemplate(template, targetPlayer, currentRound);
+  }
+
+  /// Generate a random dual constant challenge for two specific players
+  static Future<ConstantChallenge> generateRandomDualConstantChallenge(
+    Player player1,
+    Player player2,
+    int currentRound,
+  ) async {
+    await loadTemplates();
+    
+    if (_templates == null || _templates!.isEmpty) {
+      // Fallback dual challenge
+      return ConstantChallenge(
+        id: 'dual_fallback_${_random.nextInt(10000)}',
+        targetPlayer: player1, // Use first player as primary target
+        description: '${player1.nombre}, cada vez que ${player2.nombre} beba por el juego, bebes 1 trago',
+        punishment: 'Si ${player1.nombre} no bebe cuando debe, bebe 3 tragos adicionales',
+        type: ConstantChallengeType.rule,
+        startRound: currentRound,
+        status: ConstantChallengeStatus.active,
+        metadata: {'dualPlayer2': player2.nombre, 'dualPlayer2Id': player2.id},
+      );
+    }
+
+    // Filter only dual-player templates
+    final dualTemplates = _templates!.where((template) {
+      return template.variables.containsKey('PLAYER1') &&
+             template.variables.containsKey('PLAYER2') &&
+             template.variables['PLAYER1']!.contains('DUAL_PLAYER1') &&
+             template.variables['PLAYER2']!.contains('DUAL_PLAYER2');
+    }).toList();
+    
+    if (dualTemplates.isEmpty) {
+      return generateRandomConstantChallenge(player1, currentRound);
+    }
+    
+    final template = dualTemplates[_random.nextInt(dualTemplates.length)];
+    return _generateDualChallengeFromTemplate(template, player1, player2, currentRound);
   }
 
   /// Generate a challenge to end an existing constant challenge
@@ -119,15 +169,31 @@ class ConstantChallengeGenerator {
     );
 
     if (template != null) {
-      endDescription = template.endTemplate.replaceAll('{PLAYER}', challenge.targetPlayer.nombre);
+      endDescription = template.endTemplate;
+      
+      // Handle dual challenges
+      if (challenge.metadata.containsKey('dualPlayer2')) {
+        final dualPlayer2 = challenge.metadata['dualPlayer2'] as String;
+        endDescription = endDescription.replaceAll('{PLAYER1}', challenge.targetPlayer.nombre);
+        endDescription = endDescription.replaceAll('{PLAYER2}', dualPlayer2);
+      } else {
+        // Handle single player challenges
+        endDescription = endDescription.replaceAll('{PLAYER}', challenge.targetPlayer.nombre);
+      }
+      
       // Replace any other variables if needed using stored metadata
       challenge.metadata.forEach((key, value) {
-        if (key != 'templateId') {
+        if (key != 'templateId' && key != 'dualPlayer2' && key != 'dualPlayer2Id') {
           endDescription = endDescription.replaceAll('{$key}', value.toString());
         }
       });
     } else {
-      endDescription = '${challenge.targetPlayer.nombre} ya no tiene restricciones especiales';
+      if (challenge.metadata.containsKey('dualPlayer2')) {
+        final dualPlayer2 = challenge.metadata['dualPlayer2'] as String;
+        endDescription = '${challenge.targetPlayer.nombre} y $dualPlayer2 ya no tienen restricciones especiales';
+      } else {
+        endDescription = '${challenge.targetPlayer.nombre} ya no tiene restricciones especiales';
+      }
     }
 
     return ConstantChallengeEnd(
@@ -161,6 +227,49 @@ class ConstantChallengeGenerator {
     return ConstantChallenge(
       id: '${template.id}_${targetPlayer.id}_$currentRound',
       targetPlayer: targetPlayer,
+      description: description,
+      punishment: punishment,
+      type: template.challengeType,
+      startRound: currentRound,
+      status: ConstantChallengeStatus.active,
+      metadata: metadata,
+    );
+  }
+
+  /// Generate a dual challenge from a specific template
+  static ConstantChallenge _generateDualChallengeFromTemplate(
+    ConstantChallengeTemplate template,
+    Player player1,
+    Player player2,
+    int currentRound,
+  ) {
+    String description = template.template;
+    String punishment = template.punishment;
+    Map<String, dynamic> metadata = {
+      'templateId': template.id,
+      'dualPlayer2': player2.nombre,
+      'dualPlayer2Id': player2.id,
+    };
+
+    // Replace PLAYER1 and PLAYER2 first
+    description = description.replaceAll('{PLAYER1}', player1.nombre);
+    description = description.replaceAll('{PLAYER2}', player2.nombre);
+    punishment = punishment.replaceAll('{PLAYER1}', player1.nombre);
+    punishment = punishment.replaceAll('{PLAYER2}', player2.nombre);
+    
+    // Replace other variables with random values
+    template.variables.forEach((variableName, possibleValues) {
+      if (variableName != 'PLAYER1' && variableName != 'PLAYER2' && possibleValues.isNotEmpty) {
+        final selectedValue = possibleValues[_random.nextInt(possibleValues.length)];
+        description = description.replaceAll('{$variableName}', selectedValue);
+        punishment = punishment.replaceAll('{$variableName}', selectedValue);
+        metadata[variableName] = selectedValue;
+      }
+    });
+
+    return ConstantChallenge(
+      id: '${template.id}_${player1.id}_${player2.id}_$currentRound',
+      targetPlayer: player1, // Primary target is player1
       description: description,
       punishment: punishment,
       type: template.challengeType,

@@ -1,0 +1,223 @@
+{
+  "templates": [
+    {
+      "id": "multiplier_drinks",
+      "type": "multiplier",
+      "title": "Tragos Dobles",
+      "template": "EVENTO: ✖️ Todos los tragos valen x{MULTIPLIER} mientras dure este evento",
+      "endTemplate": "El evento de tragos dobles ha terminado. Todos los tragos vuelven a valer normal.",
+      "variables": {
+        "MULTIPLIER": ["2", "3"]
+      },
+      "categoria": "multiplier",
+      "minRounds": 3,
+      "maxRounds": 8,
+      "metadata": {
+        "multiplier": 2
+      }
+    },
+    {
+      "id": "no_phones",
+      "type": "global_rule",
+      "title": "Zona Sin Teléfonos",
+      "template": "EVENTO: 🌐 Nadie puede usar el teléfono mientras dure este evento. Si alguien lo usa, bebe {PUNISHMENT} tragos",
+      "endTemplate": "La zona sin teléfonos ha terminado. Ya pueden usar sus dispositivos libremente.",
+      "variables": {
+        "PUNISHMENT": ["2", "3"]
+      },
+      "categoria": "restriction",
+      "minRounds": 4,
+      "maxRounds": 7,
+      "metadata": {}
+    },
+    {
+      "id": "group_punishment",
+      "type": "global_rule",
+      "title": "Castigo Grupal",
+      "template": "EVENTO: 🌐 Mientras dure este evento, si alguien se equivoca en un reto, TODOS beben {DRINKS} tragos",
+      "endTemplate": "El castigo grupal ha terminado. Los errores vuelven a ser individuales.",
+      "variables": {
+        "DRINKS": ["1", "2"]
+      },
+      "categoria": "group",
+      "minRounds": 3,
+      "maxRounds": 5,
+      "metadata": {}
+    },
+    {
+      "id": "fast_mode",
+      "type": "special_condition",
+      "title": "Modo Rápido",
+      "template": "EVENTO: ⭐ Mientras dure este evento, tienen solo {SECONDS} segundos para responder o cumplir cada reto. Si no lo hacen a tiempo, beben {PUNISHMENT} tragos",
+      "endTemplate": "El modo rápido ha terminado. Ya no hay límite de tiempo.",
+      "variables": {
+        "SECONDS": ["10", "15"],
+        "PUNISHMENT": ["2", "3"]
+      },
+      "categoria": "time_limit",
+      "minRounds": 3,
+      "maxRounds": 6,
+      "metadata": {}
+    },
+    {
+      "id": "compliment_mode",
+      "type": "global_rule", 
+      "title": "Modo Cumplidos",
+      "template": "EVENTO: 🌐 Antes de cada trago mientras dure este evento, deben hacer un cumplido a otro jugador. Si no lo hacen, beben {PUNISHMENT} tragos extra",
+      "endTemplate": "El modo cumplidos ha terminado. Ya pueden beber sin cumplidos obligatorios.",
+      "variables": {
+        "PUNISHMENT": ["1", "2"]
+      },
+      "categoria": "social",
+      "minRounds": 4,
+      "maxRounds": 7,
+      "metadata": {}
+    },
+    {
+      "id": "silent_mode",
+      "type": "global_rule",
+      "title": "Modo Silencioso",
+      "template": "EVENTO: 🌐 Mientras dure este evento, solo se puede comunicar por gestos. Quien hable bebe {PUNISHMENT} tragos",
+      "endTemplate": "El modo silencioso ha terminado. Ya pueden hablar normalmente.",
+      "variables": {
+        "PUNISHMENT": ["2", "3"]
+      },
+      "categoria": "restriction",
+      "minRounds": 2,
+      "maxRounds": 4,
+      "metadata": {}
+    },
+    {
+      "id": "reverse_mode",
+      "type": "special_condition",
+      "title": "Modo Invertido",
+      "template": "EVENTO: ⭐ Mientras dure este evento, los que normalmente beben reparten tragos, y los que reparten beben. Si se confunden, beben {PUNISHMENT} tragos extra",
+      "endTemplate": "El modo invertido ha terminado. Todo vuelve a la normalidad.",
+      "variables": {
+        "PUNISHMENT": ["2", "3"]
+      },
+      "categoria": "reverse",
+      "minRounds": 3,
+      "maxRounds": 5,
+      "metadata": {}
+    },
+    {
+      "id": "dance_break",
+      "type": "special_condition",
+      "title": "Pausa de Baile",
+      "template": "EVENTO: ⭐ Cada vez que alguien beba mientras dure este evento, debe bailar por {SECONDS} segundos. Si no baila, bebe {PUNISHMENT} tragos extra",
+      "endTemplate": "La pausa de baile ha terminado. Ya pueden beber sin bailar.",
+      "variables": {
+        "SECONDS": ["10", "15", "20"],
+        "PUNISHMENT": ["1", "2"]
+      },
+      "categoria": "fun",
+      "minRounds": 3,
+      "maxRounds": 6,
+      "metadata": {}
+    },
+    {
+      "id": "truth_hour",
+      "type": "global_rule",
+      "title": "Hora de la Verdad",
+      "template": "EVENTO: 🌐 Mientras dure este evento, todas las preguntas deben responderse con total honestidad. Mentir = {PUNISHMENT} tragos",
+      "endTemplate": "La hora de la verdad ha terminado. Ya pueden ser creativos con sus respuestas.",
+      "variables": {
+        "PUNISHMENT": ["3", "4"]
+      },
+      "categoria": "truth",
+      "minRounds": 4,
+      "maxRounds": 6,
+      "metadata": {}
+    },
+    {
+      "id": "left_hand_only",
+      "type": "global_rule",
+      "title": "Solo Mano Izquierda",
+      "template": "EVENTO: 🌐 Mientras dure este evento, solo pueden usar la mano izquierda para beber. Usar la derecha = {PUNISHMENT} tragos",
+      "endTemplate": "El evento de mano izquierda ha terminado. Ya pueden usar ambas manos.",
+      "variables": {
+        "PUNISHMENT": ["2", "3"]
+      },
+      "categoria": "restriction",
+      "minRounds": 4,
+      "maxRounds": 7,
+      "metadata": {}
+    },
+    {
+      "id": "memory_chain",
+      "type": "special_condition",
+      "title": "Cadena de Memoria",
+      "template": "EVENTO: ⭐ Mientras dure este evento, deben recordar y repetir todos los retos anteriores antes de hacer el suyo. Si se olvidan, beben {PUNISHMENT} tragos",
+      "endTemplate": "La cadena de memoria ha terminado. Ya no necesitan recordar retos anteriores.",
+      "variables": {
+        "PUNISHMENT": ["2", "3"]
+      },
+      "categoria": "memory",
+      "minRounds": 2,
+      "maxRounds": 4,
+      "metadata": {}
+    },
+    {
+      "id": "triple_trouble",
+      "type": "multiplier",
+      "title": "Triple Problema",
+      "template": "EVENTO: ✖️ Todos los castigos y tragos valen x{MULTIPLIER} mientras dure este evento. Si protestan, beben {PUNISHMENT} tragos extra",
+      "endTemplate": "El triple problema ha terminado. Los castigos vuelven a ser normales.",
+      "variables": {
+        "MULTIPLIER": ["3"],
+        "PUNISHMENT": ["1", "2"]
+      },
+      "categoria": "multiplier",
+      "minRounds": 3,
+      "maxRounds": 5,
+      "metadata": {
+        "multiplier": 3
+      }
+    },
+    {
+      "id": "accent_challenge",
+      "type": "global_rule",
+      "title": "Desafío de Acento",
+      "template": "EVENTO: 🌐 Mientras dure este evento, todos deben hablar con acento {ACCENT}. Si hablan normal, beben {PUNISHMENT} tragos",
+      "endTemplate": "El desafío de acento ha terminado. Ya pueden hablar con su acento normal.",
+      "variables": {
+        "ACCENT": ["francés", "italiano", "argentino", "mexicano", "inglés"],
+        "PUNISHMENT": ["2", "3"]
+      },
+      "categoria": "fun",
+      "minRounds": 3,
+      "maxRounds": 6,
+      "metadata": {}
+    },
+    {
+      "id": "rhyme_time",
+      "type": "special_condition",
+      "title": "Tiempo de Rimas",
+      "template": "EVENTO: ⭐ Mientras dure este evento, todas las respuestas deben rimar con la palabra '{WORD}'. Si no riman, beben {PUNISHMENT} tragos",
+      "endTemplate": "El tiempo de rimas ha terminado. Ya no necesitan rimar sus respuestas.",
+      "variables": {
+        "WORD": ["amor", "fiesta", "juego", "risa", "baile"],
+        "PUNISHMENT": ["2", "3"]
+      },
+      "categoria": "creative",
+      "minRounds": 3,
+      "maxRounds": 5,
+      "metadata": {}
+    },
+    {
+      "id": "no_pointing",
+      "type": "global_rule",
+      "title": "Prohibido Señalar",
+      "template": "EVENTO: 🌐 Mientras dure este evento, está prohibido señalar con el dedo. Si alguien señala, bebe {PUNISHMENT} tragos",
+      "endTemplate": "Ya pueden volver a señalar normalmente.",
+      "variables": {
+        "PUNISHMENT": ["2", "3"]
+      },
+      "categoria": "restriction",
+      "minRounds": 4,
+      "maxRounds": 7,
+      "metadata": {}
+    }
+  ]
+}

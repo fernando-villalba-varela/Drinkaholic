@@ -93,9 +93,13 @@ class QuestionGenerator {
       );
     }
 
-    // Filtrar templates que NO contengan la variable PLAYER
+    // Filtrar templates que NO contengan la variable PLAYER ni variables duales
     final nonPlayerTemplates = _templates!.where((template) {
-      return !template.variables.values.any((values) => values.contains('PLAYER'));
+      return !template.variables.values.any((values) => values.contains('PLAYER')) &&
+             !(template.variables.containsKey('PLAYER1') &&
+               template.variables.containsKey('PLAYER2') &&
+               template.variables['PLAYER1']!.contains('DUAL_PLAYER1') &&
+               template.variables['PLAYER2']!.contains('DUAL_PLAYER2'));
     }).toList();
     
     if (nonPlayerTemplates.isEmpty) {
@@ -122,21 +126,55 @@ class QuestionGenerator {
       );
     }
 
-    // Filtrar solo templates que contengan la variable PLAYER
+    // Filtrar solo templates que contengan la variable PLAYER (no dual)
     final playerTemplates = _templates!.where((template) {
-      return template.variables.values.any((values) => values.contains('PLAYER'));
+      return template.variables.values.any((values) => values.contains('PLAYER')) &&
+             !(template.variables.containsKey('PLAYER1') &&
+               template.variables.containsKey('PLAYER2') &&
+               template.variables['PLAYER1']!.contains('DUAL_PLAYER1') &&
+               template.variables['PLAYER2']!.contains('DUAL_PLAYER2'));
     }).toList();
     
     if (playerTemplates.isEmpty) {
       // Si no hay templates con PLAYER, usar uno normal
       final template = _templates![_random.nextInt(_templates!.length)];
-      print('Generando pregunta de la categoría (fallback): ${template.template}');
       return _generateQuestionFromTemplate(template);
     }
 
     final template = playerTemplates[_random.nextInt(playerTemplates.length)];
-    print('Generando pregunta de la categoría: ${template.template}');
     return _generateQuestionFromTemplate(template, playerName: playerName);
+  }
+
+  /// Generar una pregunta dual con dos jugadores específicos
+  static Future<GeneratedQuestion> generateRandomDualQuestion(String player1Name, String player2Name) async {
+    await loadTemplates();
+    
+    if (_templates == null || _templates!.isEmpty) {
+      return GeneratedQuestion(
+        question: 'Error: No se pudieron cargar las preguntas',
+        categoria: 'Error',
+        usedVariables: {},
+      );
+    }
+
+    // Filtrar solo templates duales
+    final dualTemplates = _templates!.where((template) {
+      return template.variables.containsKey('PLAYER1') &&
+             template.variables.containsKey('PLAYER2') &&
+             template.variables['PLAYER1']!.contains('DUAL_PLAYER1') &&
+             template.variables['PLAYER2']!.contains('DUAL_PLAYER2');
+    }).toList();
+    
+    if (dualTemplates.isEmpty) {
+      // Si no hay templates duales, generar uno normal
+      return generateRandomQuestion();
+    }
+
+    final template = dualTemplates[_random.nextInt(dualTemplates.length)];
+    return _generateQuestionFromTemplate(template, 
+      playerName: player1Name, 
+      dualPlayerName: player2Name
+    );
   }
 
   /// Generar una pregunta de una categoría específica
@@ -171,7 +209,7 @@ class QuestionGenerator {
   }
 
   /// Generar pregunta desde una plantilla específica
-  static GeneratedQuestion _generateQuestionFromTemplate(QuestionTemplate template, {String? playerName}) {
+  static GeneratedQuestion _generateQuestionFromTemplate(QuestionTemplate template, {String? playerName, String? dualPlayerName}) {
     String question = template.template;
     Map<String, String> usedVariables = {};
 
@@ -186,6 +224,14 @@ class QuestionGenerator {
         // Para variables que solo contienen PLAYER, usar el nombre del jugador
         question = question.replaceAll('{$variableName}', playerName);
         usedVariables[variableName] = playerName;
+      } else if (possibleValues.length == 1 && possibleValues[0] == 'DUAL_PLAYER1' && playerName != null) {
+        // Para DUAL_PLAYER1, usar el primer jugador
+        question = question.replaceAll('{$variableName}', playerName);
+        usedVariables[variableName] = playerName;
+      } else if (possibleValues.length == 1 && possibleValues[0] == 'DUAL_PLAYER2' && dualPlayerName != null) {
+        // Para DUAL_PLAYER2, usar el segundo jugador
+        question = question.replaceAll('{$variableName}', dualPlayerName);
+        usedVariables[variableName] = dualPlayerName;
       } else {
         // Para otras variables, selección aleatoria normal
         final selectedValue = possibleValues[_random.nextInt(possibleValues.length)];

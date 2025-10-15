@@ -46,6 +46,7 @@ flutter:
     - assets/images/button_background.png
     - assets/questions.json
     - assets/constant_challenges.json
+    - assets/events.json
 
 flutter_icons:
   android: true

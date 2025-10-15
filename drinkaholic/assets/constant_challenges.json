@@ -146,6 +146,97 @@
       "categoria": "Obligación física",
       "minRounds": 4,
       "maxRounds": 6
+    },
+    {
+      "id": "dual_mirror_drinking",
+      "type": "rule",
+      "template": "{PLAYER1}, cada vez que {PLAYER2} beba por el juego, bebes {MULTIPLIER} tragos",
+      "endTemplate": "{PLAYER1} ya no necesita imitar los tragos de {PLAYER2}",
+      "punishment": "Si {PLAYER1} no bebe cuando debe, bebe {DRINKS} tragos adicionales",
+      "variables": {
+        "PLAYER1": ["DUAL_PLAYER1"],
+        "PLAYER2": ["DUAL_PLAYER2"],
+        "MULTIPLIER": ["1", "2"],
+        "DRINKS": ["2", "3", "4"]
+      },
+      "categoria": "Dual - Imitación",
+      "minRounds": 5,
+      "maxRounds": 8
+    },
+    {
+      "id": "dual_forbidden_eye_contact",
+      "type": "restriction",
+      "template": "{PLAYER1} y {PLAYER2} no pueden mirarse a los ojos",
+      "endTemplate": "{PLAYER1} y {PLAYER2} ya pueden mirarse normalmente",
+      "punishment": "Si {PLAYER1} y {PLAYER2} se miran a los ojos, ambos beben {DRINKS} tragos",
+      "variables": {
+        "PLAYER1": ["DUAL_PLAYER1"],
+        "PLAYER2": ["DUAL_PLAYER2"],
+        "DRINKS": ["2", "3", "4"]
+      },
+      "categoria": "Dual - Restricción",
+      "minRounds": 4,
+      "maxRounds": 7
+    },
+    {
+      "id": "dual_must_speak_together",
+      "type": "obligation",
+      "template": "{PLAYER1} y {PLAYER2} deben hablar siempre al unísono cuando les toque",
+      "endTemplate": "{PLAYER1} y {PLAYER2} ya pueden hablar por separado",
+      "punishment": "Si {PLAYER1} y {PLAYER2} no hablan sincronizados, ambos beben {DRINKS} tragos",
+      "variables": {
+        "PLAYER1": ["DUAL_PLAYER1"],
+        "PLAYER2": ["DUAL_PLAYER2"],
+        "DRINKS": ["2", "3", "4"]
+      },
+      "categoria": "Dual - Obligación",
+      "minRounds": 3,
+      "maxRounds": 6
+    },
+    {
+      "id": "dual_no_direct_communication",
+      "type": "restriction",
+      "template": "{PLAYER1} y {PLAYER2} no pueden dirigirse la palabra directamente",
+      "endTemplate": "{PLAYER1} y {PLAYER2} ya pueden hablarse directamente",
+      "punishment": "Si {PLAYER1} o {PLAYER2} se hablan directamente, ambos beben {DRINKS} tragos",
+      "variables": {
+        "PLAYER1": ["DUAL_PLAYER1"],
+        "PLAYER2": ["DUAL_PLAYER2"],
+        "DRINKS": ["1", "2", "3"]
+      },
+      "categoria": "Dual - Restricción",
+      "minRounds": 5,
+      "maxRounds": 9
+    },
+    {
+      "id": "dual_bodyguard_rule",
+      "type": "rule",
+      "template": "{PLAYER1} es el guardaespaldas de {PLAYER2}. Cuando {PLAYER2} deba beber, {PLAYER1} bebe la mitad (redondeado hacia arriba)",
+      "endTemplate": "{PLAYER1} ya no es el guardaespaldas de {PLAYER2}",
+      "punishment": "Si {PLAYER1} no cumple su rol de guardaespaldas, bebe {DRINKS} tragos adicionales",
+      "variables": {
+        "PLAYER1": ["DUAL_PLAYER1"],
+        "PLAYER2": ["DUAL_PLAYER2"],
+        "DRINKS": ["3", "4", "5"]
+      },
+      "categoria": "Dual - Regla especial",
+      "minRounds": 4,
+      "maxRounds": 7
+    },
+    {
+      "id": "dual_question_translator",
+      "type": "obligation",
+      "template": "{PLAYER1} debe repetir todo lo que diga {PLAYER2} pero cambiando el orden de las palabras",
+      "endTemplate": "{PLAYER1} ya no necesita traducir a {PLAYER2}",
+      "punishment": "Si {PLAYER1} no traduce correctamente, bebe {DRINKS} tragos",
+      "variables": {
+        "PLAYER1": ["DUAL_PLAYER1"],
+        "PLAYER2": ["DUAL_PLAYER2"],
+        "DRINKS": ["2", "3", "4"]
+      },
+      "categoria": "Dual - Obligación verbal",
+      "minRounds": 3,
+      "maxRounds": 6
     }
   ]
 }
