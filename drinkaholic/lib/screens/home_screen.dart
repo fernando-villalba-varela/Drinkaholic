@@ -142,56 +142,65 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            // Logo with glow effect
-                            Container(
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color(
-                                      0xFFD4A373,
-                                    ).withOpacity(0.3),
-                                    blurRadius: 30,
-                                    spreadRadius: 10,
-                                  ),
-                                ],
-                              ),
-                              child: Image.asset(
-                                'assets/images/drinkaholic_logo.gif',
-                                width: 180,
-                                height: 180,
-                              ),
-                            ),
-                            const SizedBox(height: 30),
+                            // Epic title (logo removed)
 
-                            // Title with enhanced styling
-                            ShaderMask(
-                              shaderCallback: (bounds) => const LinearGradient(
-                                colors: [
-                                  Color(0xFFFFD700), // Gold
-                                  Color(0xFFD4A373), // Bronze
-                                  Color(0xFFB8860B), // Dark gold
-                                ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ).createShader(bounds),
-                              child: const Text(
-                                'DRINKAHOLIC',
-                                style: TextStyle(
-                                  fontSize: 48,
-                                  fontWeight: FontWeight.w900,
-                                  letterSpacing: 4,
-                                  color: Colors.white,
-                                  shadows: [
-                                    Shadow(
-                                      color: Colors.black54,
-                                      offset: Offset(2, 2),
-                                      blurRadius: 4,
-                                    ),
-                                  ],
+                            // Title with epic styling connected to background
+                            Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                // Outline stroke for readability
+                                Text(
+                                  'DRINKAHOLIC',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: min(screenWidth * 0.14, 96),
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: 6,
+                                    foreground: Paint()
+                                      ..style = PaintingStyle.stroke
+                                      ..strokeWidth = 3
+                                      ..color = Colors.black.withOpacity(0.7),
+                                  ),
                                 ),
-                              ),
+                                ShaderMask(
+                                  shaderCallback: (bounds) => const LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Color(0xFF7F5AF0), // neon violet
+                                      Color(0xFF00D1FF), // cyan
+                                    ],
+                                  ).createShader(bounds),
+                                  blendMode: BlendMode.srcIn,
+                                  child: Text(
+                                    'DRINKAHOLIC',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: min(screenWidth * 0.14, 96),
+                                      fontWeight: FontWeight.w900,
+                                      letterSpacing: 6,
+                                      color: Colors.white,
+                                      shadows: [
+                                        Shadow(
+                                          color: const Color(0xFF7F5AF0).withOpacity(0.45),
+                                          blurRadius: 30,
+                                          offset: const Offset(0, 0),
+                                        ),
+                                        Shadow(
+                                          color: const Color(0xFF00D1FF).withOpacity(0.35),
+                                          blurRadius: 30,
+                                          offset: const Offset(0, 0),
+                                        ),
+                                        Shadow(
+                                          color: Colors.black54,
+                                          blurRadius: 8,
+                                          offset: const Offset(2, 2),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
 
                             const SizedBox(height: 8),
