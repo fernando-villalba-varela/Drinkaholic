@@ -651,260 +651,265 @@ Future<void> _initializeFirstChallenge() async {
   }
 
   Widget _buildPlayerAvatar(Player player, {bool isActive = false}) {
-    return AnimatedBuilder(
-      animation: isActive ? _pulseAnimation : _glowAnimation,
-      builder: (context, child) {
-        return Transform.scale(
-          scale: isActive ? _pulseAnimation.value : 1.0,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            padding: EdgeInsets.all(isActive ? 4 : 2),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: isActive ? Colors.white : Colors.white.withOpacity(0.5),
-                width: isActive ? 3 : 1,
-              ),
-              boxShadow: isActive ? [
-                BoxShadow(
-                  color: Colors.white.withOpacity(0.8),
-                  blurRadius: 25,
-                  spreadRadius: 5,
-                ),
-                BoxShadow(
-                  color: Colors.cyan.withOpacity(0.6),
-                  blurRadius: 15,
-                  spreadRadius: 3,
-                ),
-                BoxShadow(
-                  color: Colors.blue.withOpacity(0.4),
-                  blurRadius: 35,
-                  spreadRadius: 8,
-                ),
-              ] : [
-                BoxShadow(
-                  color: Colors.white.withOpacity(0.2),
-                  blurRadius: 5,
-                  spreadRadius: 1,
-                ),
-              ],
-            ),
-            child: Container(
-              width: 60,
-              height: 60,
-              decoration: const BoxDecoration(
+    return LayoutBuilder( 
+      builder: (context, constraints) {
+
+      final screenSize = MediaQuery.of(context).size;
+      final isSmallScreen = screenSize.width < 600;
+
+      // Ajustar tamaños según el espacio disponible
+      final double iconSize = isSmallScreen ? 15 : 25;
+      final double fontSize = isSmallScreen ? 20 : 26;
+      final double padding = isSmallScreen ? 15 : 30;
+
+
+      return  AnimatedBuilder(
+        animation: isActive ? _pulseAnimation : _glowAnimation,
+        builder: (context, child) {
+          return Transform.scale(
+            scale: isActive ? _pulseAnimation.value : 1.0,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              padding: EdgeInsets.all(isActive ? 4 : 2),
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
+                border: Border.all(
+                  color: isActive ? Colors.white : Colors.white.withOpacity(0.5),
+                  width: isActive ? 3 : 1,
+                ),
+                boxShadow: isActive ? [
+                  BoxShadow(
+                    color: Colors.white.withOpacity(0.8),
+                    blurRadius: 25,
+                    spreadRadius: 5,
+                  ),
+                  BoxShadow(
+                    color: Colors.cyan.withOpacity(0.6),
+                    blurRadius: 15,
+                    spreadRadius: 3,
+                  ),
+                  BoxShadow(
+                    color: Colors.blue.withOpacity(0.4),
+                    blurRadius: 35,
+                    spreadRadius: 8,
+                  ),
+                ] : [
+                  BoxShadow(
+                    color: Colors.white.withOpacity(0.2),
+                    blurRadius: 5,
+                    spreadRadius: 1,
+                  ),
+                ],
               ),
-              child: ClipOval(
-                child: player.imagen != null
-                    ? Image.file(
-                        player.imagen!,
-                        fit: BoxFit.cover,
-                      )
-                    : player.avatar != null
-                    ? Image.asset(
-                        player.avatar!,
-                        fit: BoxFit.cover,
-                      )
-                    : Container(
-                        color: Colors.white.withOpacity(0.2),
-                        child: const Icon(
-                          Icons.person,
-                          color: Colors.white,
-                          size: 30,
+              child: Container(
+                width: 30,
+                height: 30,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                ),
+                child: ClipOval(
+                  child: player.imagen != null
+                      ? Image.file(
+                          player.imagen!,
+                          fit: BoxFit.cover,
+                        )
+                      : player.avatar != null
+                      ? Image.asset(
+                          player.avatar!,
+                          fit: BoxFit.cover,
+                        )
+                      : Container(
+                          color: Colors.white.withOpacity(0.2),
+                          child: Icon(
+                            Icons.person,
+                            color: Colors.white,
+                            size: iconSize,
+                          ),
                         ),
-                      ),
+                ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      );}
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFF00C9FF), // Cyan
-                  Color(0xFF92FE9D), // Green
-                ],
+    return SafeArea(
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFF00C9FF), // Cyan
+                    Color(0xFF92FE9D), // Green
+                  ],
+                ),
               ),
             ),
-          ),
-          _buildAnimatedBackground(),
-          // Floating particles effect like home_screen
-          ...List.generate(
-            8,
-            (index) => _buildFloatingParticle(
-              MediaQuery.of(context).size.width,
-              MediaQuery.of(context).size.height,
-              index,
+            _buildAnimatedBackground(),
+            // Floating particles effect like home_screen
+            ...List.generate(
+              8,
+              (index) => _buildFloatingParticle(
+                MediaQuery.of(context).size.width,
+                MediaQuery.of(context).size.height,
+                index,
+              ),
             ),
-          ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(18),
-              child: Column(
-                children: [
-                  // Top section with exit button and players
-                  Row(
-                    children: [
-                      // Exit button
-                      GestureDetector(
-                        onTap: () => Navigator.of(context).pop(),
-                        child: Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: Colors.white.withOpacity(0.3),
-                              width: 1,
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(18),
+                child: Row(
+                  children: [
+                     GestureDetector(
+                          onTap: () => Navigator.of(context).pop(),
+                          child: Container(
+                            margin: const EdgeInsets.only(bottom: 357),
+                           
+                            padding: const EdgeInsets.all(7),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.3),
+                                width: 1,
+                              ),
+                            ),
+                            child: const Icon(
+                              Icons.close,
+                              color: Colors.white,
+                              size: 24,
                             ),
                           ),
-                          child: const Icon(
-                            Icons.close,
-                            color: Colors.white,
-                            size: 24,
-                          ),
                         ),
-                      ),
-                      const SizedBox(width: 20),
-                      
-                      // Players row
-                      Expanded(
-                        child: SizedBox(
-                          height: 150,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: widget.players.asMap().entries.map((entry) {
-                              final index = entry.key;
-                              final player = entry.value;
-                              return Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                    Expanded(
+                      child: AnimatedBuilder(
+                        animation: _tapAnimation,
+                        builder: (context, child) {
+                          return Transform.scale(
+                            scale: _tapAnimation.value,
+                            child: GestureDetector(
+                              onTapDown: (details) {
+                                final RenderBox renderBox = context.findRenderObject() as RenderBox;
+                                final localPosition = renderBox.globalToLocal(details.globalPosition);
+                                _addRippleEffect(localPosition);
+                              },
+                              onTap: _nextChallenge,
+                              behavior: HitTestBehavior.opaque,
+                              child: Stack(
                                 children: [
-                                  _buildPlayerAvatar(
-                                    player,
-                                    isActive: index == _currentPlayerIndex,
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Text(
-                                    player.nombre,
-                                    style: TextStyle(
-                                      color: index == _currentPlayerIndex
-                                          ? Colors.white
-                                          : Colors.white.withOpacity(0.7),
-                                      fontSize: 14,
-                                      fontWeight: index == _currentPlayerIndex
-                                          ? FontWeight.bold
-                                          : FontWeight.normal,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  
-                  // Center content area (tappable)
-                  Expanded(
-                    child: AnimatedBuilder(
-                      animation: _tapAnimation,
-                      builder: (context, child) {
-                        return Transform.scale(
-                          scale: _tapAnimation.value,
-                          child: GestureDetector(
-                            onTapDown: (details) {
-                              final RenderBox renderBox = context.findRenderObject() as RenderBox;
-                              final localPosition = renderBox.globalToLocal(details.globalPosition);
-                              _addRippleEffect(localPosition);
-                            },
-                            onTap: _nextChallenge,
-                            behavior: HitTestBehavior.opaque,
-                            child: Stack(
-                              children: [
-                                Container(
-                                  width: double.infinity,
-                                  child: Center(
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        buildCenterContent(_createGameState()),
-                                        const SizedBox(height: 40),
-                                        // Tap indicator (only show at the beginning)
-                                        if (!_gameStarted)
-                                          AnimatedBuilder(
-                                            animation: _glowAnimation,
-                                            builder: (context, child) {
-                                              return Container(
-                                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white.withOpacity(0.1),
-                                                  borderRadius: BorderRadius.circular(25),
-                                                  border: Border.all(
-                                                    color: Colors.white.withOpacity(_glowAnimation.value * 0.8),
-                                                    width: 2,
-                                                  ),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: Colors.white.withOpacity(_glowAnimation.value * 0.3),
-                                                      blurRadius: 15,
-                                                      spreadRadius: 2,
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: Center(
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          buildCenterContent(_createGameState()),
+                                          const SizedBox(height: 20),
+                                          // Tap indicator (only show at the beginning)
+                                          if (!_gameStarted)
+                                            AnimatedBuilder(
+                                              animation: _glowAnimation,
+                                              builder: (context, child) {
+                                                return Container(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white.withOpacity(0.1),
+                                                    borderRadius: BorderRadius.circular(25),
+                                                    border: Border.all(
+                                                      color: Colors.white.withOpacity(_glowAnimation.value * 0.8),
+                                                      width: 2,
                                                     ),
-                                                  ],
-                                                ),
-                                                child: Row(
-                                                  mainAxisSize: MainAxisSize.min,
-                                                  children: [
-                                                    Icon(
-                                                      Icons.touch_app,
-                                                      color: Colors.white.withOpacity(_glowAnimation.value),
-                                                      size: 20,
-                                                    ),
-                                                    const SizedBox(width: 8),
-                                                    Text(
-                                                      'TOCA LA PANTALLA',
-                                                      style: TextStyle(
-                                                        color: Colors.white.withOpacity(_glowAnimation.value),
-                                                        fontSize: 14,
-                                                        fontWeight: FontWeight.bold,
-                                                        letterSpacing: 1.2,
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Colors.white.withOpacity(_glowAnimation.value * 0.3),
+                                                        blurRadius: 15,
+                                                        spreadRadius: 2,
                                                       ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                      ],
+                                                    ],
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Icon(
+                                                        Icons.touch_app,
+                                                        color: Colors.white.withOpacity(_glowAnimation.value),
+                                                        size: 20,
+                                                      ),
+                                                      const SizedBox(width: 8),
+                                                      Text(
+                                                        'TOCA LA PANTALLA',
+                                                        style: TextStyle(
+                                                          color: Colors.white.withOpacity(_glowAnimation.value),
+                                                          fontSize: 14,
+                                                          fontWeight: FontWeight.bold,
+                                                          letterSpacing: 1.2,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                                _buildRippleEffects(),
-                              ],
+                                  _buildRippleEffects(),
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                ],
+                    // // Players row
+                        //  SizedBox(
+                        //    width: 50,
+                        //    child: Column(
+                        //      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        //      children: widget.players.asMap().entries.map((entry) {
+                        //        final index = entry.key;
+                        //        final player = entry.value;
+                        //        return Column(
+                        //          mainAxisAlignment: MainAxisAlignment.center,
+                        //          children: [
+                        //            _buildPlayerAvatar(
+                        //              player,
+                        //              isActive: index == _currentPlayerIndex,
+                        //            ),
+                        //            const SizedBox(height: 5),
+                        //            Text(
+                        //              player.nombre,
+                        //              style: TextStyle(
+                        //                color: index == _currentPlayerIndex
+                        //                    ? Colors.white
+                        //                    : Colors.white.withOpacity(0.7),
+                        //                fontSize: 14,
+                        //                fontWeight: index == _currentPlayerIndex
+                        //                    ? FontWeight.bold
+                        //                    : FontWeight.normal,
+                        //              ),
+                        //              textAlign: TextAlign.center,
+                        //            ),
+                        //          ],
+                        //        );
+                        //      }).toList(),
+                        //    ),
+                        //  ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
