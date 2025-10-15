@@ -2,10 +2,13 @@ import 'package:drinkaholic/models/question_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:math';
+import 'dart:math' as math show Random;
 import '../models/player.dart';
 import '../models/game_state.dart';
 import '../models/constant_challenge.dart';
 import '../models/constant_challenge_generator.dart';
+import '../models/event.dart';
+import '../models/event_generator.dart';
 import '../widgets/quick_game_widgets.dart'; // Añade este import arriba
 
 
@@ -40,12 +43,15 @@ class _QuickGameScreenState extends State<QuickGameScreen>
   List<double> _rippleOpacities = [];
   
   int _currentPlayerIndex = -1; // Start with no player selected
+  int? _dualPlayerIndex; // Second player for dual challenges
   String _currentChallenge = '';
   bool _gameStarted = false;
   Map<int, int> _playerWeights = {}; // Track how many times each player has been selected
   int _currentRound = 1;
   List<ConstantChallenge> _constantChallenges = [];
   ConstantChallengeEnd? _currentChallengeEnd;
+  List<Event> _events = [];
+  EventEnd? _currentEventEnd;
 
   @override
   void initState() {
@@ -181,9 +187,9 @@ Future<void> _generateNewChallenge() async {
 Future<void> _initializeFirstChallenge() async {
   await _generateNewChallenge();
   
-  // Solo selecciona jugador si el reto NO es para todos Y no es una pregunta genérica ya asignada
+  // Solo selecciona jugador si el reto NO es para todos Y no es una pregunta genérica ya asignada Y no es un reto dual
   final gameState = _createGameState();
-  if (!gameState.isChallengeForAll && !_isGenericPlayerQuestion()) {
+  if (!gameState.isChallengeForAll && !_isGenericPlayerQuestion() && !gameState.isDualChallenge) {
     _selectWeightedRandomPlayer();
   } else if (gameState.isChallengeForAll) {
     // Para desafíos que son para todos, mantener _currentPlayerIndex en -1
@@ -195,6 +201,20 @@ Future<void> _initializeFirstChallenge() async {
 }
 
   GameState _createGameState() {
+    // Get dual player names if it's a dual challenge
+    String? dualPlayer1Name;
+    String? dualPlayer2Name;
+    
+    if (_dualPlayerIndex != null && _currentPlayerIndex >= 0) {
+      // Get names from player indices
+      if (_currentPlayerIndex < widget.players.length) {
+        dualPlayer1Name = widget.players[_currentPlayerIndex].nombre;
+      }
+      if (_dualPlayerIndex! < widget.players.length) {
+        dualPlayer2Name = widget.players[_dualPlayerIndex!].nombre;
+      }
+    }
+    
     return GameState(
       players: widget.players,
       currentPlayerIndex: _currentPlayerIndex,
@@ -206,6 +226,11 @@ Future<void> _initializeFirstChallenge() async {
       currentRound: _currentRound,
       constantChallenges: _constantChallenges,
       currentChallengeEnd: _currentChallengeEnd,
+      events: _events,
+      currentEventEnd: _currentEventEnd,
+      dualPlayerIndex: _dualPlayerIndex,
+      dualPlayer1Name: dualPlayer1Name,
+      dualPlayer2Name: dualPlayer2Name,
     );
   }
 
@@ -376,39 +401,70 @@ Future<void> _initializeFirstChallenge() async {
       _gameStarted = true;
       _currentRound++; // Incrementar el contador de rondas
       _currentChallengeEnd = null; // Limpiar cualquier fin de reto constante
+      _currentEventEnd = null; // Limpiar cualquier fin de evento
+      _dualPlayerIndex = null; // Limpiar jugador dual previo
     });
 
-    // 1. Verificar si debemos terminar algún reto constante
+    // 1. Verificar si debemos terminar algún evento
+    await _checkForEventEnding();
+    
+    // 2. Si estamos mostrando un fin de evento, no generamos nuevo reto
+    if (_currentEventEnd != null) {
+      return;
+    }
+    
+    // 3. Verificar si debemos terminar algún reto constante
     await _checkForConstantChallengeEnding();
     
-    // 2. Si estamos mostrando un fin de reto, no generamos nuevo reto normal
+    // 4. Si estamos mostrando un fin de reto, no generamos nuevo reto normal
     if (_currentChallengeEnd != null) {
       return;
     }
 
-    // 3. Verificar si debemos generar un nuevo reto constante
+    // 5. Verificar si debemos generar un nuevo evento (prioridad alta)
     final gameState = _createGameState();
+    if (gameState.canHaveEvents &&
+        EventGenerator.shouldGenerateEvent(
+          _currentRound,
+          gameState.activeEvents,
+        )) {
+      await _generateNewEvent();
+      return;
+    }
+    
+    // 6. Verificar si debemos generar un nuevo reto constante (incluyendo duales)
     if (gameState.canHaveConstantChallenges &&
         ConstantChallengeGenerator.shouldGenerateConstantChallenge(
           _currentRound,
           gameState.activeChallenges,
         )) {
-      await _generateNewConstantChallenge();
+      // 20% probabilidad de reto constante dual si hay suficientes jugadores
+      if (widget.players.length >= 2 && math.Random().nextDouble() < 0.2) {
+        await _generateNewDualConstantChallenge();
+      } else {
+        await _generateNewConstantChallenge();
+      }
       return;
     }
 
-    // 4. Si no hay retos constantes, generar un reto normal
-    await _generateNewChallenge();
+    // 7. Si no hay eventos ni retos constantes, generar un reto normal (incluyendo duales)
+    // 15% probabilidad de challenge dual si hay suficientes jugadores
+    if (widget.players.length >= 2 && math.Random().nextDouble() < 0.15) {
+      await _generateNewDualChallenge();
+    } else {
+      await _generateNewChallenge();
+    }
 
-    // 5. Solo selecciona jugador si el reto NO es para todos Y no es una pregunta genérica ya asignada
+    // 8. Solo selecciona jugador si el reto NO es para todos Y no es una pregunta genérica ya asignada Y no es un reto dual
     final gameState2 = _createGameState();
-    if (!gameState2.isChallengeForAll && !_isGenericPlayerQuestion()) {
+    if (!gameState2.isChallengeForAll && !_isGenericPlayerQuestion() && !gameState2.isDualChallenge) {
       _selectWeightedRandomPlayer();
     } else if (gameState2.isChallengeForAll) {
       setState(() {
         _currentPlayerIndex = -1; // Valor especial para "todos"
       });
     }
+    // Si es un reto dual, los jugadores ya fueron asignados en _generateNewDualChallenge
     // Si es una pregunta genérica, el jugador ya fue asignado en _generateNewChallenge
   }
 
@@ -438,7 +494,6 @@ Future<void> _initializeFirstChallenge() async {
           _currentPlayerIndex = -1; // No hay jugador específico para este tipo de mensaje
         });
         
-        print('Terminando reto constante: ${challenge.description}');
         return; // Solo terminamos un reto por ronda
       }
     }
@@ -466,8 +521,149 @@ Future<void> _initializeFirstChallenge() async {
       _currentChallenge = constantChallenge.description;
       _currentPlayerIndex = widget.players.indexWhere((p) => p.id == eligiblePlayer.id);
     });
+  }
 
-    print('Nuevo reto constante: ${constantChallenge.description}');
+  Future<void> _checkForEventEnding() async {
+    final activeEvents = _events
+        .where((e) => e.isActiveAtRound(_currentRound))
+        .toList();
+
+    for (final event in activeEvents) {
+      if (EventGenerator.shouldEndEvent(event, _currentRound)) {
+        final eventEnd = EventGenerator.generateEventEnd(event, _currentRound);
+        
+        setState(() {
+          // Marcar el evento como terminado
+          _events = _events.map((e) {
+            if (e.id == event.id) {
+              return e.copyWith(
+                status: EventStatus.ended,
+                endRound: _currentRound,
+              );
+            }
+            return e;
+          }).toList();
+          
+          _currentEventEnd = eventEnd;
+          _currentChallenge = eventEnd.endDescription;
+          _currentPlayerIndex = -1; // Eventos son globales, no hay jugador específico
+        });
+        
+        return; // Solo terminamos un evento por ronda
+      }
+    }
+  }
+
+  Future<void> _generateNewEvent() async {
+    final event = await EventGenerator.generateRandomEvent(_currentRound);
+
+    setState(() {
+      _events.add(event);
+      _currentChallenge = '${event.typeIcon} ${event.title}: ${event.description}';
+      _currentPlayerIndex = -1; // Eventos son globales, no hay jugador específico
+    });
+  }
+
+  Future<void> _generateNewDualChallenge() async {
+    // Seleccionar dos jugadores diferentes
+    final selectedPlayers = _selectTwoRandomPlayers();
+    if (selectedPlayers.length < 2) {
+      // Fallback a challenge normal si no hay suficientes jugadores
+      await _generateNewChallenge();
+      return;
+    }
+
+    final player1 = selectedPlayers[0];
+    final player2 = selectedPlayers[1];
+    
+    final question = await QuestionGenerator.generateRandomDualQuestion(
+      player1.nombre, 
+      player2.nombre
+    );
+    
+    final player1Index = widget.players.indexOf(player1);
+    final player2Index = widget.players.indexOf(player2);
+    
+    setState(() {
+      _currentChallenge = question.question;
+      _currentPlayerIndex = player1Index;
+      _dualPlayerIndex = player2Index;
+      
+      // Incrementar pesos para ambos jugadores
+      _playerWeights[_currentPlayerIndex] = (_playerWeights[_currentPlayerIndex] ?? 0) + 1;
+      _playerWeights[_dualPlayerIndex!] = (_playerWeights[_dualPlayerIndex!] ?? 0) + 1;
+    });
+  }
+      confirmedPlayer2.nombre
+    );
+    
+    setState(() {
+      _currentChallenge = question.question;
+      _currentPlayerIndex = player1Index;
+      _dualPlayerIndex = player2Index;
+      
+      print('📊 DEBUG: Set _currentPlayerIndex: $_currentPlayerIndex, _dualPlayerIndex: $_dualPlayerIndex');
+      print('📊 DEBUG: Storing dual player names: "${player1.nombre}", "${player2.nombre}"');
+      
+      // Incrementar pesos para ambos jugadores
+      _playerWeights[_currentPlayerIndex] = (_playerWeights[_currentPlayerIndex] ?? 0) + 1;
+      _playerWeights[_dualPlayerIndex!] = (_playerWeights[_dualPlayerIndex!] ?? 0) + 1;
+    });
+  }
+
+  Future<void> _generateNewDualConstantChallenge() async {
+    // Seleccionar dos jugadores diferentes
+    final selectedPlayers = _selectTwoRandomPlayers();
+    if (selectedPlayers.length < 2) {
+      // Fallback a challenge constante normal
+      await _generateNewConstantChallenge();
+      return;
+    }
+
+    final player1 = selectedPlayers[0];
+    final player2 = selectedPlayers[1];
+    
+    final constantChallenge = await ConstantChallengeGenerator.generateRandomDualConstantChallenge(
+      player1, 
+      player2, 
+      _currentRound
+    );
+    
+    setState(() {
+      _constantChallenges.add(constantChallenge);
+      _currentChallenge = constantChallenge.description;
+      _currentPlayerIndex = widget.players.indexOf(player1);
+      _dualPlayerIndex = widget.players.indexOf(player2);
+    });
+  }
+
+  List<Player> _selectTwoRandomPlayers() {
+    if (widget.players.length < 2) return [];
+    
+    // Crear una lista de jugadores elegibles basada en pesos
+    List<Player> eligiblePlayers = [];
+    
+    // Encontrar el peso mínimo
+    int minWeight = _playerWeights.values.isEmpty 
+        ? 0 
+        : _playerWeights.values.reduce((a, b) => a < b ? a : b);
+    
+    // Añadir jugadores con peso mínimo
+    for (int i = 0; i < widget.players.length; i++) {
+      int weight = _playerWeights[i] ?? 0;
+      if (weight <= minWeight + 1) { // Permitir hasta 1 más que el mínimo
+        eligiblePlayers.add(widget.players[i]);
+      }
+    }
+    
+    // Si no hay suficientes jugadores elegibles, usar todos
+    if (eligiblePlayers.length < 2) {
+      eligiblePlayers = List.from(widget.players);
+    }
+    
+    // Seleccionar dos jugadores diferentes aleatoriamente
+    eligiblePlayers.shuffle(math.Random());
+    return eligiblePlayers.take(2).toList();
   }
 
   Widget _buildPlayerAvatar(Player player, {bool isActive = false}) {

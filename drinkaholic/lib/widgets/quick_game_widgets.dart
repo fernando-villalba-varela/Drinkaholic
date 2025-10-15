@@ -7,6 +7,11 @@ Widget buildCenterContent(GameState gameState) {
   //Current challenge es solo cuando son preguntas
   //Se creara uan variable para el gift si es reto o juego 
    if(gameState.currentChallenge != null){ 
+    // Verificar si es un evento
+    if (gameState.isEvent) {
+      return _buildEventContent(gameState);
+    }
+    
     // Verificar si es un reto constante
     if (gameState.isConstantChallenge) {
       return _buildConstantChallengeContent(gameState);
@@ -17,12 +22,12 @@ Widget buildCenterContent(GameState gameState) {
     return Column(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
-      // Current player indicator with glow
+      // Current player indicator with glow (single or dual)
       AnimatedBuilder(
         animation: gameState.glowAnimation,
         builder: (context, child) {
           return Container(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               boxShadow: [
@@ -33,26 +38,36 @@ Widget buildCenterContent(GameState gameState) {
                 ),
               ],
             ),
-            child: Icon(
-              isForAll ? Icons.people : Icons.person_pin,
-              size: 50,
-              color: Colors.white.withOpacity(gameState.glowAnimation.value),
-            ),
+            child: isForAll 
+                ? Icon(
+                    Icons.people,
+                    size: 50,
+                    color: Colors.white.withOpacity(gameState.glowAnimation.value),
+                  )
+                : gameState.isDualChallenge
+                    ? _buildDualPlayerAvatars(gameState)
+                    : gameState.currentPlayer != null
+                        ? _buildSinglePlayerAvatar(gameState)
+                        : Icon(
+                            Icons.person_pin,
+                            size: 50,
+                            color: Colors.white.withOpacity(gameState.glowAnimation.value),
+                          ),
           );
         },
       ),
       
       const SizedBox(height: 20),
       
-      // Player name or "Todos"
+      // Player name or "Todos" (with dual support)
       Text(
-        gameState.currentTurnDisplayName,
-        style: const TextStyle(
-          fontSize: 36,
+        gameState.isDualChallenge ? gameState.dualTurnDisplayName : gameState.currentTurnDisplayName,
+        style: TextStyle(
+          fontSize: gameState.isDualChallenge ? 28 : 36, // Smaller text for dual names
           fontWeight: FontWeight.w900,
           color: Colors.white,
-          letterSpacing: 3,
-          shadows: [
+          letterSpacing: gameState.isDualChallenge ? 2 : 3,
+          shadows: const [
             Shadow(
               color: Colors.black38,
               offset: Offset(2, 2),
@@ -159,24 +174,6 @@ Widget buildCenterContent(GameState gameState) {
         },
       ),
       
-      const SizedBox(height: 30),
-      
-      // Selection count display (for testing)
-      if (gameState.gameStarted)
-        Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Text(
-            'Turnos: ${gameState.playerWeights.values.join(", ")}',
-            style: const TextStyle(
-              color: Colors.white70,
-              fontSize: 12,
-            ),
-          ),
-        ),
     ],
   );
   }
@@ -325,71 +322,6 @@ Widget _buildConstantChallengeContent(GameState gameState) {
         ),
       ),
       
-      const SizedBox(height: 25),
-      
-      // Round counter
-      Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(
-            color: Colors.white.withOpacity(0.3),
-            width: 1,
-          ),
-        ),
-        child: Text(
-          'Ronda ${gameState.currentRound}',
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ),
-      
-      // Active challenges indicator (if any)
-      if (gameState.activeChallenges.isNotEmpty && !isEndingChallenge)
-        Container(
-          margin: const EdgeInsets.only(top: 15),
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Column(
-            children: [
-              const Text(
-                'Retos Activos:',
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 5),
-              ...gameState.activeChallenges.take(3).map((challenge) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 2),
-                child: Text(
-                  '${challenge.typeIcon} ${challenge.targetPlayer.nombre}: ${_truncateText(challenge.description, 30)}',
-                  style: const TextStyle(
-                    color: Colors.white60,
-                    fontSize: 11,
-                  ),
-                ),
-              )),
-              if (gameState.activeChallenges.length > 3)
-                Text(
-                  '... y ${gameState.activeChallenges.length - 3} más',
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.5),
-                    fontSize: 10,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-            ],
-          ),
-        ),
     ],
   );
 }
@@ -466,6 +398,227 @@ List<Widget> _buildPunishmentInfo(GameState gameState) {
   ];
 }
 
+Widget _buildEventContent(GameState gameState) {
+  final isEndingEvent = gameState.isEndingEvent;
+  final isNewEvent = gameState.isNewEvent;
+  
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      // Special icon for events with cosmic glow effect
+      AnimatedBuilder(
+        animation: gameState.glowAnimation,
+        builder: (context, child) {
+          return Container(
+            padding: const EdgeInsets.all(30),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                colors: isEndingEvent 
+                    ? [Colors.purple.withOpacity(0.4), Colors.indigo.withOpacity(0.2)]
+                    : [Colors.cyan.withOpacity(0.4), Colors.blue.withOpacity(0.2)],
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: (isEndingEvent ? Colors.purple : Colors.cyan)
+                      .withOpacity(gameState.glowAnimation.value * 0.8),
+                  blurRadius: 35,
+                  spreadRadius: 12,
+                ),
+                BoxShadow(
+                  color: Colors.white.withOpacity(gameState.glowAnimation.value * 0.6),
+                  blurRadius: 20,
+                  spreadRadius: 6,
+                ),
+              ],
+            ),
+            child: Icon(
+              isEndingEvent 
+                  ? Icons.event_busy 
+                  : Icons.event_available,
+              size: 70,
+              color: isEndingEvent 
+                  ? Colors.purple.withOpacity(gameState.glowAnimation.value)
+                  : Colors.cyan.withOpacity(gameState.glowAnimation.value),
+            ),
+          );
+        },
+      ),
+      
+      const SizedBox(height: 25),
+      
+      // Event type indicator with cosmic theme
+      Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: isEndingEvent 
+                ? [Colors.purple.withOpacity(0.3), Colors.indigo.withOpacity(0.1)]
+                : [Colors.cyan.withOpacity(0.3), Colors.blue.withOpacity(0.1)],
+          ),
+          borderRadius: BorderRadius.circular(25),
+          border: Border.all(
+            color: isEndingEvent ? Colors.purple : Colors.cyan,
+            width: 2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: (isEndingEvent ? Colors.purple : Colors.cyan).withOpacity(0.3),
+              blurRadius: 15,
+              spreadRadius: 2,
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              '🌌',
+              style: TextStyle(fontSize: 20),
+            ),
+            const SizedBox(width: 10),
+            Text(
+              isEndingEvent ? 'EVENTO FINALIZADO' : 'NUEVO EVENTO GLOBAL',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: isEndingEvent ? Colors.purple : Colors.cyan,
+                letterSpacing: 1.5,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Text(
+              '🌌',
+              style: TextStyle(fontSize: 20),
+            ),
+          ],
+        ),
+      ),
+      
+      const SizedBox(height: 20),
+      
+      // Global indicator - no specific player
+      Text(
+        'TODOS LOS JUGADORES',
+        style: const TextStyle(
+          fontSize: 38,
+          fontWeight: FontWeight.w900,
+          color: Colors.white,
+          letterSpacing: 4,
+          shadows: [
+            Shadow(
+              color: Colors.black38,
+              offset: Offset(3, 3),
+              blurRadius: 6,
+            ),
+            Shadow(
+              color: Colors.cyan,
+              offset: Offset(-1, -1),
+              blurRadius: 3,
+            ),
+          ],
+        ),
+        textAlign: TextAlign.center,
+      ),
+      
+      const SizedBox(height: 35),
+      
+      // Event container with cosmic styling
+      TweenAnimationBuilder<double>(
+        duration: const Duration(milliseconds: 800),
+        tween: Tween(begin: 0.0, end: 1.0),
+        builder: (context, value, child) {
+          return Transform.scale(
+            scale: 0.85 + (0.15 * value),
+            child: Container(
+              padding: const EdgeInsets.all(30),
+              margin: const EdgeInsets.symmetric(horizontal: 15),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: isEndingEvent 
+                      ? [Colors.purple.withOpacity(0.2), Colors.indigo.withOpacity(0.05)]
+                      : [Colors.cyan.withOpacity(0.2), Colors.blue.withOpacity(0.05)],
+                ),
+                borderRadius: BorderRadius.circular(30),
+                border: Border.all(
+                  color: (isEndingEvent ? Colors.purple : Colors.cyan).withOpacity(0.5),
+                  width: 3,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.3),
+                    blurRadius: 25,
+                    offset: const Offset(0, 10),
+                  ),
+                  BoxShadow(
+                    color: (isEndingEvent ? Colors.purple : Colors.cyan).withOpacity(0.2),
+                    blurRadius: 30,
+                    spreadRadius: -2,
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  // Animated cosmic icon
+                  TweenAnimationBuilder<double>(
+                    duration: const Duration(milliseconds: 1200),
+                    tween: Tween(begin: 0.0, end: 1.0),
+                    builder: (context, iconValue, child) {
+                      return Transform.rotate(
+                        angle: iconValue * 2 * pi,
+                        child: Transform.scale(
+                          scale: 1.0 + (sin(iconValue * 4 * pi) * 0.1),
+                          child: Text(
+                            isEndingEvent ? '🌟' : '🌐',
+                            style: TextStyle(
+                              fontSize: 60 + (sin(iconValue * 3 * pi) * 8),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 25),
+                  
+                  // Event description with cosmic styling
+                  AnimatedDefaultTextStyle(
+                    duration: const Duration(milliseconds: 600),
+                    style: TextStyle(
+                      fontSize: 28 + (sin(value * pi) * 3),
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                      height: 1.3,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black.withOpacity(0.6),
+                          offset: const Offset(2, 2),
+                          blurRadius: 6,
+                        ),
+                        Shadow(
+                          color: (isEndingEvent ? Colors.purple : Colors.cyan).withOpacity(0.4),
+                          offset: const Offset(-1, -1),
+                          blurRadius: 3,
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      gameState.currentChallenge!,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+      
+    ],
+  );
+}
+
 IconData _getDynamicIcon(String challenge) {
   final lowerChallenge = challenge.toLowerCase();
   
@@ -521,4 +674,153 @@ IconData _getDynamicIcon(String challenge) {
   
   // Default drink icon
   return Icons.local_drink;
+}
+
+/// Helper function to build single player avatar
+Widget _buildSinglePlayerAvatar(GameState gameState) {
+  return Container(
+    width: 80,
+    height: 80,
+    decoration: BoxDecoration(
+      shape: BoxShape.circle,
+      border: Border.all(
+        color: Colors.white.withOpacity(gameState.glowAnimation.value),
+        width: 3,
+      ),
+    ),
+    child: ClipOval(
+      child: gameState.currentPlayer!.imagen != null
+          ? Image.file(
+              gameState.currentPlayer!.imagen!,
+              fit: BoxFit.cover,
+            )
+          : gameState.currentPlayer!.avatar != null
+          ? Image.asset(
+              gameState.currentPlayer!.avatar!,
+              fit: BoxFit.cover,
+            )
+          : Container(
+              color: Colors.white.withOpacity(0.2),
+              child: Icon(
+                Icons.person,
+                color: Colors.white.withOpacity(gameState.glowAnimation.value),
+                size: 40,
+              ),
+            ),
+    ),
+  );
+}
+
+/// Helper function to build dual player avatars
+Widget _buildDualPlayerAvatars(GameState gameState) {
+  return SizedBox(
+    width: 120,
+    height: 80,
+    child: Stack(
+      children: [
+        // First player avatar (left)
+        Positioned(
+          left: 0,
+          top: 0,
+          child: Container(
+            width: 70,
+            height: 70,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.white.withOpacity(gameState.glowAnimation.value),
+                width: 3,
+              ),
+            ),
+            child: ClipOval(
+              child: gameState.currentPlayer!.imagen != null
+                  ? Image.file(
+                      gameState.currentPlayer!.imagen!,
+                      fit: BoxFit.cover,
+                    )
+                  : gameState.currentPlayer!.avatar != null
+                  ? Image.asset(
+                      gameState.currentPlayer!.avatar!,
+                      fit: BoxFit.cover,
+                    )
+                  : Container(
+                      color: Colors.white.withOpacity(0.2),
+                      child: Icon(
+                        Icons.person,
+                        color: Colors.white.withOpacity(gameState.glowAnimation.value),
+                        size: 35,
+                      ),
+                    ),
+            ),
+          ),
+        ),
+        // Second player avatar (right, overlapped)
+        Positioned(
+          right: 0,
+          top: 0,
+          child: Container(
+            width: 70,
+            height: 70,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.cyan.withOpacity(gameState.glowAnimation.value * 0.8),
+                width: 3,
+              ),
+            ),
+            child: ClipOval(
+              child: gameState.dualPlayer!.imagen != null
+                  ? Image.file(
+                      gameState.dualPlayer!.imagen!,
+                      fit: BoxFit.cover,
+                    )
+                  : gameState.dualPlayer!.avatar != null
+                  ? Image.asset(
+                      gameState.dualPlayer!.avatar!,
+                      fit: BoxFit.cover,
+                    )
+                  : Container(
+                      color: Colors.cyan.withOpacity(0.2),
+                      child: Icon(
+                        Icons.person,
+                        color: Colors.cyan.withOpacity(gameState.glowAnimation.value),
+                        size: 35,
+                      ),
+                    ),
+            ),
+          ),
+        ),
+        // VS indicator in the middle
+        Positioned(
+          left: 35,
+          top: 25,
+          child: Container(
+            width: 30,
+            height: 30,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white.withOpacity(0.9),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.3),
+                  blurRadius: 4,
+                  spreadRadius: 1,
+                ),
+              ],
+            ),
+            child: Center(
+              child: Text(
+                'VS',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
 }
