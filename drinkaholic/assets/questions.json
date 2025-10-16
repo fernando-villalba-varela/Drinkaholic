@@ -491,7 +491,401 @@
         ]
       },
       "categoria": "Genérico - Reparte por Razón"
+    },
+  {
+    "id": "generico_bebe_simple_1",
+    "template": "{X} bebe {Y} tragos por llegar tarde",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Genérico - Bebe"
+  },
+  {
+    "id": "generico_bebe_simple_2",
+    "template": "{X} bebe {Y} tragos si ha enviado un mensaje vergonzoso",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Genérico - Bebe"
+  },
+  {
+    "id": "generico_bebe_simple_3",
+    "template": "{X} bebe {Y} tragos si ha stalkeado a alguien esta semana",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Genérico - Bebe"
+  },
+  {
+    "id": "generico_bebe_simple_4",
+    "template": "{X} bebe {Y} tragos por revisar el celular durante el juego",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Genérico - Bebe"
+  },
+  {
+    "id": "generico_bebe_simple_5",
+    "template": "{X} bebe {Y} tragos si alguna vez ha mentido en este juego",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Genérico - Bebe"
+  },
+  {
+    "id": "generico_bebe_simple_6",
+    "template": "{X} bebe {Y} tragos por decir una palabra prohibida",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Genérico - Bebe"
+  },
+  {
+    "id": "generico_bebe_simple_7",
+    "template": "{X} bebe {Y} tragos si ha tenido una cita esta semana",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Genérico - Bebe"
+  },
+  {
+    "id": "generico_bebe_simple_8",
+    "template": "{X} bebe {Y} tragos si alguna vez se ha besado con otro jugador",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Genérico - Bebe"
+  },
+  {
+    "id": "generico_bebe_simple_9",
+    "template": "{X} bebe {Y} tragos si ha hecho ghosting a alguien",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Genérico - Bebe"
+  },
+  {
+    "id": "generico_bebe_simple_10",
+    "template": "{X} bebe {Y} tragos si no ha hecho ejercicio en toda la semana",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Genérico - Bebe"
+  },
+  {
+    "id": "generico_bebe_simple_11",
+    "template": "{X} bebe {Y} tragos si ha perdido algo importante recientemente",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Genérico - Bebe"
+  },
+  {
+    "id": "generico_bebe_simple_12",
+    "template": "{X} bebe {Y} tragos si ha tenido una pelea esta semana",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Genérico - Bebe"
+  },
+  {
+    "id": "generico_bebe_simple_13",
+    "template": "{X} bebe {Y} tragos si ha comido comida chatarra hoy",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Genérico - Bebe"
+  },
+  {
+    "id": "generico_bebe_simple_14",
+    "template": "{X} bebe {Y} tragos si ha llorado viendo una película",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Genérico - Bebe"
+  },
+  {
+    "id": "generico_bebe_simple_15",
+    "template": "{X} bebe {Y} tragos si ha tenido una resaca esta semana",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Genérico - Bebe"
+  },
+  {
+    "id": "generico_bebe_simple_16",
+    "template": "{X} bebe {Y} tragos si ha usado una excusa para no salir",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Genérico - Bebe"
+  },
+  {
+    "id": "generico_bebe_simple_17",
+    "template": "{X} bebe {Y} tragos si se ha enamorado de un profesor o jefa",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Genérico - Bebe"
+  },
+  {
+    "id": "generico_bebe_simple_18",
+    "template": "{X} bebe {Y} tragos si ha hablado mal de alguien del grupo",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Genérico - Bebe"
+  },
+  {
+    "id": "generico_bebe_simple_19",
+    "template": "{X} bebe {Y} tragos si ha tenido un sueño raro últimamente",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Genérico - Bebe"
+  },
+  {
+    "id": "generico_bebe_simple_20",
+    "template": "{X} bebe {Y} tragos si ha hecho una compra impulsiva reciente",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Genérico - Bebe"
+  },
+  {
+    "id": "generico_bebe_simple_21",
+    "template": "{X} bebe {Y} tragos si ha usado una app de citas",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Genérico - Bebe"
+  },
+  {
+    "id": "generico_bebe_simple_22",
+    "template": "{X} bebe {Y} tragos si ha mentido sobre su edad",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Genérico - Bebe"
+  },
+  {
+    "id": "generico_bebe_simple_23",
+    "template": "{X} bebe {Y} tragos si se ha quedado dormido en una clase o reunión",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Genérico - Bebe"
+  },
+  {
+    "id": "generico_bebe_simple_24",
+    "template": "{X} bebe {Y} tragos si ha stalkeado a su ex",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
     }
-   
+  },
+  {
+    "id": "generico_bebe_sarcasmo_1",
+    "template": "{X} bebe {Y} tragos por tener esa cara de influencer frustrado",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Sarcasmo - Bebe"
+  },
+  {
+    "id": "generico_bebe_sarcasmo_2",
+    "template": "{X} bebe {Y} tragos por existir tan intensamente",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Sarcasmo - Bebe"
+  },
+  {
+    "id": "generico_bebe_sarcasmo_3",
+    "template": "{X} bebe {Y} tragos por creerse el alma de la fiesta... y fallar",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Sarcasmo - Bebe"
+  },
+  {
+    "id": "generico_bebe_sarcasmo_4",
+    "template": "{X} bebe {Y} tragos por usar frases motivacionales en Instagram",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Sarcasmo - Bebe"
+  },
+  {
+    "id": "generico_bebe_sarcasmo_5",
+    "template": "{X} bebe {Y} tragos por creer que el horóscopo le guía la vida",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Sarcasmo - Bebe"
+  },
+  {
+    "id": "generico_bebe_sarcasmo_6",
+    "template": "{X} bebe {Y} tragos por esa risa que parece alarma de coche",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Sarcasmo - Bebe"
+  },
+  {
+    "id": "generico_bebe_sarcasmo_7",
+    "template": "{X} bebe {Y} tragos por tener barba como si eso te diera personalidad",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Sarcasmo - Bebe"
+  },
+  {
+    "id": "generico_bebe_sarcasmo_8",
+    "template": "{X} bebe {Y} tragos por usar Crocs y creerse con estilo",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Sarcasmo - Bebe"
+  },
+  {
+    "id": "generico_bebe_sarcasmo_9",
+    "template": "{X} bebe {Y} tragos por decir 'yo no tomo mucho' mientras bebe esto",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Sarcasmo - Bebe"
+  },
+  {
+    "id": "generico_bebe_sarcasmo_10",
+    "template": "{X} bebe {Y} tragos por tener más selfies que neuronas",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Sarcasmo - Bebe"
+  },
+  {
+    "id": "generico_bebe_sarcasmo_11",
+    "template": "{X} bebe {Y} tragos por decir que 'no le gusta el drama' mientras crea uno",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Sarcasmo - Bebe"
+  },
+  {
+    "id": "generico_bebe_sarcasmo_12",
+    "template": "{X} bebe {Y} tragos por tener más ex que zapatos",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Sarcasmo - Bebe"
+  },
+  {
+    "id": "generico_bebe_sarcasmo_13",
+    "template": "{X} bebe {Y} tragos por seguir diciendo que va al gym 'mañana'",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Sarcasmo - Bebe"
+  },
+  {
+    "id": "generico_bebe_sarcasmo_14",
+    "template": "{X} bebe {Y} tragos por creerse modelo solo por tener TikTok",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Sarcasmo - Bebe"
+  },
+  {
+    "id": "generico_bebe_sarcasmo_15",
+    "template": "{X} bebe {Y} tragos por decir que está soltero por decisión propia",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Sarcasmo - Bebe"
+  },
+  {
+    "id": "generico_bebe_sarcasmo_16",
+    "template": "{X} bebe {Y} tragos por ser el que más habla y menos aporta",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Sarcasmo - Bebe"
+  },
+  {
+    "id": "generico_bebe_sarcasmo_17",
+    "template": "{X} bebe {Y} tragos por tener playlist de 'perreo triste'",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Sarcasmo - Bebe"
+  },
+  {
+    "id": "generico_bebe_sarcasmo_18",
+    "template": "{X} bebe {Y} tragos por enviar stickers en vez de respuestas",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Sarcasmo - Bebe"
+  },
+  {
+    "id": "generico_bebe_sarcasmo_19",
+    "template": "{X} bebe {Y} tragos por decir 'yo soy diferente' como todos los demás",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Sarcasmo - Bebe"
+  },
+  {
+    "id": "generico_bebe_sarcasmo_20",
+    "template": "{X} bebe {Y} tragos solo por mirar así de sospechoso",
+    "variables": {
+      "X": ["PLAYER"],
+      "Y": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Sarcasmo - Bebe"
+  }
   ]
 }

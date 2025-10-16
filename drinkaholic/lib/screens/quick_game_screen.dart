@@ -739,179 +739,241 @@ Future<void> _initializeFirstChallenge() async {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: Stack(
-          children: [
-            Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xFF00C9FF), // Cyan
-                    Color(0xFF92FE9D), // Green
-                  ],
+        body: LayoutBuilder( 
+          builder: (context, constraints) {
+
+
+
+             final iconSize = getResponsiveSize(
+          context,
+          small: 35,     // Aumentado de 28
+          medium: 40,    // Aumentado de 35
+          large: 50,     // Aumentado de 45
+        );
+
+        final fontSize = getResponsiveSize(
+          context, 
+          small: 18,     // Aumentado de 16
+          medium: 22,    // Aumentado de 20
+          large: 26,     // Aumentado de 24
+        );
+
+        final padding = getResponsiveSize(
+          context,
+          small: 18,     // Aumentado de 15
+          medium: 28,    // Aumentado de 25
+          large: 38,     // Aumentado de 35
+        );
+
+        final containerPadding = getResponsiveSize(
+          context,
+          small: 20,     // Nuevo valor
+          medium: 30,    // Nuevo valor
+          large: 40,     // Nuevo valor
+        );
+
+        final containerMargin = getResponsiveSize(
+          context,
+          small: 270,     // Nuevo valor
+          medium: 370,    // Nuevo valor
+          large: 400,     // Nuevo valor
+        );
+
+
+          return Stack(
+            children: [
+              Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color(0xFF00C9FF), // Cyan
+                      Color(0xFF92FE9D), // Green
+                    ],
+                  ),
                 ),
               ),
-            ),
-            _buildAnimatedBackground(),
-            // Floating particles effect like home_screen
-            ...List.generate(
-              8,
-              (index) => _buildFloatingParticle(
-                MediaQuery.of(context).size.width,
-                MediaQuery.of(context).size.height,
-                index,
+              _buildAnimatedBackground(),
+              // Floating particles effect like home_screen
+              ...List.generate(
+                8,
+                (index) => _buildFloatingParticle(
+                  MediaQuery.of(context).size.width,
+                  MediaQuery.of(context).size.height,
+                  index,
+                ),
               ),
-            ),
-            SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(18),
-                child: Row(
-                  children: [
-                     GestureDetector(
-                          onTap: () => Navigator.of(context).pop(),
-                          child: Container(
-                            margin: const EdgeInsets.only(bottom: 357),
-                           
-                            padding: const EdgeInsets.all(7),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(
-                                color: Colors.white.withOpacity(0.3),
-                                width: 1,
+              SafeArea(
+                child: Padding(
+                  padding:  EdgeInsets.all(padding),
+                  child: Row(
+                    children: [
+                       GestureDetector(
+                            onTap: () => Navigator.of(context).pop(),
+                            child: Container(
+                              margin:  EdgeInsets.only(bottom: containerMargin),
+                             
+                              padding: const EdgeInsets.all(7),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: Colors.white.withOpacity(0.3),
+                                  width: 1,
+                                ),
                               ),
-                            ),
-                            child: const Icon(
-                              Icons.close,
-                              color: Colors.white,
-                              size: 24,
+                              child: Icon(
+                                Icons.close,
+                                color: Colors.white,
+                                size: iconSize,
+                              ),
                             ),
                           ),
-                        ),
-                    Expanded(
-                      child: AnimatedBuilder(
-                        animation: _tapAnimation,
-                        builder: (context, child) {
-                          return Transform.scale(
-                            scale: _tapAnimation.value,
-                            child: GestureDetector(
-                              onTapDown: (details) {
-                                final RenderBox renderBox = context.findRenderObject() as RenderBox;
-                                final localPosition = renderBox.globalToLocal(details.globalPosition);
-                                _addRippleEffect(localPosition);
-                              },
-                              onTap: _nextChallenge,
-                              behavior: HitTestBehavior.opaque,
-                              child: Stack(
-                                children: [
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: Center(
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          buildCenterContent(_createGameState()),
-                                          const SizedBox(height: 20),
-                                          // Tap indicator (only show at the beginning)
-                                          if (!_gameStarted)
-                                            AnimatedBuilder(
-                                              animation: _glowAnimation,
-                                              builder: (context, child) {
-                                                return Container(
-                                                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white.withOpacity(0.1),
-                                                    borderRadius: BorderRadius.circular(25),
-                                                    border: Border.all(
-                                                      color: Colors.white.withOpacity(_glowAnimation.value * 0.8),
-                                                      width: 2,
-                                                    ),
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: Colors.white.withOpacity(_glowAnimation.value * 0.3),
-                                                        blurRadius: 15,
-                                                        spreadRadius: 2,
+                      Expanded(
+                        child: AnimatedBuilder(
+                          animation: _tapAnimation,
+                          builder: (context, child) {
+                            return Transform.scale(
+                              scale: _tapAnimation.value,
+                              child: GestureDetector(
+                                onTapDown: (details) {
+                                  final RenderBox renderBox = context.findRenderObject() as RenderBox;
+                                  final localPosition = renderBox.globalToLocal(details.globalPosition);
+                                  _addRippleEffect(localPosition);
+                                },
+                                onTap: _nextChallenge,
+                                behavior: HitTestBehavior.opaque,
+                                child: Stack(
+                                  children: [
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: Center(
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            buildCenterContent(_createGameState()),
+                                            const SizedBox(height: 20),
+                                            // Tap indicator (only show at the beginning)
+                                            if (!_gameStarted)
+                                              AnimatedBuilder(
+                                                animation: _glowAnimation,
+                                                builder: (context, child) {
+                                                  return Container(
+                                                    padding: EdgeInsets.all(containerPadding),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white.withOpacity(0.1),
+                                                      borderRadius: BorderRadius.circular(25),
+                                                      border: Border.all(
+                                                        color: Colors.white.withOpacity(_glowAnimation.value * 0.8),
+                                                        width: 2,
                                                       ),
-                                                    ],
-                                                  ),
-                                                  child: Row(
-                                                    mainAxisSize: MainAxisSize.min,
-                                                    children: [
-                                                      Icon(
-                                                        Icons.touch_app,
-                                                        color: Colors.white.withOpacity(_glowAnimation.value),
-                                                        size: 20,
-                                                      ),
-                                                      const SizedBox(width: 8),
-                                                      Text(
-                                                        'TOCA LA PANTALLA',
-                                                        style: TextStyle(
-                                                          color: Colors.white.withOpacity(_glowAnimation.value),
-                                                          fontSize: 14,
-                                                          fontWeight: FontWeight.bold,
-                                                          letterSpacing: 1.2,
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: Colors.white.withOpacity(_glowAnimation.value * 0.3),
+                                                          blurRadius: 15,
+                                                          spreadRadius: 2,
                                                         ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                        ],
+                                                      ],
+                                                    ),
+                                                    child: Row(
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      children: [
+                                                        Icon(
+                                                          Icons.touch_app,
+                                                          color: Colors.white.withOpacity(_glowAnimation.value),
+                                                          size: iconSize,
+                                                        ),
+                                                        const SizedBox(width: 8),
+                                                        Text(
+                                                          'TOCA LA PANTALLA',
+                                                          style: TextStyle(
+                                                            color: Colors.white.withOpacity(_glowAnimation.value),
+                                                            fontSize: fontSize,
+                                                            fontWeight: FontWeight.bold,
+                                                            letterSpacing: 1.2,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  _buildRippleEffects(),
-                                ],
+                                    _buildRippleEffects(),
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        },
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                    // // Players row
-                        //  SizedBox(
-                        //    width: 50,
-                        //    child: Column(
-                        //      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        //      children: widget.players.asMap().entries.map((entry) {
-                        //        final index = entry.key;
-                        //        final player = entry.value;
-                        //        return Column(
-                        //          mainAxisAlignment: MainAxisAlignment.center,
-                        //          children: [
-                        //            _buildPlayerAvatar(
-                        //              player,
-                        //              isActive: index == _currentPlayerIndex,
-                        //            ),
-                        //            const SizedBox(height: 5),
-                        //            Text(
-                        //              player.nombre,
-                        //              style: TextStyle(
-                        //                color: index == _currentPlayerIndex
-                        //                    ? Colors.white
-                        //                    : Colors.white.withOpacity(0.7),
-                        //                fontSize: 14,
-                        //                fontWeight: index == _currentPlayerIndex
-                        //                    ? FontWeight.bold
-                        //                    : FontWeight.normal,
-                        //              ),
-                        //              textAlign: TextAlign.center,
-                        //            ),
-                        //          ],
-                        //        );
-                        //      }).toList(),
-                        //    ),
-                        //  ),
-                  ],
+                      // // Players row
+                          //  SizedBox(
+                          //    width: 50,
+                          //    child: Column(
+                          //      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          //      children: widget.players.asMap().entries.map((entry) {
+                          //        final index = entry.key;
+                          //        final player = entry.value;
+                          //        return Column(
+                          //          mainAxisAlignment: MainAxisAlignment.center,
+                          //          children: [
+                          //            _buildPlayerAvatar(
+                          //              player,
+                          //              isActive: index == _currentPlayerIndex,
+                          //            ),
+                          //            const SizedBox(height: 5),
+                          //            Text(
+                          //              player.nombre,
+                          //              style: TextStyle(
+                          //                color: index == _currentPlayerIndex
+                          //                    ? Colors.white
+                          //                    : Colors.white.withOpacity(0.7),
+                          //                fontSize: 14,
+                          //                fontWeight: index == _currentPlayerIndex
+                          //                    ? FontWeight.bold
+                          //                    : FontWeight.normal,
+                          //              ),
+                          //              textAlign: TextAlign.center,
+                          //            ),
+                          //          ],
+                          //        );
+                          //      }).toList(),
+                          //    ),
+                          //  ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          );}
         ),
       ),
     );
+  }
+}
+
+double getResponsiveSize(BuildContext context, {
+  required double small,    
+  required double medium,   
+  required double large,    
+}) {
+  final width = MediaQuery.of(context).size.width;
+  
+  // Breakpoints ajustados para Nothing Phone (2400x1080)
+  const breakpointSmall = 1000.0;    // Móviles pequeños
+  const breakpointMedium = 1700.0;   // Móviles medianos/grandes como Nothing Phone
+
+  if (width <= breakpointSmall) {
+    return small * 1.2;  // Incremento del 20% para mejor visibilidad
+  } else if (width <= breakpointMedium) {
+    return medium * 1.5; // Incremento del 15% 
+  } else {
+    return large * 2;
   }
 }
 

@@ -1,7 +1,9 @@
-import 'package:drinkaholic/screens/league_list_screen.dart';
 import 'package:flutter/material.dart';
-import 'dart:math';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../viewmodels/home_viewmodel.dart';
+import '../widgets/home/modern_button.dart';
+import '../widgets/home/animated_icon_widget.dart';
+import '../widgets/home/floating_particle.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -83,13 +85,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     await _animationController.forward();
 
-    // Wait a bit for the full effect
     await Future.delayed(const Duration(milliseconds: 200));
 
-    // Execute the navigation
     onComplete();
 
-    // Reset animation after navigation
     await Future.delayed(const Duration(milliseconds: 100));
     _animationController.reset();
     setState(() {
@@ -111,96 +110,92 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         builder: (context, child) {
           return Stack(
             children: [
-              // Beautiful gradient background
               Container(
                 decoration: const BoxDecoration(
                   gradient: RadialGradient(
                     center: Alignment.topLeft,
                     radius: 1.5,
                     colors: [
-                      Color(0xFF2D1B69), // Deep purple
-                      Color(0xFF11072C), // Dark purple
-                      Color(0xFF0D0221), // Almost black
+                      Color(0xFF2D1B69),
+                      Color(0xFF11072C),
+                      Color(0xFF0D0221),
                     ],
                   ),
                 ),
               ),
-              // Floating particles effect
               ...List.generate(
                 6,
-                (index) =>
-                    _buildFloatingParticle(screenWidth, screenHeight, index),
+                (index) => FloatingParticle(
+                  screenWidth: screenWidth,
+                  screenHeight: screenHeight,
+                  index: index,
+                ),
               ),
 
-              // Main content
               SafeArea(
                 child: Column(
                   children: [
-                    Expanded(
-                      flex: 3,
+                    Flexible(
+                      fit: FlexFit.loose,
                       child: Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            // Logo with glow effect
                             Container(
-                              padding: const EdgeInsets.all(20),
+                              padding: EdgeInsets.all(16.w),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(
-                                      0xFFD4A373,
-                                    ).withOpacity(0.3),
-                                    blurRadius: 30,
-                                    spreadRadius: 10,
+                                    color: const Color(0x4DD4A373),
+                                    blurRadius: 30.r,
+                                    spreadRadius: 10.r,
                                   ),
                                 ],
                               ),
                               child: Image.asset(
                                 'assets/images/drinkaholic_logo.gif',
-                                width: 180,
-                                height: 180,
+                                width: 160.w,
+                                height: 160.w,
                               ),
                             ),
-                            const SizedBox(height: 30),
+                            SizedBox(height: 24.h),
 
-                            // Title with enhanced styling
                             ShaderMask(
                               shaderCallback: (bounds) => const LinearGradient(
                                 colors: [
-                                  Color(0xFFFFD700), // Gold
-                                  Color(0xFFD4A373), // Bronze
-                                  Color(0xFFB8860B), // Dark gold
+                                  Color(0xFFFFD700),
+                                  Color(0xFFD4A373),
+                                  Color(0xFFB8860B),
                                 ],
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                               ).createShader(bounds),
-                              child: const Text(
+                              child: Text(
                                 'DRINKAHOLIC',
                                 style: TextStyle(
-                                  fontSize: 48,
+                                  fontSize: 42.sp,
                                   fontWeight: FontWeight.w900,
-                                  letterSpacing: 4,
+                                  letterSpacing: 3.5,
                                   color: Colors.white,
                                   shadows: [
                                     Shadow(
                                       color: Colors.black54,
-                                      offset: Offset(2, 2),
-                                      blurRadius: 4,
+                                      offset: Offset(2.w, 2.h),
+                                      blurRadius: 4.r,
                                     ),
                                   ],
                                 ),
                               ),
                             ),
 
-                            const SizedBox(height: 8),
+                            SizedBox(height: 6.h),
                             Text(
                               'A beber como los duendes',
                               style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.white.withOpacity(0.8),
-                                letterSpacing: 2,
+                                fontSize: 14.sp,
+                                color: const Color(0xCCFFFFFF),
+                                letterSpacing: 1.8,
                                 fontWeight: FontWeight.w300,
                               ),
                             ),
@@ -209,64 +204,46 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       ),
                     ),
 
-                    // Buttons section
-                    Expanded(
-                      flex: 2,
+                    Flexible(
+                      fit: FlexFit.loose,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 40),
+                        padding: EdgeInsets.symmetric(horizontal: 32.w),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            _buildModernButton(
-                              onTap: () {
-                                const gradient = LinearGradient(
-                                  colors: [
-                                    Color(0xFF00C9FF),
-                                    Color(0xFF92FE9D),
-                                  ],
-                                );
-                                _startAnimatedNavigation(
-                                  gradient,
-                                  'PARTIDA RÁPIDA',
-                                  Icons.flash_on,
-                                  () => _viewModel.navigateToQuickGame(context),
+                            Builder(
+                              builder: (context) {
+                                final config = _viewModel
+                                    .getQuickGameButtonConfig(
+                                      context,
+                                      _startAnimatedNavigation,
+                                    );
+                                return ModernButton(
+                                  onTap: config.onTap,
+                                  text: config.text,
+                                  icon: config.icon,
+                                  gradient: config.gradient,
                                 );
                               },
-                              text: 'PARTIDA RÁPIDA',
-                              icon: Icons.flash_on,
-                              gradient: const LinearGradient(
-                                colors: [Color(0xFF00C9FF), Color(0xFF92FE9D)],
-                              ),
                             ),
-                            const SizedBox(height: 20),
+                            SizedBox(height: 18.h),
 
-                            _buildModernButton(
-                              onTap: () {
-                                const gradient = LinearGradient(
-                                  colors: [
-                                    Color(0xFFFC466B),
-                                    Color(0xFF3F5EFB),
-                                  ],
+                            Builder(
+                              builder: (context) {
+                                final config = _viewModel.getLeagueButtonConfig(
+                                  context,
+                                  _startAnimatedNavigation,
                                 );
-                                _startAnimatedNavigation(
-                                  gradient,
-                                  'LIGA',
-                                  Icons.emoji_events,
-                                  () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => const LeagueListScreen(),
-                                    ),
-                                  ),
+                                return ModernButton(
+                                  onTap: config.onTap,
+                                  text: config.text,
+                                  icon: config.icon,
+                                  gradient: config.gradient,
                                 );
                               },
-                              text: 'LIGA',
-                              icon: Icons.emoji_events,
-                              gradient: const LinearGradient(
-                                colors: [Color(0xFFFC466B), Color(0xFF3F5EFB)],
-                              ),
                             ),
-                            const SizedBox(height: 30),
+                            SizedBox(height: 24.h),
                           ],
                         ),
                       ),
@@ -274,7 +251,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   ],
                 ),
               ),
-              // Fullscreen animation overlay
               if (_isAnimating && _currentGradient != null)
                 AnimatedBuilder(
                   animation: _animationController,
@@ -290,10 +266,20 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           child: _scaleAnimation.value > 0.3
                               ? Stack(
                                   children: [
-                                    // Animated icon layer (appears early)
                                     if (_scaleAnimation.value > 0.3)
-                                      Center(child: _buildAnimatedIcon()),
-                                    // Loading text layer (appears later)
+                                      Center(
+                                        child: AnimatedIconWidget(
+                                          animatingIcon: _animatingIcon,
+                                          animationController:
+                                              _animationController,
+                                          opacityAnimation: _opacityAnimation,
+                                          iconMoveAnimation: _iconMoveAnimation,
+                                          iconScaleAnimation:
+                                              _iconScaleAnimation,
+                                          iconRotationAnimation:
+                                              _iconRotationAnimation,
+                                        ),
+                                      ),
                                     if (_scaleAnimation.value > 0.8)
                                       FadeTransition(
                                         opacity: _opacityAnimation,
@@ -302,9 +288,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
                                             children: [
-                                              const SizedBox(
-                                                height: 200,
-                                              ), // Space for icon animation
+                                              const SizedBox(height: 200),
                                               const CircularProgressIndicator(
                                                 valueColor:
                                                     AlwaysStoppedAnimation<
@@ -335,7 +319,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   },
                 ),
 
-              // Error handling with modern styling
               if (_viewModel.hasError)
                 Positioned(
                   bottom: 30,
@@ -350,7 +333,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       borderRadius: BorderRadius.circular(15),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.red.withOpacity(0.3),
+                          color: const Color(0x4DF44336),
                           blurRadius: 15,
                           spreadRadius: 2,
                         ),
@@ -379,215 +362,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   ),
                 ),
             ],
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildModernButton({
-    required VoidCallback onTap,
-    required String text,
-    required IconData icon,
-    required Gradient gradient,
-    bool isSmaller = false,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        width: double.infinity,
-        height: isSmaller ? 50 : 65,
-        decoration: BoxDecoration(
-          gradient: gradient,
-          borderRadius: BorderRadius.circular(isSmaller ? 25 : 32),
-          boxShadow: [
-            BoxShadow(
-              color: gradient.colors.first.withOpacity(0.3),
-              blurRadius: 20,
-              spreadRadius: 2,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(isSmaller ? 25 : 32),
-            onTap: onTap,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(icon, color: Colors.white, size: isSmaller ? 20 : 24),
-                  const SizedBox(width: 12),
-                  Text(
-                    text,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: isSmaller ? 16 : 18,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAnimatedIcon() {
-    if (_animatingIcon == null) return const SizedBox.shrink();
-
-    // Different animations based on icon type
-    if (_animatingIcon == Icons.flash_on) {
-      // Rocket launch animation - moves up with trail effect
-      return AnimatedBuilder(
-        animation: _animationController,
-        builder: (context, child) {
-          return Stack(
-            alignment: Alignment.center,
-            children: [
-              // Rocket trail effect
-              if (_iconMoveAnimation.value < -50)
-                ...List.generate(5, (index) {
-                  final opacity = (1 - (index * 0.2)) * _opacityAnimation.value;
-                  final trailOffset = _iconMoveAnimation.value + (index * 30);
-                  return Transform.translate(
-                    offset: Offset(0, trailOffset),
-                    child: Opacity(
-                      opacity: opacity.clamp(0.0, 1.0),
-                      child: Icon(
-                        Icons.circle,
-                        size: 8 - (index * 1.5),
-                        color: Colors.white,
-                      ),
-                    ),
-                  );
-                }),
-              // Main rocket icon
-              Transform.translate(
-                offset: Offset(0, _iconMoveAnimation.value),
-                child: Transform.scale(
-                  scale: _iconScaleAnimation.value,
-                  child: Transform.rotate(
-                    angle: (_iconRotationAnimation.value * 3.14159) / 180,
-                    child: Icon(_animatingIcon, size: 80, color: Colors.white),
-                  ),
-                ),
-              ),
-            ],
-          );
-        },
-      );
-    } else if (_animatingIcon == Icons.emoji_events) {
-      // Trophy bounce and glow animation
-      return AnimatedBuilder(
-        animation: _animationController,
-        builder: (context, child) {
-          return Stack(
-            alignment: Alignment.center,
-            children: [
-              // Glow effect
-              Container(
-                width: 120 * _iconScaleAnimation.value,
-                height: 120 * _iconScaleAnimation.value,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.yellow.withOpacity(
-                        0.6 * _opacityAnimation.value,
-                      ),
-                      blurRadius: 30,
-                      spreadRadius: 10,
-                    ),
-                  ],
-                ),
-              ),
-              // Floating sparkles around trophy
-              ...List.generate(8, (index) {
-                final angle = (index * 45) + (_iconRotationAnimation.value * 2);
-                final distance = 60 + (10 * _iconScaleAnimation.value);
-                final x = distance * cos(angle * 3.14159 / 180);
-                final y = distance * sin(angle * 3.14159 / 180);
-                return Transform.translate(
-                  offset: Offset(x, y),
-                  child: Opacity(
-                    opacity: _opacityAnimation.value,
-                    child: Icon(
-                      Icons.star,
-                      size: 12 + (8 * _iconScaleAnimation.value),
-                      color: Colors.yellow,
-                    ),
-                  ),
-                );
-              }),
-              // Main trophy icon with bounce
-              Transform.translate(
-                offset: Offset(
-                  0,
-                  sin(_iconRotationAnimation.value * 3.14159 / 180) * 20,
-                ),
-                child: Transform.scale(
-                  scale: _iconScaleAnimation.value,
-                  child: Icon(_animatingIcon, size: 80, color: Colors.yellow),
-                ),
-              ),
-            ],
-          );
-        },
-      );
-    }
-
-    return const SizedBox.shrink();
-  }
-
-  Widget _buildFloatingParticle(
-    double screenWidth,
-    double screenHeight,
-    int index,
-  ) {
-    final random = (index * 1234) % 1000;
-    final size = 4.0 + (random % 8);
-    final left = (random * 0.7) % screenWidth;
-    final top = (random * 0.8) % screenHeight;
-    final opacity = 0.1 + (random % 40) / 100;
-
-    return Positioned(
-      left: left,
-      top: top,
-      child: TweenAnimationBuilder(
-        duration: Duration(milliseconds: 3000 + (random % 2000)),
-        tween: Tween<double>(begin: 0, end: 1),
-        onEnd: () {
-          // Restart animation
-        },
-        builder: (context, double value, child) {
-          return Transform.translate(
-            offset: Offset(0, -value * 50),
-            child: Opacity(
-              opacity: opacity * (1 - value),
-              child: Container(
-                width: size,
-                height: size,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.6),
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.white.withOpacity(0.3),
-                      blurRadius: 4,
-                      spreadRadius: 1,
-                    ),
-                  ],
-                ),
-              ),
-            ),
           );
         },
       ),
