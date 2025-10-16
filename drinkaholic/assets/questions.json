@@ -705,7 +705,8 @@
     "variables": {
       "X": ["PLAYER"],
       "Y": ["1", "2", "3", "4", "5"]
-    }
+    },
+    "categoria": "Genérico - Bebe"
   },
   {
     "id": "generico_bebe_sarcasmo_1",
