@@ -1,6 +1,31 @@
+import 'package:drinkaholic/models/player.dart';
 import 'package:flutter/material.dart';
 import '../models/game_state.dart';
 import 'dart:math';
+
+
+
+
+// Helper function para determinar tamaños responsivos
+double getResponsiveSize(BuildContext context, {
+  required double small,    
+  required double medium,   
+  required double large,    
+}) {
+  final width = MediaQuery.of(context).size.width;
+  
+  // Breakpoints ajustados para Nothing Phone (2400x1080)
+  const breakpointSmall = 1000.0;    // Móviles pequeños
+  const breakpointMedium = 1700.0;   // Móviles medianos/grandes como Nothing Phone
+
+  if (width <= breakpointSmall) {
+    return small * 1.2;  // Incremento del 20% para mejor visibilidad
+  } else if (width <= breakpointMedium) {
+    return medium * 1.5; // Incremento del 15% 
+  } else {
+    return large * 2;
+  }
+}
 
 Widget buildCenterContent(GameState gameState) {
   //Current challenge es solo cuando son preguntas
@@ -20,13 +45,46 @@ Widget buildCenterContent(GameState gameState) {
 
     return LayoutBuilder(
       builder: (context, constraints) {
+        // Definir tamaños responsivos
+        final iconSize = getResponsiveSize(
+          context,
+          small: 35,     // Aumentado de 28
+          medium: 40,    // Aumentado de 35
+          large: 50,     // Aumentado de 45
+        );
+
+        final fontSize = getResponsiveSize(
+          context, 
+          small: 18,     // Aumentado de 16
+          medium: 22,    // Aumentado de 20
+          large: 26,     // Aumentado de 24
+        );
+
+        final padding = getResponsiveSize(
+          context,
+          small: 18,     // Aumentado de 15
+          medium: 28,    // Aumentado de 25
+          large: 38,     // Aumentado de 35
+        );
+
+        final containerPadding = getResponsiveSize(
+          context,
+          small: 20,     // Nuevo valor
+          medium: 30,    // Nuevo valor
+          large: 40,     // Nuevo valor
+        );
+
+        final containerMargin = getResponsiveSize(
+          context,
+          small: 15,     // Nuevo valor
+          medium: 25,    // Nuevo valor
+          large: 35,     // Nuevo valor
+        );
+
         final screenSize = MediaQuery.of(context).size;
         final isSmallScreen = screenSize.width < 500;
 
-        // Ajustar tamaños según el espacio disponible
-        final double iconSize = isSmallScreen ? 20 : 25;
-        final double fontSize = isSmallScreen ? 15 : 17;
-        final double padding = isSmallScreen ? 10 : 20;
+        
 
         return SingleChildScrollView(
           child: Column(
@@ -209,13 +267,40 @@ Widget _buildConstantChallengeContent(GameState gameState) {
 
   return LayoutBuilder(
     builder: (context, constraints) {
-      final screenSize = MediaQuery.of(context).size;
-      final isSmallScreen = screenSize.width < 600;
+     final iconSize = getResponsiveSize(
+          context,
+          small: 35,     // Aumentado de 28
+          medium: 40,    // Aumentado de 35
+          large: 50,     // Aumentado de 45
+        );
 
-      // Ajustar tamaños según el espacio disponible
-      final double iconSize = isSmallScreen ? 15 : 30;
-      final double fontSize = isSmallScreen ? 16 : 20;
+        final fontSize = getResponsiveSize(
+          context, 
+          small: 18,     // Aumentado de 16
+          medium: 22,    // Aumentado de 20
+          large: 26,     // Aumentado de 24
+        );
 
+        final padding = getResponsiveSize(
+          context,
+          small: 18,     // Aumentado de 15
+          medium: 28,    // Aumentado de 25
+          large: 38,     // Aumentado de 35
+        );
+
+        final containerPadding = getResponsiveSize(
+          context,
+          small: 20,     // Nuevo valor
+          medium: 30,    // Nuevo valor
+          large: 40,     // Nuevo valor
+        );
+
+        final containerMargin = getResponsiveSize(
+          context,
+          small: 15,     // Nuevo valor
+          medium: 25,    // Nuevo valor
+          large: 35,     // Nuevo valor
+        );
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -225,7 +310,7 @@ Widget _buildConstantChallengeContent(GameState gameState) {
             children: [
               // Martillo con aura amarilla a la izquierda (más grande)
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(13),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   boxShadow: [
@@ -292,12 +377,12 @@ Widget _buildConstantChallengeContent(GameState gameState) {
           //     ),
           //     textAlign: TextAlign.center,
           //   ),
-          SizedBox(height: isSmallScreen ? 10 : 20),
+          SizedBox(height:  20),
 
           // Challenge container with special styling
           Container(
-            padding: EdgeInsets.all(20),
-            margin: const EdgeInsets.symmetric(horizontal: 15),
+            padding: EdgeInsets.all(padding),
+            margin:  EdgeInsets.symmetric(horizontal: padding),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
@@ -342,8 +427,8 @@ Widget _buildConstantChallengeContent(GameState gameState) {
                     Flexible(
                       child: Text(
                         gameState.currentChallenge!,
-                        style: const TextStyle(
-                          fontSize: 20,
+                        style: TextStyle(
+                          fontSize: fontSize,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                           height: 1.3,
@@ -356,7 +441,7 @@ Widget _buildConstantChallengeContent(GameState gameState) {
                 // Show punishment info for new constant challenges
                 if (isNewChallenge && !isEndingChallenge) ...[
                   const SizedBox(height: 15),
-                  ..._buildPunishmentInfo(gameState),
+                  ..._buildPunishmentInfo(gameState, context),
                 ],
               ],
             ),
@@ -372,7 +457,44 @@ String _truncateText(String text, int maxLength) {
   return '${text.substring(0, maxLength)}...';
 }
 
-List<Widget> _buildPunishmentInfo(GameState gameState) {
+List<Widget> _buildPunishmentInfo(GameState gameState, BuildContext  context) {
+
+   final iconSize = getResponsiveSize(
+          context,
+          small: 25,     // Aumentado de 28
+          medium: 30,    // Aumentado de 35
+          large: 40,     // Aumentado de 45
+        );
+
+        final fontSize = getResponsiveSize(
+          context, 
+          small: 18,     // Aumentado de 16
+          medium: 22,    // Aumentado de 20
+          large: 26,     // Aumentado de 24
+        );
+
+        final padding = getResponsiveSize(
+          context,
+          small: 18,     // Aumentado de 15
+          medium: 28,    // Aumentado de 25
+          large: 38,     // Aumentado de 35
+        );
+
+        final containerPadding = getResponsiveSize(
+          context,
+          small: 20,     // Nuevo valor
+          medium: 30,    // Nuevo valor
+          large: 40,     // Nuevo valor
+        );
+
+        final containerMargin = getResponsiveSize(
+          context,
+          small: 15,     // Nuevo valor
+          medium: 25,    // Nuevo valor
+          large: 35,     // Nuevo valor
+        );
+
+
   // Find the current constant challenge being created
   final currentPlayerIndex = gameState.currentPlayerIndex;
   if (currentPlayerIndex < 0 ||
@@ -399,7 +521,7 @@ List<Widget> _buildPunishmentInfo(GameState gameState) {
   return [
     const SizedBox(height: 7),
     Container(
-      padding: const EdgeInsets.all(10),
+      padding:  EdgeInsets.all(padding),
       decoration: BoxDecoration(
         color: Colors.red.withOpacity(0.15),
         borderRadius: BorderRadius.circular(15),
@@ -407,16 +529,16 @@ List<Widget> _buildPunishmentInfo(GameState gameState) {
       ),
       child: Column(
         children: [
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.warning, color: Colors.red, size: 20),
-              SizedBox(width: 8),
+              Icon(Icons.warning, color: Colors.red, size: iconSize),
+              const SizedBox(width: 8),
               Text(
                 'CASTIGO',
                 style: TextStyle(
                   color: Colors.red,
-                  fontSize: 20,
+                  fontSize: iconSize,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1,
                 ),
@@ -426,9 +548,9 @@ List<Widget> _buildPunishmentInfo(GameState gameState) {
           const SizedBox(height: 2),
           Text(
             activeChallenge!.punishment,
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white,
-              fontSize: 17,
+              fontSize: fontSize,
               fontWeight: FontWeight.w500,
             ),
             textAlign: TextAlign.center,
@@ -445,11 +567,40 @@ Widget _buildEventContent(GameState gameState) {
 
   return LayoutBuilder(
     builder: (context, constraints) {
-      final screenSize = MediaQuery.of(context).size;
-      final isSmallScreen = screenSize.width < 600;
+      final iconSize = getResponsiveSize(
+          context,
+          small: 35,     // Aumentado de 28
+          medium: 40,    // Aumentado de 35
+          large: 50,     // Aumentado de 45
+        );
 
-      // Ajustar tamaños según el espacio disponible
-      final double fontSize = isSmallScreen ? 16 : 20;
+        final fontSize = getResponsiveSize(
+          context, 
+          small: 18,     // Aumentado de 16
+          medium: 22,    // Aumentado de 20
+          large: 26,     // Aumentado de 24
+        );
+
+        final padding = getResponsiveSize(
+          context,
+          small: 18,     // Aumentado de 15
+          medium: 28,    // Aumentado de 25
+          large: 38,     // Aumentado de 35
+        );
+
+        final containerPadding = getResponsiveSize(
+          context,
+          small: 20,     // Nuevo valor
+          medium: 30,    // Nuevo valor
+          large: 40,     // Nuevo valor
+        );
+
+        final containerMargin = getResponsiveSize(
+          context,
+          small: 15,     // Nuevo valor
+          medium: 25,    // Nuevo valor
+          large: 35,     // Nuevo valor
+        );
 
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -486,19 +637,19 @@ Widget _buildEventContent(GameState gameState) {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('🌌', style: TextStyle(fontSize: 20)),
+                Text('🌌', style: TextStyle(fontSize: fontSize)),
                 const SizedBox(width: 10),
                 Text(
                   isEndingEvent ? 'EVENTO FINALIZADO' : 'NUEVO EVENTO GLOBAL',
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: fontSize,
                     fontWeight: FontWeight.bold,
                     color: isEndingEvent ? Colors.purple : Colors.cyan,
                     letterSpacing: 1.5,
                   ),
                 ),
                 const SizedBox(width: 10),
-                Text('🌌', style: TextStyle(fontSize: 20)),
+                Text('🌌', style: TextStyle(fontSize: fontSize)),
               ],
             ),
           ),
@@ -529,7 +680,7 @@ Widget _buildEventContent(GameState gameState) {
             textAlign: TextAlign.center,
           ),
 
-          SizedBox(height: isSmallScreen ? 10 : 20),
+          SizedBox(height:  20),
 
           // Event container with cosmic styling
           TweenAnimationBuilder<double>(
@@ -539,7 +690,7 @@ Widget _buildEventContent(GameState gameState) {
               return Transform.scale(
                 scale: 0.85 + (0.15 * value),
                 child: Container(
-                  padding: EdgeInsets.all(15),
+                  padding: EdgeInsets.all(padding),
                   margin: const EdgeInsets.symmetric(horizontal: 15),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -581,7 +732,7 @@ Widget _buildEventContent(GameState gameState) {
                       AnimatedDefaultTextStyle(
                         duration: const Duration(milliseconds: 600),
                         style: TextStyle(
-                          fontSize: 20, //+ (sin(value * pi) * 3),
+                          fontSize: fontSize, //+ (sin(value * pi) * 3),
                           fontWeight: FontWeight.w800,
                           color: Colors.white,
                           height: 1.3,
@@ -696,146 +847,197 @@ IconData _getDynamicIcon(String challenge) {
 
 /// Helper function to build single player avatar
 Widget _buildSinglePlayerAvatar(GameState gameState) {
-  return Container(
-    width: 80,
-    height: 80,
-    decoration: BoxDecoration(
-      shape: BoxShape.circle,
-      border: Border.all(
-        color: Colors.white.withOpacity(gameState.glowAnimation.value),
-        width: 3,
-      ),
-    ),
-    child: ClipOval(
-      child: gameState.currentPlayer!.imagen != null
-          ? Image.file(gameState.currentPlayer!.imagen!, fit: BoxFit.cover)
-          : gameState.currentPlayer!.avatar != null
-          ? Image.asset(gameState.currentPlayer!.avatar!, fit: BoxFit.cover)
-          : Container(
-              color: Colors.white.withOpacity(0.2),
-              child: Icon(
-                Icons.person,
-                color: Colors.white.withOpacity(gameState.glowAnimation.value),
-                size: 40,
-              ),
-            ),
-    ),
+  return LayoutBuilder(
+    builder: (context, constraints) {
+      final avatarSize = getResponsiveSize(
+        context,
+        small: 60,    // Tamaño para pantallas pequeñas
+        medium: 80,   // Tamaño para pantallas medianas
+        large: 100,   // Tamaño para pantallas grandes
+      );
+
+      final borderWidth = getResponsiveSize(
+        context,
+        small: 2,
+        medium: 3,
+        large: 4,
+      );
+
+      final iconSize = getResponsiveSize(
+        context,
+        small: 30,
+        medium: 40,
+        large: 50,
+      );
+
+      return Container(
+        width: avatarSize,
+        height: avatarSize,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: Colors.white.withOpacity(gameState.glowAnimation.value),
+            width: borderWidth,
+          ),
+        ),
+        child: ClipOval(
+          child: gameState.currentPlayer!.imagen != null
+              ? Image.file(gameState.currentPlayer!.imagen!, fit: BoxFit.cover)
+              : gameState.currentPlayer!.avatar != null
+              ? Image.asset(gameState.currentPlayer!.avatar!, fit: BoxFit.cover)
+              : Container(
+                  color: Colors.white.withOpacity(0.2),
+                  child: Icon(
+                    Icons.person,
+                    color: Colors.white.withOpacity(gameState.glowAnimation.value),
+                    size: iconSize,
+                  ),
+                ),
+        ),
+      );
+    }
   );
 }
 
-/// Helper function to build dual player avatars
+/// Ajustar tamaños para avatares duales
 Widget _buildDualPlayerAvatars(GameState gameState) {
-  return SizedBox(
-    width: 120,
-    height: 80,
-    child: Stack(
-      children: [
-        // First player avatar (left)
-        Positioned(
-          left: 0,
-          top: 0,
-          child: Container(
-            width: 70,
-            height: 70,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: Colors.white.withOpacity(gameState.glowAnimation.value),
-                width: 3,
+  return LayoutBuilder(
+    builder: (context, constraints) {
+      final containerWidth = getResponsiveSize(
+        context,
+        small: 100,
+        medium: 120,
+        large: 140,
+      );
+
+      final avatarSize = getResponsiveSize(
+        context,
+        small: 50,
+        medium: 70,
+        large: 90,
+      );
+
+      final vsSize = getResponsiveSize(
+        context,
+        small: 25,
+        medium: 30,
+        large: 35,
+      );
+
+      final vsFontSize = getResponsiveSize(
+        context,
+        small: 10,
+        medium: 12,
+        large: 14,
+      );
+
+      return SizedBox(
+        width: containerWidth,
+        height: avatarSize,
+        child: Stack(
+          children: [
+            // Primer avatar (izquierda)
+            Positioned(
+              left: 0,
+              top: 0,
+              child: Container(
+                width: avatarSize,
+                height: avatarSize,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.white.withOpacity(gameState.glowAnimation.value),
+                    width: 3,
+                  ),
+                ),
+                child: ClipOval(
+                  child: _buildPlayerImage(
+                    gameState.currentPlayer!, 
+                    gameState,
+                    context, // Pasar el context
+                  ),
+                ),
               ),
             ),
-            child: ClipOval(
-              child: gameState.currentPlayer!.imagen != null
-                  ? Image.file(
-                      gameState.currentPlayer!.imagen!,
-                      fit: BoxFit.cover,
-                    )
-                  : gameState.currentPlayer!.avatar != null
-                  ? Image.asset(
-                      gameState.currentPlayer!.avatar!,
-                      fit: BoxFit.cover,
-                    )
-                  : Container(
-                      color: Colors.white.withOpacity(0.2),
-                      child: Icon(
-                        Icons.person,
-                        color: Colors.white.withOpacity(
-                          gameState.glowAnimation.value,
-                        ),
-                        size: 50,
-                      ),
+            // Segundo avatar (derecha)
+            Positioned(
+              right: 0,
+              top: 0,
+              child: Container(
+                width: avatarSize,
+                height: avatarSize,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.cyan.withOpacity(gameState.glowAnimation.value * 0.8),
+                    width: 3,
+                  ),
+                ),
+                child: ClipOval(
+                  child: _buildPlayerImage(
+                    gameState.dualPlayer!, 
+                    gameState,
+                    context, // Pasar el context
+                  ),
+                ),
+              ),
+            ),
+            // Indicador VS
+            Positioned(
+              left: containerWidth / 4,
+              top: avatarSize / 3,
+              child: Container(
+                width: vsSize,
+                height: vsSize,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withOpacity(0.9),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      blurRadius: 4,
+                      spreadRadius: 1,
                     ),
-            ),
-          ),
-        ),
-        // Second player avatar (right, overlapped)
-        Positioned(
-          right: 0,
-          top: 0,
-          child: Container(
-            width: 70,
-            height: 70,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: Colors.cyan.withOpacity(
-                  gameState.glowAnimation.value * 0.8,
+                  ],
                 ),
-                width: 3,
-              ),
-            ),
-            child: ClipOval(
-              child: gameState.dualPlayer!.imagen != null
-                  ? Image.file(gameState.dualPlayer!.imagen!, fit: BoxFit.cover)
-                  : gameState.dualPlayer!.avatar != null
-                  ? Image.asset(
-                      gameState.dualPlayer!.avatar!,
-                      fit: BoxFit.cover,
-                    )
-                  : Container(
-                      color: Colors.cyan.withOpacity(0.2),
-                      child: Icon(
-                        Icons.person,
-                        color: Colors.cyan.withOpacity(
-                          gameState.glowAnimation.value,
-                        ),
-                        size: 50,
-                      ),
+                child: Center(
+                  child: Text(
+                    'VS',
+                    style: TextStyle(
+                      fontSize: vsFontSize,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
                     ),
-            ),
-          ),
-        ),
-        // VS indicator in the middle
-        Positioned(
-          left: 35,
-          top: 25,
-          child: Container(
-            width: 30,
-            height: 30,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white.withOpacity(0.9),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
-                  blurRadius: 4,
-                  spreadRadius: 1,
-                ),
-              ],
-            ),
-            child: Center(
-              child: Text(
-                'VS',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  ),
                 ),
               ),
             ),
-          ),
+          ],
         ),
-      ],
-    ),
+      );
+    }
   );
+}
+
+// Helper method para construir la imagen del jugador
+Widget _buildPlayerImage(Player player, GameState gameState, BuildContext context) {
+  final iconSize = getResponsiveSize(
+    context, // Usar el context pasado como parámetro
+    small: 30,
+    medium: 40,
+    large: 50,
+  );
+
+  return player.imagen != null
+      ? Image.file(player.imagen!, fit: BoxFit.cover)
+      : player.avatar != null
+      ? Image.asset(player.avatar!, fit: BoxFit.cover)
+      : Container(
+          color: Colors.white.withOpacity(0.2),
+          child: Icon(
+            Icons.person,
+            color: Colors.white.withOpacity(gameState.glowAnimation.value),
+            size: iconSize,
+          ),
+        );
 }
