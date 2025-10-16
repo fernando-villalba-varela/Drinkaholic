@@ -107,13 +107,10 @@ class LeagueDetailViewModel extends ChangeNotifier {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        backgroundColor: const Color(0xFF00C9FF).withOpacity(.95),
-        title: Text(
+        backgroundColor: const Color(0xF200C9FF), // 00C9FF with 95% opacity
+        title: const Text(
           'Avatar / Foto',
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -199,7 +196,7 @@ class LeagueDetailViewModel extends ChangeNotifier {
         // ignore: use_build_context_synchronously
         context: context,
         builder: (_) => AlertDialog(
-          backgroundColor: const Color(0xFF00C9FF).withOpacity(.95),
+          backgroundColor: const Color(0xF200C9FF), // 00C9FF with 95% opacity
           title: const Text(
             'Elegir avatar',
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
@@ -241,8 +238,8 @@ class LeagueDetailViewModel extends ChangeNotifier {
                     child: ClipOval(
                       child: ColorFiltered(
                         colorFilter: isUsed && !current
-                            ? ColorFilter.mode(
-                                Colors.black.withOpacity(.65),
+                            ? const ColorFilter.mode(
+                                Color(0xA6000000), // black with 65% opacity
                                 BlendMode.darken,
                               )
                             : const ColorFilter.mode(
@@ -340,6 +337,68 @@ class LeagueDetailViewModel extends ChangeNotifier {
       listVM.refresh();
       notifyListeners();
     }
+  }
+
+  // === DELETE PLAYER ===
+  void showDeletePlayerDialog(BuildContext context, int playerId) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Eliminar jugador'),
+        content: const Text('¿Seguro que quieres eliminarlo?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () {
+              league.players.removeWhere((p) => p.playerId == playerId);
+              listVM.refresh();
+              notifyListeners();
+              Navigator.pop(context);
+            },
+            child: const Text('Eliminar', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // === EXPORT LEAGUE ===
+  void showExportDialog(BuildContext context) {
+    final jsonString = const JsonEncoder.withIndent(
+      '  ',
+    ).convert(league.toJson());
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Exportar liga'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: SingleChildScrollView(child: SelectableText(jsonString)),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Clipboard.setData(ClipboardData(text: jsonString));
+              Navigator.pop(context);
+            },
+            child: const Text('Copiar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cerrar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Guarda los cambios de la liga y notifica a los observadores
+  void saveLeague() {
+    listVM.refresh(); // Actualiza la lista de ligas
+    notifyListeners(); // Notifica los cambios locales
   }
 }
 

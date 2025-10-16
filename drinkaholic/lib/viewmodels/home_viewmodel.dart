@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../screens/participants_screen.dart';
+import '../screens/league_list_screen.dart';
+import '../models/button_config.dart';
 
 class HomeViewModel extends ChangeNotifier {
-  // State variables
-  bool _isLoading = false;
+  final bool _isLoading = false;
   String? _errorMessage;
 
   // Getters
@@ -12,7 +12,14 @@ class HomeViewModel extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
   bool get hasError => _errorMessage != null;
 
-  // Navigation methods
+  static const LinearGradient quickGameGradient = LinearGradient(
+    colors: [Color(0xFF00C9FF), Color(0xFF92FE9D)],
+  );
+
+  static const LinearGradient leagueGradient = LinearGradient(
+    colors: [Color(0xFFFC466B), Color(0xFF3F5EFB)],
+  );
+
   void navigateToQuickGame(BuildContext context) {
     try {
       _clearError();
@@ -28,49 +35,56 @@ class HomeViewModel extends ChangeNotifier {
     }
   }
 
-  // Exit functionality
-  void showExitConfirmation(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: const Color(0xFF23606E),
-          title: const Text(
-            '¿Deseas salir de la aplicación?',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => _cancelExit(context),
-              child: const Text(
-                'Cancelar',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-            TextButton(
-              onPressed: () => _confirmExit(),
-              child: const Text('Aceptar', style: TextStyle(color: Colors.red)),
-            ),
-          ],
+  void navigateToLeague(BuildContext context) {
+    try {
+      _clearError();
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const LeagueListScreen()),
+      );
+    } catch (e) {
+      _setError('Error al navegar a Liga: ${e.toString()}');
+    }
+  }
+
+  ButtonConfig getQuickGameButtonConfig(
+    BuildContext context,
+    Function(Gradient, String, IconData, VoidCallback) onAnimatedTap,
+  ) {
+    return ButtonConfig(
+      text: 'PARTIDA RÁPIDA',
+      icon: Icons.flash_on,
+      gradient: quickGameGradient,
+      onTap: () {
+        onAnimatedTap(
+          quickGameGradient,
+          'PARTIDA RÁPIDA',
+          Icons.flash_on,
+          () => navigateToQuickGame(context),
         );
       },
     );
   }
 
-  // Private helper methods
-  void _cancelExit(BuildContext context) {
-    Navigator.of(context).pop();
+  ButtonConfig getLeagueButtonConfig(
+    BuildContext context,
+    Function(Gradient, String, IconData, VoidCallback) onAnimatedTap,
+  ) {
+    return ButtonConfig(
+      text: 'LIGA',
+      icon: Icons.emoji_events,
+      gradient: leagueGradient,
+      onTap: () {
+        onAnimatedTap(
+          leagueGradient,
+          'LIGA',
+          Icons.emoji_events,
+          () => navigateToLeague(context),
+        );
+      },
+    );
   }
 
-  void _confirmExit() {
-    try {
-      SystemNavigator.pop();
-    } catch (e) {
-      _setError('Error al salir de la aplicación: ${e.toString()}');
-    }
-  }
-
-  
   void _setError(String message) {
     _errorMessage = message;
     notifyListeners();
@@ -81,13 +95,8 @@ class HomeViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  //void _setLoading(bool loading) {
-   // _isLoading = loading;
-    //notifyListeners();
-  //}
-
-  // Cleanup
   @override
+  // ignore: unnecessary_overrides
   void dispose() {
     super.dispose();
   }
