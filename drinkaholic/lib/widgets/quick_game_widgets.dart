@@ -3,25 +3,24 @@ import 'package:flutter/material.dart';
 import '../models/game_state.dart';
 import 'dart:math';
 
-
-
-
 // Helper function para determinar tamaños responsivos
-double getResponsiveSize(BuildContext context, {
-  required double small,    
-  required double medium,   
-  required double large,    
+double getResponsiveSize(
+  BuildContext context, {
+  required double small,
+  required double medium,
+  required double large,
 }) {
   final width = MediaQuery.of(context).size.width;
-  
+
   // Breakpoints ajustados para Nothing Phone (2400x1080)
-  const breakpointSmall = 1000.0;    // Móviles pequeños
-  const breakpointMedium = 1700.0;   // Móviles medianos/grandes como Nothing Phone
+  const breakpointSmall = 1000.0; // Móviles pequeños
+  const breakpointMedium =
+      1700.0; // Móviles medianos/grandes como Nothing Phone
 
   if (width <= breakpointSmall) {
-    return small * 1.2;  // Incremento del 20% para mejor visibilidad
+    return small * 1.2; // Incremento del 20% para mejor visibilidad
   } else if (width <= breakpointMedium) {
-    return medium * 1.5; // Incremento del 15% 
+    return medium * 1.5; // Incremento del 15%
   } else {
     return large * 2;
   }
@@ -48,43 +47,41 @@ Widget buildCenterContent(GameState gameState) {
         // Definir tamaños responsivos
         final iconSize = getResponsiveSize(
           context,
-          small: 35,     // Aumentado de 28
-          medium: 40,    // Aumentado de 35
-          large: 50,     // Aumentado de 45
+          small: 35, // Aumentado de 28
+          medium: 40, // Aumentado de 35
+          large: 50, // Aumentado de 45
         );
 
         final fontSize = getResponsiveSize(
-          context, 
-          small: 18,     // Aumentado de 16
-          medium: 22,    // Aumentado de 20
-          large: 26,     // Aumentado de 24
+          context,
+          small: 18, // Aumentado de 16
+          medium: 22, // Aumentado de 20
+          large: 26, // Aumentado de 24
         );
 
         final padding = getResponsiveSize(
           context,
-          small: 18,     // Aumentado de 15
-          medium: 28,    // Aumentado de 25
-          large: 38,     // Aumentado de 35
+          small: 18, // Aumentado de 15
+          medium: 28, // Aumentado de 25
+          large: 38, // Aumentado de 35
         );
 
         final containerPadding = getResponsiveSize(
           context,
-          small: 20,     // Nuevo valor
-          medium: 30,    // Nuevo valor
-          large: 40,     // Nuevo valor
+          small: 20, // Nuevo valor
+          medium: 30, // Nuevo valor
+          large: 40, // Nuevo valor
         );
 
         final containerMargin = getResponsiveSize(
           context,
-          small: 15,     // Nuevo valor
-          medium: 25,    // Nuevo valor
-          large: 35,     // Nuevo valor
+          small: 15, // Nuevo valor
+          medium: 25, // Nuevo valor
+          large: 35, // Nuevo valor
         );
 
         final screenSize = MediaQuery.of(context).size;
         final isSmallScreen = screenSize.width < 500;
-
-        
 
         return SingleChildScrollView(
           child: Column(
@@ -153,7 +150,7 @@ Widget buildCenterContent(GameState gameState) {
               //   ),
               //   textAlign: TextAlign.center,
               // ),
-              SizedBox(height: isSmallScreen ? 10 : 20),
+              //SizedBox(height: isSmallScreen ? 10 : 20),
 
               // Enhanced Challenge text container
               TweenAnimationBuilder<double>(
@@ -267,40 +264,40 @@ Widget _buildConstantChallengeContent(GameState gameState) {
 
   return LayoutBuilder(
     builder: (context, constraints) {
-     final iconSize = getResponsiveSize(
-          context,
-          small: 35,     // Aumentado de 28
-          medium: 40,    // Aumentado de 35
-          large: 50,     // Aumentado de 45
-        );
+      final iconSize = getResponsiveSize(
+        context,
+        small: 35, // Aumentado de 28
+        medium: 40, // Aumentado de 35
+        large: 50, // Aumentado de 45
+      );
 
-        final fontSize = getResponsiveSize(
-          context, 
-          small: 18,     // Aumentado de 16
-          medium: 22,    // Aumentado de 20
-          large: 26,     // Aumentado de 24
-        );
+      final fontSize = getResponsiveSize(
+        context,
+        small: 18, // Aumentado de 16
+        medium: 22, // Aumentado de 20
+        large: 23, // Aumentado de 24
+      );
 
-        final padding = getResponsiveSize(
-          context,
-          small: 18,     // Aumentado de 15
-          medium: 28,    // Aumentado de 25
-          large: 38,     // Aumentado de 35
-        );
+      final padding = getResponsiveSize(
+        context,
+        small: 18, // Aumentado de 15
+        medium: 28, // Aumentado de 25
+        large: 38, // Aumentado de 35
+      );
 
-        final containerPadding = getResponsiveSize(
-          context,
-          small: 20,     // Nuevo valor
-          medium: 30,    // Nuevo valor
-          large: 40,     // Nuevo valor
-        );
+      final containerPadding = getResponsiveSize(
+        context,
+        small: 20, // Nuevo valor
+        medium: 30, // Nuevo valor
+        large: 40, // Nuevo valor
+      );
 
-        final containerMargin = getResponsiveSize(
-          context,
-          small: 15,     // Nuevo valor
-          medium: 25,    // Nuevo valor
-          large: 35,     // Nuevo valor
-        );
+      final containerMargin = getResponsiveSize(
+        context,
+        small: 15, // Nuevo valor
+        medium: 25, // Nuevo valor
+        large: 35, // Nuevo valor
+      );
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -377,12 +374,12 @@ Widget _buildConstantChallengeContent(GameState gameState) {
           //     ),
           //     textAlign: TextAlign.center,
           //   ),
-          SizedBox(height:  20),
+          SizedBox(height: 20),
 
           // Challenge container with special styling
           Container(
             padding: EdgeInsets.all(padding),
-            margin:  EdgeInsets.symmetric(horizontal: padding),
+            margin: EdgeInsets.symmetric(horizontal: padding),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
@@ -457,43 +454,41 @@ String _truncateText(String text, int maxLength) {
   return '${text.substring(0, maxLength)}...';
 }
 
-List<Widget> _buildPunishmentInfo(GameState gameState, BuildContext  context) {
+List<Widget> _buildPunishmentInfo(GameState gameState, BuildContext context) {
+  final iconSize = getResponsiveSize(
+    context,
+    small: 25, // Aumentado de 28
+    medium: 30, // Aumentado de 35
+    large: 40, // Aumentado de 45
+  );
 
-   final iconSize = getResponsiveSize(
-          context,
-          small: 25,     // Aumentado de 28
-          medium: 30,    // Aumentado de 35
-          large: 40,     // Aumentado de 45
-        );
+  final fontSize = getResponsiveSize(
+    context,
+    small: 18, // Aumentado de 16
+    medium: 22, // Aumentado de 20
+    large: 26, // Aumentado de 24
+  );
 
-        final fontSize = getResponsiveSize(
-          context, 
-          small: 18,     // Aumentado de 16
-          medium: 22,    // Aumentado de 20
-          large: 26,     // Aumentado de 24
-        );
+  final padding = getResponsiveSize(
+    context,
+    small: 18, // Aumentado de 15
+    medium: 28, // Aumentado de 25
+    large: 35, // Aumentado de 35
+  );
 
-        final padding = getResponsiveSize(
-          context,
-          small: 18,     // Aumentado de 15
-          medium: 28,    // Aumentado de 25
-          large: 38,     // Aumentado de 35
-        );
+  final containerPadding = getResponsiveSize(
+    context,
+    small: 20, // Nuevo valor
+    medium: 30, // Nuevo valor
+    large: 40, // Nuevo valor
+  );
 
-        final containerPadding = getResponsiveSize(
-          context,
-          small: 20,     // Nuevo valor
-          medium: 30,    // Nuevo valor
-          large: 40,     // Nuevo valor
-        );
-
-        final containerMargin = getResponsiveSize(
-          context,
-          small: 15,     // Nuevo valor
-          medium: 25,    // Nuevo valor
-          large: 35,     // Nuevo valor
-        );
-
+  final containerMargin = getResponsiveSize(
+    context,
+    small: 15, // Nuevo valor
+    medium: 25, // Nuevo valor
+    large: 35, // Nuevo valor
+  );
 
   // Find the current constant challenge being created
   final currentPlayerIndex = gameState.currentPlayerIndex;
@@ -521,7 +516,7 @@ List<Widget> _buildPunishmentInfo(GameState gameState, BuildContext  context) {
   return [
     const SizedBox(height: 7),
     Container(
-      padding:  EdgeInsets.all(padding),
+      padding: EdgeInsets.all(padding),
       decoration: BoxDecoration(
         color: Colors.red.withOpacity(0.15),
         borderRadius: BorderRadius.circular(15),
@@ -538,7 +533,7 @@ List<Widget> _buildPunishmentInfo(GameState gameState, BuildContext  context) {
                 'CASTIGO',
                 style: TextStyle(
                   color: Colors.red,
-                  fontSize: iconSize,
+                  fontSize: fontSize,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1,
                 ),
@@ -568,39 +563,39 @@ Widget _buildEventContent(GameState gameState) {
   return LayoutBuilder(
     builder: (context, constraints) {
       final iconSize = getResponsiveSize(
-          context,
-          small: 35,     // Aumentado de 28
-          medium: 40,    // Aumentado de 35
-          large: 50,     // Aumentado de 45
-        );
+        context,
+        small: 35, // Aumentado de 28
+        medium: 40, // Aumentado de 35
+        large: 50, // Aumentado de 45
+      );
 
-        final fontSize = getResponsiveSize(
-          context, 
-          small: 18,     // Aumentado de 16
-          medium: 22,    // Aumentado de 20
-          large: 26,     // Aumentado de 24
-        );
+      final fontSize = getResponsiveSize(
+        context,
+        small: 18, // Aumentado de 16
+        medium: 22, // Aumentado de 20
+        large: 26, // Aumentado de 24
+      );
 
-        final padding = getResponsiveSize(
-          context,
-          small: 18,     // Aumentado de 15
-          medium: 28,    // Aumentado de 25
-          large: 38,     // Aumentado de 35
-        );
+      final padding = getResponsiveSize(
+        context,
+        small: 18, // Aumentado de 15
+        medium: 28, // Aumentado de 25
+        large: 38, // Aumentado de 35
+      );
 
-        final containerPadding = getResponsiveSize(
-          context,
-          small: 20,     // Nuevo valor
-          medium: 30,    // Nuevo valor
-          large: 40,     // Nuevo valor
-        );
+      final containerPadding = getResponsiveSize(
+        context,
+        small: 20, // Nuevo valor
+        medium: 30, // Nuevo valor
+        large: 40, // Nuevo valor
+      );
 
-        final containerMargin = getResponsiveSize(
-          context,
-          small: 15,     // Nuevo valor
-          medium: 25,    // Nuevo valor
-          large: 35,     // Nuevo valor
-        );
+      final containerMargin = getResponsiveSize(
+        context,
+        small: 15, // Nuevo valor
+        medium: 25, // Nuevo valor
+        large: 35, // Nuevo valor
+      );
 
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -680,7 +675,7 @@ Widget _buildEventContent(GameState gameState) {
             textAlign: TextAlign.center,
           ),
 
-          SizedBox(height:  20),
+          SizedBox(height: 20),
 
           // Event container with cosmic styling
           TweenAnimationBuilder<double>(
@@ -851,9 +846,9 @@ Widget _buildSinglePlayerAvatar(GameState gameState) {
     builder: (context, constraints) {
       final avatarSize = getResponsiveSize(
         context,
-        small: 60,    // Tamaño para pantallas pequeñas
-        medium: 80,   // Tamaño para pantallas medianas
-        large: 100,   // Tamaño para pantallas grandes
+        small: 60, // Tamaño para pantallas pequeñas
+        medium: 80, // Tamaño para pantallas medianas
+        large: 100, // Tamaño para pantallas grandes
       );
 
       final borderWidth = getResponsiveSize(
@@ -889,13 +884,15 @@ Widget _buildSinglePlayerAvatar(GameState gameState) {
                   color: Colors.white.withOpacity(0.2),
                   child: Icon(
                     Icons.person,
-                    color: Colors.white.withOpacity(gameState.glowAnimation.value),
+                    color: Colors.white.withOpacity(
+                      gameState.glowAnimation.value,
+                    ),
                     size: iconSize,
                   ),
                 ),
         ),
       );
-    }
+    },
   );
 }
 
@@ -946,13 +943,15 @@ Widget _buildDualPlayerAvatars(GameState gameState) {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: Colors.white.withOpacity(gameState.glowAnimation.value),
+                    color: Colors.white.withOpacity(
+                      gameState.glowAnimation.value,
+                    ),
                     width: 3,
                   ),
                 ),
                 child: ClipOval(
                   child: _buildPlayerImage(
-                    gameState.currentPlayer!, 
+                    gameState.currentPlayer!,
                     gameState,
                     context, // Pasar el context
                   ),
@@ -969,13 +968,15 @@ Widget _buildDualPlayerAvatars(GameState gameState) {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: Colors.cyan.withOpacity(gameState.glowAnimation.value * 0.8),
+                    color: Colors.cyan.withOpacity(
+                      gameState.glowAnimation.value * 0.8,
+                    ),
                     width: 3,
                   ),
                 ),
                 child: ClipOval(
                   child: _buildPlayerImage(
-                    gameState.dualPlayer!, 
+                    gameState.dualPlayer!,
                     gameState,
                     context, // Pasar el context
                   ),
@@ -984,7 +985,7 @@ Widget _buildDualPlayerAvatars(GameState gameState) {
             ),
             // Indicador VS
             Positioned(
-              left: containerWidth / 4,
+              left: containerWidth / 2.75,
               top: avatarSize / 3,
               child: Container(
                 width: vsSize,
@@ -1015,12 +1016,16 @@ Widget _buildDualPlayerAvatars(GameState gameState) {
           ],
         ),
       );
-    }
+    },
   );
 }
 
 // Helper method para construir la imagen del jugador
-Widget _buildPlayerImage(Player player, GameState gameState, BuildContext context) {
+Widget _buildPlayerImage(
+  Player player,
+  GameState gameState,
+  BuildContext context,
+) {
   final iconSize = getResponsiveSize(
     context, // Usar el context pasado como parámetro
     small: 30,
