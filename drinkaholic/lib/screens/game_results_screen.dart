@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/player.dart';
+import 'tiebreaker_screen.dart';
 
 class GameResultsScreen extends StatefulWidget {
   final List<Player> players;
@@ -21,6 +22,11 @@ class GameResultsScreen extends StatefulWidget {
 }
 
 class _GameResultsScreenState extends State<GameResultsScreen> {
+  Player? _resolvedMVP;
+  Player? _resolvedRatita;
+  bool _mvpTieResolved = false;
+  bool _ratitaTieResolved = false;
+
   @override
   void initState() {
     super.initState();
@@ -29,6 +35,11 @@ class _GameResultsScreenState extends State<GameResultsScreen> {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+
+    // Inicializar verificación de empates
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkForTiebreakers();
+    });
   }
 
   @override
@@ -41,34 +52,116 @@ class _GameResultsScreenState extends State<GameResultsScreen> {
     super.dispose();
   }
 
+  void _checkForTiebreakers() {
+    // Encontrar jugadores con más tragos (MVP)
+    int maxDrinks = widget.playerDrinks.values.reduce((a, b) => a > b ? a : b);
+    List<int> mvpPlayerIds = widget.playerDrinks.entries
+        .where((entry) => entry.value == maxDrinks)
+        .map((entry) => entry.key)
+        .toList();
+
+    // Encontrar jugadores con menos tragos (Ratita)
+    int minDrinks = widget.playerDrinks.values.reduce((a, b) => a < b ? a : b);
+    List<int> ratitaPlayerIds = widget.playerDrinks.entries
+        .where((entry) => entry.value == minDrinks)
+        .map((entry) => entry.key)
+        .toList();
+
+    // Verificar empate MVP
+    if (mvpPlayerIds.length > 1 && !_mvpTieResolved) {
+      List<Player> tiedMVPPlayers = widget.players
+          .where((p) => mvpPlayerIds.contains(p.id))
+          .toList();
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => TiebreakerScreen(
+            tiedPlayers: tiedMVPPlayers,
+            tiedScore: maxDrinks,
+            type: TiebreakerType.mvp,
+            onTiebreakerResolved: (winner, loser) {
+              setState(() {
+                _resolvedMVP = winner;
+                _mvpTieResolved = true;
+              });
+              Navigator.pop(context);
+
+              // Verificar empate Ratita después de resolver MVP
+              if (ratitaPlayerIds.length > 1 && !_ratitaTieResolved) {
+                _checkRatitaTiebreaker(ratitaPlayerIds, minDrinks);
+              }
+            },
+          ),
+        ),
+      );
+    }
+    // Verificar empate Ratita si no hay empate MVP
+    else if (ratitaPlayerIds.length > 1 && !_ratitaTieResolved) {
+      _checkRatitaTiebreaker(ratitaPlayerIds, minDrinks);
+    }
+  }
+
+  void _checkRatitaTiebreaker(List<int> ratitaPlayerIds, int minDrinks) {
+    List<Player> tiedRatitaPlayers = widget.players
+        .where((p) => ratitaPlayerIds.contains(p.id))
+        .toList();
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TiebreakerScreen(
+          tiedPlayers: tiedRatitaPlayers,
+          tiedScore: minDrinks,
+          type: TiebreakerType.ratita,
+          onTiebreakerResolved: (winner, loser) {
+            setState(() {
+              _resolvedRatita = winner;
+              _ratitaTieResolved = true;
+            });
+            Navigator.pop(context);
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // playerDrinks ahora es Map<playerId, drinks>
     // Calcular MVP (más tragos) y Ratita (menos tragos)
-    int mvpPlayerId = -1;
-    int ratitaPlayerId = -1;
-    int maxDrinks = 0;
-    int minDrinks = 999999;
+    int maxDrinks = widget.playerDrinks.values.reduce((a, b) => a > b ? a : b);
+    int minDrinks = widget.playerDrinks.values.reduce((a, b) => a < b ? a : b);
 
-    widget.playerDrinks.forEach((playerId, drinks) {
-      if (drinks > maxDrinks) {
-        maxDrinks = drinks;
-        mvpPlayerId = playerId;
-      }
-      if (drinks < minDrinks) {
-        minDrinks = drinks;
-        ratitaPlayerId = playerId;
-      }
-    });
+    // Usar resultados de desempate si están disponibles, sino calcular normalmente
+    Player mvp;
+    Player ratita;
 
-    Player? mvp = widget.players.firstWhere(
-      (p) => p.id == mvpPlayerId,
-      orElse: () => widget.players.first,
-    );
-    Player? ratita = widget.players.firstWhere(
-      (p) => p.id == ratitaPlayerId,
-      orElse: () => widget.players.last,
-    );
+    if (_resolvedMVP != null) {
+      mvp = _resolvedMVP!;
+    } else {
+      // Encontrar MVP sin desempate
+      int mvpPlayerId = widget.playerDrinks.entries
+          .firstWhere((entry) => entry.value == maxDrinks)
+          .key;
+      mvp = widget.players.firstWhere(
+        (p) => p.id == mvpPlayerId,
+        orElse: () => widget.players.first,
+      );
+    }
+
+    if (_resolvedRatita != null) {
+      ratita = _resolvedRatita!;
+    } else {
+      // Encontrar Ratita sin desempate
+      int ratitaPlayerId = widget.playerDrinks.entries
+          .firstWhere((entry) => entry.value == minDrinks)
+          .key;
+      ratita = widget.players.firstWhere(
+        (p) => p.id == ratitaPlayerId,
+        orElse: () => widget.players.last,
+      );
+    }
 
     // Ordenar jugadores por cantidad de tragos (de más a menos)
     final sortedPlayers = List<MapEntry<int, int>>.from(
@@ -150,7 +243,7 @@ class _GameResultsScreenState extends State<GameResultsScreen> {
                         // MVP Section - TOP
                         _buildMVPCard(
                           player: mvp,
-                          drinks: maxDrinks,
+                          drinks: widget.playerDrinks[mvp.id] ?? 0,
                           isSmallScreen: isSmallScreen,
                         ),
                         SizedBox(height: isSmallScreen ? 16 : 24),
@@ -253,7 +346,7 @@ class _GameResultsScreenState extends State<GameResultsScreen> {
                               SizedBox(height: isSmallScreen ? 12 : 16),
                               _buildRatitaCard(
                                 player: ratita,
-                                drinks: minDrinks,
+                                drinks: widget.playerDrinks[ratita.id] ?? 0,
                                 isSmallScreen: isSmallScreen,
                               ),
                             ],
@@ -329,7 +422,7 @@ class _GameResultsScreenState extends State<GameResultsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '🏆 MVDP (Más Borracho)',
+                  '🏆 MVDP',
                   style: TextStyle(
                     color: const Color(0xFFFFD700),
                     fontSize: titleFontSize,
@@ -378,12 +471,15 @@ class _GameResultsScreenState extends State<GameResultsScreen> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            const Color(0xFF92FE9D).withOpacity(0.3),
-            const Color(0xFF92FE9D).withOpacity(0.1),
+            const Color.fromARGB(255, 98, 46, 33).withOpacity(0.3),
+            const Color.fromARGB(255, 98, 46, 33).withOpacity(0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFF92FE9D), width: 2),
+        border: Border.all(
+          color: const Color.fromARGB(255, 98, 46, 33),
+          width: 2,
+        ),
       ),
       child: Row(
         children: [
@@ -394,9 +490,9 @@ class _GameResultsScreenState extends State<GameResultsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '🐭 Ratita (Más Sobrio)',
+                  '🐭 Ratita',
                   style: TextStyle(
-                    color: const Color(0xFF92FE9D),
+                    color: const Color.fromARGB(255, 98, 46, 33),
                     fontSize: titleFontSize,
                     fontWeight: FontWeight.bold,
                   ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart'; // <-- Añade esta línea
 import '../viewmodels/participants_viewmodel.dart'; // <-- Añade esta línea
 import '../models/player.dart';
@@ -20,7 +19,7 @@ class ParticipantsScreen extends StatelessWidget {
 }
 
 class _ParticipantsScreenBody extends StatefulWidget {
-  const _ParticipantsScreenBody({Key? key}) : super(key: key);
+  const _ParticipantsScreenBody();
 
   @override
   State<_ParticipantsScreenBody> createState() =>
@@ -44,15 +43,14 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody>
       duration: const Duration(seconds: 20),
       vsync: this,
     );
-    
-    _backgroundAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _backgroundAnimationController,
-      curve: Curves.linear,
-    ));
-    
+
+    _backgroundAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _backgroundAnimationController,
+        curve: Curves.linear,
+      ),
+    );
+
     _backgroundAnimationController.repeat();
   }
 
@@ -98,93 +96,91 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody>
             ),
           ),
           // Main content
-          Container(
-            child: SafeArea(
-          child: Column(
-            children: [
-              // Custom header with back button
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Row(
-                  children: [
-                    // Modern back button
-                    GestureDetector(
-                      onTap: () => Navigator.of(context).pop(),
-                      child: Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.3),
-                            width: 1,
+          SafeArea(
+            child: Column(
+              children: [
+                // Custom header with back button
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Row(
+                    children: [
+                      // Modern back button
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).pop(),
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.3),
+                              width: 1,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: const Icon(
-                          Icons.arrow_back_ios_new,
-                          color: Colors.white,
-                          size: 20,
+                          child: const Icon(
+                            Icons.arrow_back_ios_new,
+                            color: Colors.white,
+                            size: 20,
+                          ),
                         ),
                       ),
-                    ),
-                    const Spacer(),
-                    // Title with modern styling
-                    ShaderMask(
-                      shaderCallback: (bounds) => const LinearGradient(
-                        colors: [
-                          Colors.white,
-                          Color(0xFFE0F7FA),
-                        ],
-                      ).createShader(bounds),
-                      child: const Text(
-                        'JUGADORES',
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 3,
-                          color: Colors.white,
-                          shadows: [
-                            Shadow(
-                              color: Colors.black26,
-                              offset: Offset(1, 1),
-                              blurRadius: 3,
-                            ),
-                          ],
+                      const Spacer(),
+                      // Title with modern styling
+                      ShaderMask(
+                        shaderCallback: (bounds) => const LinearGradient(
+                          colors: [Colors.white, Color(0xFFE0F7FA)],
+                        ).createShader(bounds),
+                        child: const Text(
+                          'JUGADORES',
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 3,
+                            color: Colors.white,
+                            shadows: [
+                              Shadow(
+                                color: Colors.black26,
+                                offset: Offset(1, 1),
+                                blurRadius: 3,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    const Spacer(),
-                    const SizedBox(width: 44), // Balance space for back button
-                  ],
-                ),
-              ),
-              // Players list with modern cards
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: ListView.builder(
-                    itemCount: _players.length + 1,
-                    itemBuilder: (context, index) {
-                      if (index < _players.length) {
-                        return _buildPlayerCard(index);
-                      } else {
-                        return _buildAddPlayerCard();
-                      }
-                    },
+                      const Spacer(),
+                      const SizedBox(
+                        width: 44,
+                      ), // Balance space for back button
+                    ],
                   ),
                 ),
-              ),
-              // Modern start game button
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: Container(
+                // Players list with modern cards
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: ListView.builder(
+                      itemCount: _players.length + 1,
+                      itemBuilder: (context, index) {
+                        if (index < _players.length) {
+                          return _buildPlayerCard(index);
+                        } else {
+                          return _buildAddPlayerCard();
+                        }
+                      },
+                    ),
+                  ),
+                ),
+                // Modern start game button
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Container(
                     width: double.infinity,
                     height: 65,
                     decoration: BoxDecoration(
@@ -211,18 +207,25 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody>
                       child: InkWell(
                         borderRadius: BorderRadius.circular(32),
                         onTap: () {
-                          final viewModel = Provider.of<ParticipantsViewmodel>(context, listen: false);
+                          final viewModel = Provider.of<ParticipantsViewmodel>(
+                            context,
+                            listen: false,
+                          );
                           if (viewModel.players.isNotEmpty) {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => QuickGameScreen(players: viewModel.players),
+                                builder: (context) =>
+                                    QuickGameScreen(players: viewModel.players),
                               ),
                             );
                           }
                         },
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 16,
+                          ),
                           child: const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -248,18 +251,20 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody>
                     ),
                   ),
                 ),
-            ],
+              ],
             ),
-          ), // Closing for SafeArea
-        ), // Closing for Container at 102
+          ), // Closing for Container at 102
         ],
       ),
     );
   }
 
   Widget _buildPlayerCard(int index) {
-    final viewModel = Provider.of<ParticipantsViewmodel>(context, listen: false);
-    
+    final viewModel = Provider.of<ParticipantsViewmodel>(
+      context,
+      listen: false,
+    );
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Container(
@@ -267,10 +272,7 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody>
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.15),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: Colors.white.withOpacity(0.3),
-            width: 1,
-          ),
+          border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
@@ -301,7 +303,9 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody>
                     ),
                   ],
                 ),
-                child: (_players[index].imagen != null || _players[index].avatar != null)
+                child:
+                    (_players[index].imagen != null ||
+                        _players[index].avatar != null)
                     ? ClipOval(
                         child: Container(
                           width: 56,
@@ -370,8 +374,11 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody>
   }
 
   Widget _buildAddPlayerCard() {
-    final viewModel = Provider.of<ParticipantsViewmodel>(context, listen: false);
-    
+    final viewModel = Provider.of<ParticipantsViewmodel>(
+      context,
+      listen: false,
+    );
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Container(
@@ -437,11 +444,7 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody>
                   color: Colors.white.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(
-                  Icons.add,
-                  color: Colors.white,
-                  size: 24,
-                ),
+                child: const Icon(Icons.add, color: Colors.white, size: 24),
               ),
             ),
           ],
@@ -489,82 +492,93 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody>
 
 class FloatingShapesPainter extends CustomPainter {
   final double animationValue;
-  
+
   FloatingShapesPainter(this.animationValue);
-  
+
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..style = PaintingStyle.fill;
-      
+    final paint = Paint()..style = PaintingStyle.fill;
+
     // Create multiple floating shapes with different speeds and sizes
     final shapes = [
       // Large circles
       _FloatingShape(
-        Offset(size.width * 0.1 + (sin(animationValue * 2 * pi) * 30),
-               size.height * 0.2 + (cos(animationValue * 2 * pi) * 20)),
+        Offset(
+          size.width * 0.1 + (sin(animationValue * 2 * pi) * 30),
+          size.height * 0.2 + (cos(animationValue * 2 * pi) * 20),
+        ),
         30,
         Colors.white.withOpacity(0.05),
       ),
       _FloatingShape(
-        Offset(size.width * 0.8 + (sin(animationValue * 2 * pi + 1) * 40),
-               size.height * 0.7 + (cos(animationValue * 2 * pi + 1) * 30)),
+        Offset(
+          size.width * 0.8 + (sin(animationValue * 2 * pi + 1) * 40),
+          size.height * 0.7 + (cos(animationValue * 2 * pi + 1) * 30),
+        ),
         25,
         Colors.white.withOpacity(0.08),
       ),
       // Medium circles
       _FloatingShape(
-        Offset(size.width * 0.3 + (sin(animationValue * 2 * pi + 2) * 50),
-               size.height * 0.5 + (cos(animationValue * 2 * pi + 2) * 25)),
+        Offset(
+          size.width * 0.3 + (sin(animationValue * 2 * pi + 2) * 50),
+          size.height * 0.5 + (cos(animationValue * 2 * pi + 2) * 25),
+        ),
         20,
         Colors.white.withOpacity(0.04),
       ),
       _FloatingShape(
-        Offset(size.width * 0.7 + (sin(animationValue * 2 * pi + 3) * 35),
-               size.height * 0.3 + (cos(animationValue * 2 * pi + 3) * 40)),
+        Offset(
+          size.width * 0.7 + (sin(animationValue * 2 * pi + 3) * 35),
+          size.height * 0.3 + (cos(animationValue * 2 * pi + 3) * 40),
+        ),
         18,
         Colors.cyan.withOpacity(0.06),
       ),
       // Small circles
       _FloatingShape(
-        Offset(size.width * 0.5 + (sin(animationValue * 2 * pi + 4) * 60),
-               size.height * 0.8 + (cos(animationValue * 2 * pi + 4) * 15)),
+        Offset(
+          size.width * 0.5 + (sin(animationValue * 2 * pi + 4) * 60),
+          size.height * 0.8 + (cos(animationValue * 2 * pi + 4) * 15),
+        ),
         12,
         Colors.white.withOpacity(0.03),
       ),
       _FloatingShape(
-        Offset(size.width * 0.9 + (sin(animationValue * 2 * pi + 5) * 25),
-               size.height * 0.1 + (cos(animationValue * 2 * pi + 5) * 35)),
+        Offset(
+          size.width * 0.9 + (sin(animationValue * 2 * pi + 5) * 25),
+          size.height * 0.1 + (cos(animationValue * 2 * pi + 5) * 35),
+        ),
         15,
         Colors.green.withOpacity(0.05),
       ),
     ];
-    
+
     // Draw all shapes
     for (final shape in shapes) {
       paint.color = shape.color;
       canvas.drawCircle(shape.position, shape.radius, paint);
     }
-    
+
     // Add some triangular shapes for variety
     final trianglePaint = Paint()
       ..color = Colors.white.withOpacity(0.02)
       ..style = PaintingStyle.fill;
-      
+
     final trianglePath = Path();
     final triangleCenter = Offset(
       size.width * 0.6 + (sin(animationValue * 2 * pi + 6) * 45),
       size.height * 0.4 + (cos(animationValue * 2 * pi + 6) * 30),
     );
-    
+
     trianglePath.moveTo(triangleCenter.dx, triangleCenter.dy - 15);
     trianglePath.lineTo(triangleCenter.dx - 13, triangleCenter.dy + 10);
     trianglePath.lineTo(triangleCenter.dx + 13, triangleCenter.dy + 10);
     trianglePath.close();
-    
+
     canvas.drawPath(trianglePath, trianglePaint);
   }
-  
+
   @override
   bool shouldRepaint(FloatingShapesPainter oldDelegate) {
     return oldDelegate.animationValue != animationValue;
@@ -575,7 +589,7 @@ class _FloatingShape {
   final Offset position;
   final double radius;
   final Color color;
-  
+
   _FloatingShape(this.position, this.radius, this.color);
 }
 
@@ -583,37 +597,36 @@ class _FloatingParticleWidget extends StatefulWidget {
   final double size;
   final double opacity;
   final Duration duration;
-  
+
   const _FloatingParticleWidget({
     required this.size,
     required this.opacity,
     required this.duration,
   });
-  
+
   @override
-  State<_FloatingParticleWidget> createState() => _FloatingParticleWidgetState();
+  State<_FloatingParticleWidget> createState() =>
+      _FloatingParticleWidgetState();
 }
 
 class _FloatingParticleWidgetState extends State<_FloatingParticleWidget>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
-  
+
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: widget.duration,
-      vsync: this,
-    );
-    
-    _animation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
-    
+    _controller = AnimationController(duration: widget.duration, vsync: this);
+
+    _animation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+
     _startAnimation();
   }
-  
+
   void _startAnimation() {
     _controller.forward().then((_) {
       if (mounted) {
@@ -622,13 +635,13 @@ class _FloatingParticleWidgetState extends State<_FloatingParticleWidget>
       }
     });
   }
-  
+
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(

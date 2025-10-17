@@ -37,55 +37,8 @@ class _PlayTabState extends State<PlayTab> {
   void _saveGameResults(Map<int, int> playerDrinks) {
     final vm = context.read<LeagueDetailViewModel>();
 
-    // playerDrinks ahora es Map<playerId, drinks>
-    // Encontrar MVP (más tragos) y Ratita (menos tragos)
-    int mvpPlayerId = -1;
-    int ratitaPlayerId = -1;
-    int maxDrinks = 0;
-    int minDrinks = 999999;
-
-    playerDrinks.forEach((playerId, drinks) {
-      if (drinks > maxDrinks) {
-        maxDrinks = drinks;
-        mvpPlayerId = playerId;
-      }
-      if (drinks < minDrinks) {
-        minDrinks = drinks;
-        ratitaPlayerId = playerId;
-      }
-    });
-
-    // Actualizar estadísticas SOLO de los jugadores que jugaron
-    playerDrinks.forEach((playerId, drinks) {
-      // Buscar el jugador por su playerId en la lista de la liga
-      final playerStats = vm.league.players.firstWhere(
-        (p) => p.playerId == playerId,
-      );
-
-      final isMvp = playerId == mvpPlayerId;
-      final isRatita = playerId == ratitaPlayerId;
-
-      // Actualizar tragos y partidas jugadas
-      playerStats.totalDrinks += drinks;
-      playerStats.gamesPlayed++;
-
-      // Actualizar MVDP y Ratita counts
-      if (isMvp) {
-        playerStats.mvdpCount++;
-        playerStats.points += 3; // MVP gana 3 puntos
-        playerStats.lastWasRatita = false;
-      } else if (isRatita) {
-        playerStats.ratitaCount++;
-        playerStats.points -= 3; // Ratita pierde 3 puntos
-        playerStats.lastWasRatita = true;
-      } else {
-        playerStats.points += 1; // Resto gana 1 punto
-        playerStats.lastWasRatita = false;
-      }
-    });
-
-    // Guardar la liga con los datos actualizados
-    vm.saveLeague();
+    // Usar el método correcto del ViewModel que maneja toda la lógica de puntuación
+    vm.recordMatch(playerDrinks);
 
     setState(() {
       _selected.clear(); // Limpiar selección después de guardar
@@ -236,6 +189,10 @@ class _PlayTabState extends State<PlayTab> {
                             maxRounds: maxRounds,
                             onGameEnd: (playerDrinks) {
                               _saveGameResults(playerDrinks);
+                              // Cambiar a la pestaña del scoreboard después de guardar
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                DefaultTabController.of(context).animateTo(0);
+                              });
                             },
                           ),
                         ),

@@ -1,13 +1,15 @@
+// ignore_for_file: constant_identifier_names
+
 enum EventType {
-  global_rule,      // Reglas globales que afectan a todos
-  multiplier,       // Multiplicadores de tragos/castigos
-  special_condition // Condiciones especiales temporales
+  global_rule, // Reglas globales que afectan a todos
+  multiplier, // Multiplicadores de tragos/castigos
+  special_condition, // Condiciones especiales temporales
 }
 
 enum EventStatus {
-  active,   // El evento está activo
-  ended,    // El evento ha terminado
-  pending,  // El evento está esperando para activarse
+  active, // El evento está activo
+  ended, // El evento ha terminado
+  pending, // El evento está esperando para activarse
 }
 
 class Event {
@@ -18,7 +20,8 @@ class Event {
   final int startRound;
   final int? endRound; // null si aún no ha terminado
   final EventStatus status;
-  final Map<String, dynamic> metadata; // Para datos adicionales como multiplicadores, etc.
+  final Map<String, dynamic>
+  metadata; // Para datos adicionales como multiplicadores, etc.
 
   const Event({
     required this.id,
@@ -57,15 +60,15 @@ class Event {
   /// Returns true if this event is currently active
   bool isActiveAtRound(int currentRound) {
     return status == EventStatus.active &&
-           currentRound >= startRound &&
-           (endRound == null || currentRound <= endRound!);
+        currentRound >= startRound &&
+        (endRound == null || currentRound <= endRound!);
   }
 
   /// Returns true if this event can be ended (has been active for at least the minimum duration)
   bool canBeEndedAtRound(int currentRound) {
     final minDuration = metadata['minDuration'] as int? ?? 3;
     return status == EventStatus.active &&
-           currentRound >= (startRound + minDuration);
+        currentRound >= (startRound + minDuration);
   }
 
   /// Returns a user-friendly duration description

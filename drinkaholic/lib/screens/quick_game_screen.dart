@@ -33,16 +33,15 @@ class _QuickGameScreenState extends State<QuickGameScreen>
   late Animation<double> _tapAnimation;
   late Animation<double> _backgroundAnimation;
   late Animation<double> _rippleAnimation;
-  late Animation<double> _pulseAnimation;
 
-  List<Offset> _ripplePositions = [];
-  List<double> _rippleOpacities = [];
+  final List<Offset> _ripplePositions = [];
+  final List<double> _rippleOpacities = [];
 
   int _currentPlayerIndex = -1; // Start with no player selected
   int? _dualPlayerIndex; // Second player for dual challenges
   String _currentChallenge = '';
   bool _gameStarted = false;
-  Map<int, int> _playerWeights =
+  final Map<int, int> _playerWeights =
       {}; // Track how many times each player has been selected
   int _currentRound = 1;
   List<ConstantChallenge> _constantChallenges = [];
@@ -112,13 +111,6 @@ class _QuickGameScreenState extends State<QuickGameScreen>
       CurvedAnimation(
         parent: _rippleAnimationController,
         curve: Curves.easeOut,
-      ),
-    );
-
-    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.15).animate(
-      CurvedAnimation(
-        parent: _pulseAnimationController,
-        curve: Curves.easeInOut,
       ),
     );
 
@@ -675,86 +667,6 @@ class _QuickGameScreenState extends State<QuickGameScreen>
     return eligiblePlayers.take(2).toList();
   }
 
-  Widget _buildPlayerAvatar(Player player, {bool isActive = false}) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final screenSize = MediaQuery.of(context).size;
-        final isSmallScreen = screenSize.width < 600;
-
-        // Ajustar tamaños según el espacio disponible
-        final double iconSize = isSmallScreen ? 15 : 25;
-        final double fontSize = isSmallScreen ? 20 : 26;
-        final double padding = isSmallScreen ? 15 : 30;
-
-        return AnimatedBuilder(
-          animation: isActive ? _pulseAnimation : _glowAnimation,
-          builder: (context, child) {
-            return Transform.scale(
-              scale: isActive ? _pulseAnimation.value : 1.0,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                padding: EdgeInsets.all(isActive ? 4 : 2),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: isActive
-                        ? Colors.white
-                        : Colors.white.withOpacity(0.5),
-                    width: isActive ? 3 : 1,
-                  ),
-                  boxShadow: isActive
-                      ? [
-                          BoxShadow(
-                            color: Colors.white.withOpacity(0.8),
-                            blurRadius: 25,
-                            spreadRadius: 5,
-                          ),
-                          BoxShadow(
-                            color: Colors.cyan.withOpacity(0.6),
-                            blurRadius: 15,
-                            spreadRadius: 3,
-                          ),
-                          BoxShadow(
-                            color: Colors.blue.withOpacity(0.4),
-                            blurRadius: 35,
-                            spreadRadius: 8,
-                          ),
-                        ]
-                      : [
-                          BoxShadow(
-                            color: Colors.white.withOpacity(0.2),
-                            blurRadius: 5,
-                            spreadRadius: 1,
-                          ),
-                        ],
-                ),
-                child: Container(
-                  width: 30,
-                  height: 30,
-                  decoration: const BoxDecoration(shape: BoxShape.circle),
-                  child: ClipOval(
-                    child: player.imagen != null
-                        ? Image.file(player.imagen!, fit: BoxFit.cover)
-                        : player.avatar != null
-                        ? Image.asset(player.avatar!, fit: BoxFit.cover)
-                        : Container(
-                            color: Colors.white.withOpacity(0.2),
-                            child: Icon(
-                              Icons.person,
-                              color: Colors.white,
-                              size: iconSize,
-                            ),
-                          ),
-                  ),
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -768,7 +680,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
               large: 50, // Aumentado de 45
             );
 
-            final fontSize = getResponsiveSize(
+            getResponsiveSize(
               context,
               small: 18, // Aumentado de 16
               medium: 22, // Aumentado de 20
@@ -782,7 +694,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
               large: 38, // Aumentado de 35
             );
 
-            final containerPadding = getResponsiveSize(
+            getResponsiveSize(
               context,
               small: 20, // Nuevo valor
               medium: 30, // Nuevo valor

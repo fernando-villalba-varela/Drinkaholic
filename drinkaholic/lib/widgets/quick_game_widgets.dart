@@ -66,20 +66,6 @@ Widget buildCenterContent(GameState gameState) {
           large: 38, // Aumentado de 35
         );
 
-        final containerPadding = getResponsiveSize(
-          context,
-          small: 20, // Nuevo valor
-          medium: 30, // Nuevo valor
-          large: 40, // Nuevo valor
-        );
-
-        final containerMargin = getResponsiveSize(
-          context,
-          small: 15, // Nuevo valor
-          medium: 25, // Nuevo valor
-          large: 35, // Nuevo valor
-        );
-
         final screenSize = MediaQuery.of(context).size;
         final isSmallScreen = screenSize.width < 500;
 
@@ -285,19 +271,6 @@ Widget _buildConstantChallengeContent(GameState gameState) {
         large: 38, // Aumentado de 35
       );
 
-      final containerPadding = getResponsiveSize(
-        context,
-        small: 20, // Nuevo valor
-        medium: 30, // Nuevo valor
-        large: 40, // Nuevo valor
-      );
-
-      final containerMargin = getResponsiveSize(
-        context,
-        small: 15, // Nuevo valor
-        medium: 25, // Nuevo valor
-        large: 35, // Nuevo valor
-      );
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -449,11 +422,6 @@ Widget _buildConstantChallengeContent(GameState gameState) {
   );
 }
 
-String _truncateText(String text, int maxLength) {
-  if (text.length <= maxLength) return text;
-  return '${text.substring(0, maxLength)}...';
-}
-
 List<Widget> _buildPunishmentInfo(GameState gameState, BuildContext context) {
   final iconSize = getResponsiveSize(
     context,
@@ -474,20 +442,6 @@ List<Widget> _buildPunishmentInfo(GameState gameState, BuildContext context) {
     small: 18, // Aumentado de 15
     medium: 28, // Aumentado de 25
     large: 35, // Aumentado de 35
-  );
-
-  final containerPadding = getResponsiveSize(
-    context,
-    small: 20, // Nuevo valor
-    medium: 30, // Nuevo valor
-    large: 40, // Nuevo valor
-  );
-
-  final containerMargin = getResponsiveSize(
-    context,
-    small: 15, // Nuevo valor
-    medium: 25, // Nuevo valor
-    large: 35, // Nuevo valor
   );
 
   // Find the current constant challenge being created
@@ -558,11 +512,10 @@ List<Widget> _buildPunishmentInfo(GameState gameState, BuildContext context) {
 
 Widget _buildEventContent(GameState gameState) {
   final isEndingEvent = gameState.isEndingEvent;
-  final isNewEvent = gameState.isNewEvent;
 
   return LayoutBuilder(
     builder: (context, constraints) {
-      final iconSize = getResponsiveSize(
+      getResponsiveSize(
         context,
         small: 35, // Aumentado de 28
         medium: 40, // Aumentado de 35
@@ -583,14 +536,14 @@ Widget _buildEventContent(GameState gameState) {
         large: 38, // Aumentado de 35
       );
 
-      final containerPadding = getResponsiveSize(
+      getResponsiveSize(
         context,
         small: 20, // Nuevo valor
         medium: 30, // Nuevo valor
         large: 40, // Nuevo valor
       );
 
-      final containerMargin = getResponsiveSize(
+      getResponsiveSize(
         context,
         small: 15, // Nuevo valor
         medium: 25, // Nuevo valor

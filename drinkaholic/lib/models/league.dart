@@ -1,5 +1,6 @@
 import 'league_player_stats.dart';
 import 'match_result.dart';
+// ignore: depend_on_referenced_packages
 import 'package:uuid/uuid.dart';
 
 class League {
@@ -14,8 +15,8 @@ class League {
     required this.name,
     required this.code,
     required this.players,
-    this.matches = const [],
-  });
+    List<MatchResult>? matches,
+  }) : matches = matches ?? <MatchResult>[];
 
   factory League.newLeague(String name) => League(
     id: const Uuid().v4(),
