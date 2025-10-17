@@ -4,6 +4,7 @@ import '../viewmodels/home_viewmodel.dart';
 import '../widgets/home/modern_button.dart';
 import '../widgets/home/animated_icon_widget.dart';
 import '../widgets/home/floating_particle.dart';
+import 'dart:math';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -152,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   'DRINKAHOLIC',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    fontSize: min(screenWidth * 0.14, 96),
+                                    fontSize: min(screenWidth * 0.12, 88),
                                     fontWeight: FontWeight.w900,
                                     letterSpacing: 6,
                                     foreground: Paint()
@@ -175,7 +176,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                     'DRINKAHOLIC',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                      fontSize: min(screenWidth * 0.14, 96),
+                                      fontSize: min(screenWidth * 0.12, 88),
                                       fontWeight: FontWeight.w900,
                                       letterSpacing: 6,
                                       color: Colors.white,

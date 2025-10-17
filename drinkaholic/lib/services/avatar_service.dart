@@ -69,20 +69,7 @@ class AvatarService {
                       width: isCurrent || isUsed ? 3 : 1,
                     ),
                   ),
-                  child: ClipOval(
-                    child: ColorFiltered(
-                      colorFilter: isUsed
-                          ? ColorFilter.mode(
-                              Colors.black.withOpacity(.6),
-                              BlendMode.darken,
-                            )
-                          : const ColorFilter.mode(
-                              Colors.transparent,
-                              BlendMode.multiply,
-                            ),
-                      child: Image.asset(path, fit: BoxFit.cover),
-                    ),
-                  ),
+                  
                 ),
               );
             },

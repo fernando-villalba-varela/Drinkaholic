@@ -287,8 +287,8 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody>
             GestureDetector(
               onTap: () => viewModel.onAvatarTap(index),
               child: Container(
-                width: 60,
-                height: 60,
+                width: 72,
+                height: 72,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
@@ -307,34 +307,27 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody>
                     (_players[index].imagen != null ||
                         _players[index].avatar != null)
                     ? ClipOval(
-                        child: Container(
-                          width: 56,
-                          height: 56,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                          ),
-                          child: _players[index].imagen != null
-                              ? Image.file(
-                                  _players[index].imagen!,
-                                  fit: BoxFit.cover,
-                                  width: 56,
-                                  height: 56,
-                                )
-                              : Image.asset(
-                                  _players[index].avatar!,
-                                  fit: BoxFit.cover,
-                                  width: 56,
-                                  height: 56,
-                                ),
-                        ),
+                        child: _players[index].imagen != null
+                            ? Image.file(
+                                _players[index].imagen!,
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: double.infinity,
+                              )
+                            : Image.asset(
+                                _players[index].avatar!,
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: double.infinity,
+                              ),
                       )
                     : CircleAvatar(
-                        radius: 28,
+                        radius: 34,
                         backgroundColor: Colors.white.withOpacity(0.2),
                         child: const Icon(
                           Icons.camera_alt,
                           color: Colors.white,
-                          size: 24,
+                          size: 26,
                         ),
                       ),
               ),
