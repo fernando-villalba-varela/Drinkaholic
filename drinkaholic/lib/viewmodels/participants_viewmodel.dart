@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:drinkaholic/models/player.dart';
 import 'package:flutter/material.dart';
@@ -7,11 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ParticipantsViewmodel extends ChangeNotifier {
-  BuildContext? _context;
-
-  // Getter y setter para el contexto
-  BuildContext? get context => _context;
-  set context(BuildContext? ctx) => _context = ctx;
+  BuildContext? context;
 
   final List<Player> _players = [
     Player(id: 1, nombre: 'James'),
@@ -68,7 +65,9 @@ class ParticipantsViewmodel extends ChangeNotifier {
   }
 
   void onAvatarTap(int index) {
-    print('Avatar tap en $index');
+    if (kDebugMode) {
+      print('Avatar tap en $index');
+    }
     if (_players[index].imagen == null && _players[index].avatar == null) {
       showAvatarOptions(index);
     } else {
@@ -78,7 +77,7 @@ class ParticipantsViewmodel extends ChangeNotifier {
 
   void showAvatarOptions(int index) {
     showDialog(
-      context: _context!,
+      context: context!,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF00C9FF).withOpacity(0.95),
         title: Text(
@@ -225,13 +224,15 @@ class ParticipantsViewmodel extends ChangeNotifier {
                               : Colors.white.withOpacity(0.3),
                           width: isCurrentlySelected || isUsed ? 3 : 1,
                         ),
-                        boxShadow: isCurrentlySelected ? [
-                          BoxShadow(
-                            color: Colors.white.withOpacity(0.5),
-                            blurRadius: 10,
-                            spreadRadius: 2,
-                          ),
-                        ] : null,
+                        boxShadow: isCurrentlySelected
+                            ? [
+                                BoxShadow(
+                                  color: Colors.white.withOpacity(0.5),
+                                  blurRadius: 10,
+                                  spreadRadius: 2,
+                                ),
+                              ]
+                            : null,
                       ),
                       child: Stack(
                         children: [
@@ -292,7 +293,9 @@ class ParticipantsViewmodel extends ChangeNotifier {
         );
       }
     } catch (e) {
-      print('Error loading avatars: $e');
+      if (kDebugMode) {
+        print('Error loading avatars: $e');
+      }
       if (context != null) {
         ScaffoldMessenger.of(context!).showSnackBar(
           const SnackBar(
@@ -307,15 +310,21 @@ class ParticipantsViewmodel extends ChangeNotifier {
   }
 
   Future<void> pickImage(int index) async {
-    print('Intentando pedir permiso de cámara');
+    if (kDebugMode) {
+      print('Intentando pedir permiso de cámara');
+    }
     final status = await Permission.camera.request();
-    print('Permiso de cámara: $status');
+    if (kDebugMode) {
+      print('Permiso de cámara: $status');
+    }
     if (status.isGranted) {
       final XFile? photo = await _picker.pickImage(
         source: ImageSource.camera,
         imageQuality: 60,
       );
-      print('Foto tomada: ${photo?.path}');
+      if (kDebugMode) {
+        print('Foto tomada: ${photo?.path}');
+      }
       if (photo != null && context != null) {
         _players[index] = Player(
           id: _players[index].id,
@@ -341,9 +350,7 @@ class ParticipantsViewmodel extends ChangeNotifier {
       context: context!,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF00C9FF).withOpacity(0.95),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
           '¿Quieres eliminar la foto de ${_players[index].nombre}?',
           style: const TextStyle(
@@ -383,9 +390,7 @@ class ParticipantsViewmodel extends ChangeNotifier {
       context: context!,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF00C9FF).withOpacity(0.95),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
           '¿Quieres eliminar a ${_players[index].nombre}?',
           style: const TextStyle(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:math';
 import 'dart:math' as math show Random;
+import 'dart:async';
 import '../models/player.dart';
 import '../models/game_state.dart';
 import '../models/constant_challenge.dart';
@@ -43,15 +44,15 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
   late Animation<double> _backgroundAnimation;
   late Animation<double> _rippleAnimation;
 
-  List<Offset> _ripplePositions = [];
-  List<double> _rippleOpacities = [];
+  final List<Offset> _ripplePositions = [];
+  final List<double> _rippleOpacities = [];
 
   int _currentPlayerIndex = -1;
   int? _dualPlayerIndex;
   String _currentChallenge = '';
   bool _gameStarted = false;
-  Map<int, int> _playerWeights = {};
-  Map<int, int> _playerDrinks = {}; // Contador de tragos por jugador
+  final Map<int, int> _playerWeights = {};
+  final Map<int, int> _playerDrinks = {}; // Contador de tragos por jugador
   int _currentRound = 1;
   List<ConstantChallenge> _constantChallenges = [];
   ConstantChallengeEnd? _currentChallengeEnd;
@@ -61,6 +62,10 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
   bool _showingLetterCounter = false;
   List<int> _selectedPlayerIdsForLetterCounter =
       []; // Guardar IDs seleccionados
+
+  // Variables para el doble tap "nadie cumple"
+  DateTime? _lastTapTime;
+  Timer? _toastTimer;
 
   @override
   void initState() {
@@ -145,6 +150,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
     _tapAnimationController.dispose();
     _backgroundAnimationController.dispose();
     _rippleAnimationController.dispose();
+    _toastTimer?.cancel(); // Cancelar el timer si está activo
     super.dispose();
   }
 
@@ -398,6 +404,58 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
         _rippleOpacities.clear();
       });
     });
+  }
+
+  void _handleDoubleTapForNobody() {
+    final now = DateTime.now();
+    if (_lastTapTime != null &&
+        now.difference(_lastTapTime!).inMilliseconds < 1000) {
+      // Doble tap detectado - cancelar el timer y nadie cumple
+      _toastTimer?.cancel();
+      setState(() {
+        if (_shouldCountDrinks()) {
+          // No añadir tragos porque nadie cumple
+        }
+      });
+      // Avanzar al siguiente reto
+      _nextChallenge();
+    } else {
+      // Primer tap - iniciar timer para mostrar mensaje después de 1 segundo
+      _lastTapTime = now;
+      _toastTimer?.cancel(); // Cancelar timer anterior si existe
+
+      _toastTimer = Timer(Duration(seconds: 1), () {
+        // Solo mostrar el toast si seguimos en el mismo contexto
+        if (mounted && _lastTapTime != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.info_outlined, color: Colors.white, size: 16),
+                  SizedBox(width: 8),
+                  Text(
+                    'Si nadie cumple, pulsa rápido 2 veces',
+                    style: TextStyle(color: Colors.white, fontSize: 14),
+                  ),
+                ],
+              ),
+              backgroundColor: Colors.red.shade600,
+              duration: Duration(seconds: 2),
+              behavior: SnackBarBehavior.floating,
+              margin: EdgeInsets.only(
+                bottom: MediaQuery.of(context).size.height * 0.1,
+                left: 20,
+                right: 20,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+          );
+        }
+      });
+    }
   }
 
   Widget _buildAnimatedBackground() {
@@ -767,7 +825,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
 
     if (!mounted) return;
 
-    Navigator.of(context).pushReplacement(
+    Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => GameResultsScreen(
           players: widget.players,
@@ -775,7 +833,10 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
           maxRounds: widget.maxRounds,
           onConfirm: () {
             widget.onGameEnd(_playerDrinks);
-            Navigator.of(context).pop(); // Volver a la pantalla anterior
+            // Cerrar GameResultsScreen y volver a LeagueGameScreen
+            Navigator.of(context).pop(); // Cierra GameResultsScreen
+            // Luego cerrar LeagueGameScreen para volver a PlayTab
+            Navigator.of(context).pop(); // Cierra LeagueGameScreen
           },
         ),
       ),
@@ -827,7 +888,9 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
                                 );
                                 _addRippleEffect(localPosition);
                               },
-                        onTap: hasActiveSelector ? null : _nextChallenge,
+                        onTap: hasActiveSelector
+                            ? _handleDoubleTapForNobody
+                            : _nextChallenge,
                         behavior: HitTestBehavior.opaque,
                         child: AnimatedBuilder(
                           animation: _tapAnimation,

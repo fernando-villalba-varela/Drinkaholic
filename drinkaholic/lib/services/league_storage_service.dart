@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/league.dart';
 
@@ -14,7 +15,9 @@ class LeagueStorageService {
       final jsonString = jsonEncode(jsonList);
       await prefs.setString(_keyLeagues, jsonString);
     } catch (e) {
-      print('Error guardando ligas: $e');
+      if (kDebugMode) {
+        print('Error guardando ligas: $e');
+      }
     }
   }
 
@@ -31,7 +34,9 @@ class LeagueStorageService {
       final jsonList = jsonDecode(jsonString) as List;
       return jsonList.map((json) => League.fromJson(json)).toList();
     } catch (e) {
-      print('Error cargando ligas: $e');
+      if (kDebugMode) {
+        print('Error cargando ligas: $e');
+      }
       return [];
     }
   }
@@ -42,7 +47,9 @@ class LeagueStorageService {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(_keyLeagues);
     } catch (e) {
-      print('Error eliminando ligas: $e');
+      if (kDebugMode) {
+        print('Error eliminando ligas: $e');
+      }
     }
   }
 

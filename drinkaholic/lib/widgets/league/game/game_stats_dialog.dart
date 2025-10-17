@@ -184,8 +184,9 @@ void showGameStatsDialog({
                               final player = index < players.length
                                   ? players[index]
                                   : null;
-                              if (player == null)
+                              if (player == null) {
                                 return const SizedBox.shrink();
+                              }
 
                               final avatarSize = isSmallScreen ? 28.0 : 32.0;
                               final drinkIconSize = isSmallScreen ? 14.0 : 16.0;

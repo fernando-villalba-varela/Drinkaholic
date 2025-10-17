@@ -3,23 +3,23 @@ import '../../../models/game_state.dart';
 import '../../../models/player.dart';
 import '../../quick_game_widgets.dart' show buildCenterContent;
 
-
-
-double getResponsiveSize(BuildContext context, {
-  required double small,    
-  required double medium,   
-  required double large,    
+double getResponsiveSize(
+  BuildContext context, {
+  required double small,
+  required double medium,
+  required double large,
 }) {
   final width = MediaQuery.of(context).size.width;
-  
+
   // Breakpoints ajustados para Nothing Phone (2400x1080)
-  const breakpointSmall = 1000.0;    // Móviles pequeños
-  const breakpointMedium = 1700.0;   // Móviles medianos/grandes como Nothing Phone
+  const breakpointSmall = 1000.0; // Móviles pequeños
+  const breakpointMedium =
+      1700.0; // Móviles medianos/grandes como Nothing Phone
 
   if (width <= breakpointSmall) {
-    return small * 1.2;  // Incremento del 20% para mejor visibilidad
+    return small * 1.2; // Incremento del 20% para mejor visibilidad
   } else if (width <= breakpointMedium) {
-    return medium * 1.5; // Incremento del 15% 
+    return medium * 1.5; // Incremento del 15%
   } else {
     return large * 2;
   }
@@ -41,29 +41,27 @@ class GameCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        
-             final iconSize = getResponsiveSize(
+        final iconSize = getResponsiveSize(
           context,
-          small: 35,     // Aumentado de 28
-          medium: 40,    // Aumentado de 35
-          large: 50,     // Aumentado de 45
+          small: 35, // Aumentado de 28
+          medium: 40, // Aumentado de 35
+          large: 50, // Aumentado de 45
         );
 
         final fontSize = getResponsiveSize(
-          context, 
-          small: 18,     // Aumentado de 16
-          medium: 22,    // Aumentado de 20
-          large: 26,     // Aumentado de 24
+          context,
+          small: 18, // Aumentado de 16
+          medium: 22, // Aumentado de 20
+          large: 26, // Aumentado de 24
         );
 
         final padding = getResponsiveSize(
           context,
-          small: 18,     // Aumentado de 15
-          medium: 28,    // Aumentado de 25
-          large: 38,     // Aumentado de 35
+          small: 18, // Aumentado de 15
+          medium: 28, // Aumentado de 25
+          large: 38, // Aumentado de 35
         );
 
-      
         return SizedBox(
           width: double.infinity,
           child: Center(
@@ -75,10 +73,11 @@ class GameCard extends StatelessWidget {
                   Flexible(
                     child: _buildChallengeContent(
                       gameState,
-                      showPlayerSelector,context
+                      showPlayerSelector,
+                      context,
                     ),
                   ),
-                  SizedBox(height:  20),
+                  SizedBox(height: 20),
                   // Player selection buttons (for conditional questions)
                   if (showPlayerSelector &&
                       onPlayersSelected != null &&
@@ -154,48 +153,44 @@ class GameCard extends StatelessWidget {
 
   Widget _buildPlayerSelectionButtons(
     List<Player> players,
-    
     Function(List<int>) onSelected,
   ) {
     final Set<int> selectedIds = {};
 
     return StatefulBuilder(
       builder: (context, setState) {
-
-           final iconSize = getResponsiveSize(
+        final iconSize = getResponsiveSize(
           context,
-          small: 35,     // Aumentado de 28
-          medium: 40,    // Aumentado de 35
-          large: 50,     // Aumentado de 45
+          small: 35, // Aumentado de 28
+          medium: 40, // Aumentado de 35
+          large: 50, // Aumentado de 45
         );
 
         final fontSize = getResponsiveSize(
-          context, 
-          small: 18,     // Aumentado de 16
-          medium: 22,    // Aumentado de 20
-          large: 26,     // Aumentado de 24
+          context,
+          small: 18, // Aumentado de 16
+          medium: 22, // Aumentado de 20
+          large: 26, // Aumentado de 24
         );
 
         // Tamaños más compactos para evitar scroll
-       
 
         final buttonHeight = getResponsiveSize(
-          context, 
-          small: 40,     // Aumentado de 16
-          medium: 50,    // Aumentado de 20
-          large: 60,     // Aumentado de 24
+          context,
+          small: 40, // Aumentado de 16
+          medium: 50, // Aumentado de 20
+          large: 60, // Aumentado de 24
         );
 
-         final buttonWidth= getResponsiveSize(
-          context, 
-          small: 180,     // Aumentado de 16
-          medium: 150,    // Aumentado de 20
-          large: 200,     // Aumentado de 24
+        final buttonWidth = getResponsiveSize(
+          context,
+          small: 230, // Aumentado de 16
+          medium: 150, // Aumentado de 20
+          large: 200, // Aumentado de 24
         );
-     
-        final avatarSize =  24.0;
-        final spacing =  6.0;
-    
+
+        final avatarSize = 24.0;
+        final spacing = 6.0;
 
         return Column(
           mainAxisSize: MainAxisSize.min,
@@ -231,29 +226,23 @@ class GameCard extends StatelessWidget {
                   child: Container(
                     width: buttonWidth,
                     height: buttonHeight,
-                    padding: EdgeInsets.symmetric(
-                      horizontal:  10,
-                      vertical: 6,
-                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 10),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? const Color(0xFF00C9FF)
                           : Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(
-                        18,
-                      ),
+                      borderRadius: BorderRadius.circular(18),
                       border: Border.all(
                         color: isSelected
                             ? const Color(0xFF00C9FF)
                             : Colors.white.withOpacity(0.5),
-                        width:  2,
+                        width: 2,
                       ),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         _buildMiniAvatar(player, avatarSize, context),
-                        SizedBox(width:  6),
                         Text(
                           player.nombre,
                           style: TextStyle(
@@ -277,66 +266,28 @@ class GameCard extends StatelessWidget {
               }).toList(),
             ),
             SizedBox(height: spacing * 1.5),
-            // Botones de acción
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Botón "Nadie cumple"
-                OutlinedButton(
-                  onPressed: () {
-                    // Pasar directamente al siguiente reto sin diálogo
-                    onSelected(
-                      [],
-                    ); // Pasar lista vacía para indicar que nadie cumple
-                  },
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    side: const BorderSide(color: Colors.white, width: 2),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical:  10,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  ),
-                  child: Text(
-                    'Nadie cumple',
-                    style: TextStyle(
-                      fontSize: fontSize,
-                      fontWeight: FontWeight.bold,
-                    ),
+            // Solo mostrar botón confirmar si hay selección
+            if (selectedIds.isNotEmpty)
+              ElevatedButton(
+                onPressed: () {
+                  onSelected(selectedIds.toList());
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF00C9FF),
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
                   ),
                 ),
-                if (selectedIds.isNotEmpty) ...[
-                  const SizedBox(width: 12),
-                  // Botón "Confirmar" (solo visible si hay selección)
-                  ElevatedButton(
-                    onPressed: () {
-                      onSelected(selectedIds.toList());
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF00C9FF),
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(
-                        horizontal:  20,
-                        vertical:  10,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    child: Text(
-                      'Confirmar (${selectedIds.length})',
-                      style: TextStyle(
-                        fontSize: fontSize,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                child: Text(
+                  'Confirmar (${selectedIds.length})',
+                  style: TextStyle(
+                    fontSize: fontSize,
+                    fontWeight: FontWeight.bold,
                   ),
-                ],
-              ],
-            ),
+                ),
+              ),
           ],
         );
       },
@@ -344,27 +295,19 @@ class GameCard extends StatelessWidget {
   }
 
   Widget _buildMiniAvatar(Player player, double size, BuildContext context) {
+    final iconSize = getResponsiveSize(
+      context,
+      small: 35, // Aumentado de 28
+      medium: 20, // Aumentado de 35
+      large: 30, // Aumentado de 45
+    );
 
-       final iconSize = getResponsiveSize(
-          context,
-          small: 35,     // Aumentado de 28
-          medium: 20,    // Aumentado de 35
-          large: 30,     // Aumentado de 45
-        );
-
-        final fontSize = getResponsiveSize(
-          context, 
-          small: 18,     // Aumentado de 16
-          medium: 22,    // Aumentado de 20
-          large: 26,     // Aumentado de 24
-        );
-
-        final padding = getResponsiveSize(
-          context,
-          small: 18,     // Aumentado de 15
-          medium: 28,    // Aumentado de 25
-          large: 38,     // Aumentado de 35
-        );
+    final fontSize = getResponsiveSize(
+      context,
+      small: 18, // Aumentado de 16
+      medium: 22, // Aumentado de 20
+      large: 26, // Aumentado de 24
+    );
 
     ImageProvider? img;
     if (player.imagen != null && player.imagen!.existsSync()) {
@@ -379,65 +322,42 @@ class GameCard extends StatelessWidget {
       child: img == null
           ? Text(
               player.nombre.isNotEmpty ? player.nombre[0].toUpperCase() : '?',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: fontSize,
-              ),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: fontSize),
             )
           : null,
     );
   }
 
   /// Builds challenge content, hiding "TODOS" icon and text when showPlayerSelector is true
-  Widget _buildChallengeContent(GameState gameState, bool hideForAllIndicator, BuildContext context) {
-
-         final iconSize = getResponsiveSize(
-          context,
-          small: 35,     // Aumentado de 28
-          medium: 40,    // Aumentado de 35
-          large: 50,     // Aumentado de 45
-        );
-
-        final fontSize = getResponsiveSize(
-          context, 
-          small: 18,     // Aumentado de 16
-          medium: 22,    // Aumentado de 20
-          large: 26,     // Aumentado de 24
-        );
-
-        final padding = getResponsiveSize(
-          context,
-          small: 18,     // Aumentado de 15
-          medium: 28,    // Aumentado de 25
-          large: 38,     // Aumentado de 35
-        );
-
-
-
+  Widget _buildChallengeContent(
+    GameState gameState,
+    bool hideForAllIndicator,
+    BuildContext context,
+  ) {
     if (hideForAllIndicator && gameState.isChallengeForAll) {
       // Para preguntas condicionales, solo mostrar el texto del reto sin icono ni "TODOS"
       return LayoutBuilder(
         builder: (context, constraints) {
           final iconSize = getResponsiveSize(
-          context,
-          small: 35,     // Aumentado de 28
-          medium: 40,    // Aumentado de 35
-          large: 50,     // Aumentado de 45
-        );
+            context,
+            small: 35, // Aumentado de 28
+            medium: 40, // Aumentado de 35
+            large: 50, // Aumentado de 45
+          );
 
-        final fontSize = getResponsiveSize(
-          context, 
-          small: 18,     // Aumentado de 16
-          medium: 22,    // Aumentado de 20
-          large: 26,     // Aumentado de 24
-        );
+          final fontSize = getResponsiveSize(
+            context,
+            small: 18, // Aumentado de 16
+            medium: 22, // Aumentado de 20
+            large: 26, // Aumentado de 24
+          );
 
-        final padding = getResponsiveSize(
-          context,
-          small: 18,     // Aumentado de 15
-          medium: 28,    // Aumentado de 25
-          large: 38,     // Aumentado de 35
-        );
+          final padding = getResponsiveSize(
+            context,
+            small: 18, // Aumentado de 15
+            medium: 28, // Aumentado de 25
+            large: 38, // Aumentado de 35
+          );
 
           return SingleChildScrollView(
             child: Column(
