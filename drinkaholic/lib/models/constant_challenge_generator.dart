@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'constant_challenge.dart';
 import 'player.dart';
@@ -68,14 +69,18 @@ class ConstantChallengeGenerator {
     if (_templates != null) return;
 
     try {
-      final String jsonString = await rootBundle.loadString('assets/constant_challenges.json');
+      final String jsonString = await rootBundle.loadString(
+        'assets/constant_challenges.json',
+      );
       final Map<String, dynamic> jsonData = json.decode(jsonString);
-      
+
       _templates = (jsonData['templates'] as List)
           .map((template) => ConstantChallengeTemplate.fromJson(template))
           .toList();
     } catch (e) {
-      print('Error loading constant challenges: $e');
+      if (kDebugMode) {
+        print('Error loading constant challenges: $e');
+      }
       _templates = [];
     }
   }
@@ -86,14 +91,15 @@ class ConstantChallengeGenerator {
     int currentRound,
   ) async {
     await loadTemplates();
-    
+
     if (_templates == null || _templates!.isEmpty) {
       // Fallback challenge
       return ConstantChallenge(
         id: 'fallback_${_random.nextInt(10000)}',
         targetPlayer: targetPlayer,
         description: '${targetPlayer.nombre} debe beber con la mano izquierda',
-        punishment: 'Si ${targetPlayer.nombre} usa la mano derecha, bebe 2 tragos',
+        punishment:
+            'Si ${targetPlayer.nombre} usa la mano derecha, bebe 2 tragos',
         type: ConstantChallengeType.restriction,
         startRound: currentRound,
         status: ConstantChallengeStatus.active,
@@ -103,16 +109,21 @@ class ConstantChallengeGenerator {
     // Filter only single-player templates (exclude dual templates)
     final singlePlayerTemplates = _templates!.where((template) {
       return !(template.variables.containsKey('PLAYER1') &&
-               template.variables.containsKey('PLAYER2') &&
-               template.variables['PLAYER1']!.contains('DUAL_PLAYER1') &&
-               template.variables['PLAYER2']!.contains('DUAL_PLAYER2'));
+          template.variables.containsKey('PLAYER2') &&
+          template.variables['PLAYER1']!.contains('DUAL_PLAYER1') &&
+          template.variables['PLAYER2']!.contains('DUAL_PLAYER2'));
     }).toList();
-    
+
     if (singlePlayerTemplates.isEmpty) {
-      return _generateChallengeFromTemplate(_templates!.first, targetPlayer, currentRound);
+      return _generateChallengeFromTemplate(
+        _templates!.first,
+        targetPlayer,
+        currentRound,
+      );
     }
-    
-    final template = singlePlayerTemplates[_random.nextInt(singlePlayerTemplates.length)];
+
+    final template =
+        singlePlayerTemplates[_random.nextInt(singlePlayerTemplates.length)];
     return _generateChallengeFromTemplate(template, targetPlayer, currentRound);
   }
 
@@ -123,14 +134,16 @@ class ConstantChallengeGenerator {
     int currentRound,
   ) async {
     await loadTemplates();
-    
+
     if (_templates == null || _templates!.isEmpty) {
       // Fallback dual challenge
       return ConstantChallenge(
         id: 'dual_fallback_${_random.nextInt(10000)}',
         targetPlayer: player1, // Use first player as primary target
-        description: '${player1.nombre}, cada vez que ${player2.nombre} beba por el juego, bebes 1 trago',
-        punishment: 'Si ${player1.nombre} no bebe cuando debe, bebe 3 tragos adicionales',
+        description:
+            '${player1.nombre}, cada vez que ${player2.nombre} beba por el juego, bebes 1 trago',
+        punishment:
+            'Si ${player1.nombre} no bebe cuando debe, bebe 3 tragos adicionales',
         type: ConstantChallengeType.rule,
         startRound: currentRound,
         status: ConstantChallengeStatus.active,
@@ -141,17 +154,22 @@ class ConstantChallengeGenerator {
     // Filter only dual-player templates
     final dualTemplates = _templates!.where((template) {
       return template.variables.containsKey('PLAYER1') &&
-             template.variables.containsKey('PLAYER2') &&
-             template.variables['PLAYER1']!.contains('DUAL_PLAYER1') &&
-             template.variables['PLAYER2']!.contains('DUAL_PLAYER2');
+          template.variables.containsKey('PLAYER2') &&
+          template.variables['PLAYER1']!.contains('DUAL_PLAYER1') &&
+          template.variables['PLAYER2']!.contains('DUAL_PLAYER2');
     }).toList();
-    
+
     if (dualTemplates.isEmpty) {
       return generateRandomConstantChallenge(player1, currentRound);
     }
-    
+
     final template = dualTemplates[_random.nextInt(dualTemplates.length)];
-    return _generateDualChallengeFromTemplate(template, player1, player2, currentRound);
+    return _generateDualChallengeFromTemplate(
+      template,
+      player1,
+      player2,
+      currentRound,
+    );
   }
 
   /// Generate a challenge to end an existing constant challenge
@@ -160,39 +178,63 @@ class ConstantChallengeGenerator {
     int endRound,
   ) {
     String endDescription;
-    
+
     // Find the template using the templateId stored in metadata
     final templateId = challenge.metadata['templateId'] as String?;
-    final template = _templates?.firstWhere(
-      (t) => t.id == templateId,
-      orElse: () => _templates!.first,
-    );
+    ConstantChallengeTemplate? template;
+
+    // Solo buscar template si templateId no es null y _templates no está vacío
+    if (templateId != null && _templates != null && _templates!.isNotEmpty) {
+      try {
+        final foundTemplates = _templates!
+            .where((t) => t.id == templateId)
+            .toList();
+        if (foundTemplates.isNotEmpty) {
+          template = foundTemplates.first;
+        }
+      } catch (e) {
+        template = null;
+      }
+    }
 
     if (template != null) {
       endDescription = template.endTemplate;
-      
+
       // Handle dual challenges
       if (challenge.metadata.containsKey('dualPlayer2')) {
         final dualPlayer2 = challenge.metadata['dualPlayer2'] as String;
-        endDescription = endDescription.replaceAll('{PLAYER1}', challenge.targetPlayer.nombre);
+        endDescription = endDescription.replaceAll(
+          '{PLAYER1}',
+          challenge.targetPlayer.nombre,
+        );
         endDescription = endDescription.replaceAll('{PLAYER2}', dualPlayer2);
       } else {
         // Handle single player challenges
-        endDescription = endDescription.replaceAll('{PLAYER}', challenge.targetPlayer.nombre);
+        endDescription = endDescription.replaceAll(
+          '{PLAYER}',
+          challenge.targetPlayer.nombre,
+        );
       }
-      
+
       // Replace any other variables if needed using stored metadata
       challenge.metadata.forEach((key, value) {
-        if (key != 'templateId' && key != 'dualPlayer2' && key != 'dualPlayer2Id') {
-          endDescription = endDescription.replaceAll('{$key}', value.toString());
+        if (key != 'templateId' &&
+            key != 'dualPlayer2' &&
+            key != 'dualPlayer2Id') {
+          endDescription = endDescription.replaceAll(
+            '{$key}',
+            value.toString(),
+          );
         }
       });
     } else {
       if (challenge.metadata.containsKey('dualPlayer2')) {
         final dualPlayer2 = challenge.metadata['dualPlayer2'] as String;
-        endDescription = '${challenge.targetPlayer.nombre} y $dualPlayer2 ya no tienen restricciones especiales';
+        endDescription =
+            '${challenge.targetPlayer.nombre} y $dualPlayer2 ya no tienen restricciones especiales';
       } else {
-        endDescription = '${challenge.targetPlayer.nombre} ya no tiene restricciones especiales';
+        endDescription =
+            '${challenge.targetPlayer.nombre} ya no tiene restricciones especiales';
       }
     }
 
@@ -210,14 +252,21 @@ class ConstantChallengeGenerator {
     Player targetPlayer,
     int currentRound,
   ) {
-    String description = template.template.replaceAll('{PLAYER}', targetPlayer.nombre);
-    String punishment = template.punishment.replaceAll('{PLAYER}', targetPlayer.nombre);
+    String description = template.template.replaceAll(
+      '{PLAYER}',
+      targetPlayer.nombre,
+    );
+    String punishment = template.punishment.replaceAll(
+      '{PLAYER}',
+      targetPlayer.nombre,
+    );
     Map<String, dynamic> metadata = {'templateId': template.id};
 
     // Replace variables with random values
     template.variables.forEach((variableName, possibleValues) {
       if (possibleValues.isNotEmpty) {
-        final selectedValue = possibleValues[_random.nextInt(possibleValues.length)];
+        final selectedValue =
+            possibleValues[_random.nextInt(possibleValues.length)];
         description = description.replaceAll('{$variableName}', selectedValue);
         punishment = punishment.replaceAll('{$variableName}', selectedValue);
         metadata[variableName] = selectedValue;
@@ -256,11 +305,14 @@ class ConstantChallengeGenerator {
     description = description.replaceAll('{PLAYER2}', player2.nombre);
     punishment = punishment.replaceAll('{PLAYER1}', player1.nombre);
     punishment = punishment.replaceAll('{PLAYER2}', player2.nombre);
-    
+
     // Replace other variables with random values
     template.variables.forEach((variableName, possibleValues) {
-      if (variableName != 'PLAYER1' && variableName != 'PLAYER2' && possibleValues.isNotEmpty) {
-        final selectedValue = possibleValues[_random.nextInt(possibleValues.length)];
+      if (variableName != 'PLAYER1' &&
+          variableName != 'PLAYER2' &&
+          possibleValues.isNotEmpty) {
+        final selectedValue =
+            possibleValues[_random.nextInt(possibleValues.length)];
         description = description.replaceAll('{$variableName}', selectedValue);
         punishment = punishment.replaceAll('{$variableName}', selectedValue);
         metadata[variableName] = selectedValue;
@@ -289,7 +341,7 @@ class ConstantChallengeGenerator {
 
     // Lower probability if there are many active challenges
     final activeChallengeCount = activeChallenges.length;
-    
+
     double baseProbability;
     if (activeChallengeCount == 0) {
       baseProbability = 0.15; // 15% chance if no active challenges
@@ -311,7 +363,7 @@ class ConstantChallengeGenerator {
 
     // Lower probability as time goes on to make challenges persist longer
     final roundsActive = currentRound - challenge.startRound;
-    
+
     double probability;
     if (roundsActive >= 15) {
       probability = 0.25; // 25% chance after 15 rounds
@@ -342,10 +394,16 @@ class ConstantChallengeGenerator {
     }
 
     // Find players with the minimum number of active challenges
-    final minChallenges = challengeCount.values.isEmpty ? 0 : challengeCount.values.reduce((a, b) => a < b ? a : b);
-    final eligiblePlayers = players.where((player) => 
-      (challengeCount[player.id] ?? 0) == minChallenges && minChallenges < 3
-    ).toList();
+    final minChallenges = challengeCount.values.isEmpty
+        ? 0
+        : challengeCount.values.reduce((a, b) => a < b ? a : b);
+    final eligiblePlayers = players
+        .where(
+          (player) =>
+              (challengeCount[player.id] ?? 0) == minChallenges &&
+              minChallenges < 3,
+        )
+        .toList();
 
     if (eligiblePlayers.isEmpty) return null;
 
