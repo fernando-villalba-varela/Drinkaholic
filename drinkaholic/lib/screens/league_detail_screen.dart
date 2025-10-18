@@ -102,10 +102,11 @@ class _LeagueDetailScreenState extends State<LeagueDetailScreen>
                   ),
                 ),
               ),
-              LeagueAppBarButton(
-                onTap: () => vm.showExportDialog(context),
-                icon: Icons.upload_file,
-              ),
+              // FUTURA IMPLEMENTACION: Exportar liga a JSON
+              // LeagueAppBarButton(
+              //   onTap: () => vm.showExportDialog(context),
+              //   icon: Icons.upload_file,
+              // ),
             ],
           ),
           bottom: PreferredSize(

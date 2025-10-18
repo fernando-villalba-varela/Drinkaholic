@@ -30,8 +30,11 @@ class LeagueDetailViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void recordMatch(Map<int, int> drinksMap) {
-    if (drinksMap.isEmpty) return;
+  Map<int, String> recordMatch(Map<int, int> drinksMap) {
+    final Map<int, String> streakMessages = {};
+
+    if (drinksMap.isEmpty) return streakMessages;
+
     final maxVal = drinksMap.values.reduce((a, b) => a > b ? a : b);
     final minVal = drinksMap.values.reduce((a, b) => a < b ? a : b);
 
@@ -50,30 +53,56 @@ class LeagueDetailViewModel extends ChangeNotifier {
     final mvpId = mvpIds.first;
     final ratitaId = ratitaIds.first;
 
+    // Detectar rachas de MVP consecutivos
+    if (league.currentMvpStreak == mvpId) {
+      league.mvpStreakCount++;
+    } else {
+      league.currentMvpStreak = mvpId;
+      league.mvpStreakCount = 1;
+    }
+
+    // Detectar rachas de Ratita consecutivas
+    if (league.currentRatitaStreak == ratitaId) {
+      league.ratitaStreakCount++;
+    } else {
+      league.currentRatitaStreak = ratitaId;
+      league.ratitaStreakCount = 1;
+    }
+
+    // Generar mensajes para rachas de MVP (2 o más victorias consecutivas)
+    if (league.mvpStreakCount >= 2) {
+      final mvpPlayer = league.players.firstWhere((p) => p.playerId == mvpId);
+      streakMessages[mvpId] =
+          '${mvpPlayer.name} ha ganado ${league.mvpStreakCount} veces seguidas!. El duende te da 10 tragos a repartir mientras se rie y bebe.';
+    }
+
+    // Generar mensajes para rachas de Ratita (2 o más derrotas consecutivas)
+    if (league.ratitaStreakCount >= 2) {
+      final ratitaPlayer = league.players.firstWhere(
+        (p) => p.playerId == ratitaId,
+      );
+      streakMessages[ratitaId] =
+          '${ratitaPlayer.name} ha perdido ${league.ratitaStreakCount} veces seguidas. El duende se mea en tu boca y bebes 10 tragos.';
+    }
+
     for (final p in league.players) {
-      final drinks = drinksMap[p.playerId] ?? 0;
+      final drinks = drinksMap[p.playerId];
+
+      // Solo procesar jugadores que participaron en la partida
+      if (drinks == null) continue;
+
       final isMvp = p.playerId == mvpId;
       final isRatita = p.playerId == ratitaId;
-      int bonus = 0;
 
-      if (isMvp && p.lastWasRatita) {
-        for (final other in league.players.where(
-          (x) => x.playerId != p.playerId,
-        )) {
-          other.totalDrinks += 10;
-        }
-      }
-      if (isRatita && p.lastWasRatita) {
-        bonus += 10;
-      }
-
+      // Solo aplicar los tragos base del juego, sin bonificaciones que afecten el scoreboard
       p.applyGame(
         drinks: drinks,
         isMvp: isMvp,
         isRatita: isRatita,
-        bonusDrinks: bonus,
+        bonusDrinks: 0, // No agregar bonificaciones al scoreboard
       );
 
+      // Sistema de puntos simple y claro
       if (isMvp) {
         p.points += 3;
       } else if (isRatita) {
@@ -95,6 +124,8 @@ class LeagueDetailViewModel extends ChangeNotifier {
     );
     listVM.refresh();
     notifyListeners();
+
+    return streakMessages;
   }
 
   int _tieBreaker(List<int> ids) {

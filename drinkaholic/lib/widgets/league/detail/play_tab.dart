@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../viewmodels/league_detail_viewmodel.dart';
 import '../../../models/player.dart';
 import '../../../screens/league_game_screen.dart';
+import '../../../screens/game_results_screen.dart';
 
 class PlayTab extends StatefulWidget {
   const PlayTab({super.key});
@@ -15,6 +16,7 @@ class PlayTab extends StatefulWidget {
 
 class _PlayTabState extends State<PlayTab> {
   final Set<int> _selected = {};
+  bool _isProcessingGameEnd = false;
 
   ImageProvider? _avatar(String? path) {
     if (path == null) return null;
@@ -34,21 +36,54 @@ class _PlayTabState extends State<PlayTab> {
     });
   }
 
-  void _saveGameResults(Map<int, int> playerDrinks) {
+  Map<int, String> _saveGameResults(Map<int, int> playerDrinks) {
     final vm = context.read<LeagueDetailViewModel>();
 
     // Usar el método correcto del ViewModel que maneja toda la lógica de puntuación
-    vm.recordMatch(playerDrinks);
+    final streakMessages = vm.recordMatch(playerDrinks);
 
     setState(() {
       _selected.clear(); // Limpiar selección después de guardar
     });
+
+    return streakMessages;
   }
 
   @override
   Widget build(BuildContext context) {
     final vm = context.watch<LeagueDetailViewModel>();
     final players = vm.league.players;
+
+    // Si no hay jugadores, mostrar mensaje
+    if (players.isEmpty) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.sports_esports_outlined,
+              size: 64,
+              color: Colors.white54,
+            ),
+            SizedBox(height: 16),
+            Text(
+              'No hay jugadores',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Agrega jugadores desde la pestaña "Jugadores"',
+              style: TextStyle(fontSize: 16, color: Colors.white70),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    }
 
     return Column(
       children: [
@@ -128,7 +163,13 @@ class _PlayTabState extends State<PlayTab> {
             width: double.infinity,
             child: ElevatedButton.icon(
               icon: const Icon(Icons.local_drink),
-              label: const Text('¡Que dios os bendiga!'),
+              label: Text(
+                _selected.length >= 2
+                    ? '¡Que dios os bendiga!'
+                    : players.length < 2
+                    ? 'Necesitas al menos 2 jugadores'
+                    : 'Selecciona al menos 2 jugadores',
+              ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.lightBlueAccent,
                 disabledBackgroundColor: const Color(0x5987CEEB),
@@ -144,8 +185,11 @@ class _PlayTabState extends State<PlayTab> {
                 ),
                 elevation: 2,
               ),
-              onPressed: _selected.length >= 2
+              onPressed: (_selected.length >= 2 && players.length >= 2)
                   ? () {
+                      // Capturar el TabController ANTES de navegar
+                      final tabController = DefaultTabController.of(context);
+
                       // Convertir los jugadores seleccionados de LeaguePlayerStats a Player
                       final selectedPlayers = players
                           .where((p) => _selected.contains(p.playerId))
@@ -188,10 +232,44 @@ class _PlayTabState extends State<PlayTab> {
                             players: selectedPlayers,
                             maxRounds: maxRounds,
                             onGameEnd: (playerDrinks) {
-                              _saveGameResults(playerDrinks);
-                              // Cambiar a la pestaña del scoreboard después de guardar
-                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                DefaultTabController.of(context).animateTo(0);
+                              // Prevenir múltiples ejecuciones
+                              if (_isProcessingGameEnd) return;
+                              _isProcessingGameEnd = true;
+
+                              // Procesar resultados y obtener mensajes de rachas
+                              final streakMessages = _saveGameResults(
+                                playerDrinks,
+                              );
+
+                              // Navegar a GameResultsScreen con los mensajes de rachas
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => GameResultsScreen(
+                                    players: selectedPlayers,
+                                    playerDrinks: playerDrinks,
+                                    maxRounds: maxRounds,
+                                    streakMessages: streakMessages,
+                                    onConfirm: () {
+                                      // Cerrar GameResultsScreen
+                                      Navigator.pop(context);
+                                      // Cerrar también LeagueGameScreen para volver a PlayTab
+                                      Navigator.pop(context);
+                                      // Cambiar a la pestaña del scoreboard usando el controlador capturado
+                                      if (mounted) {
+                                        WidgetsBinding.instance
+                                            .addPostFrameCallback((_) {
+                                              tabController.animateTo(0);
+                                            });
+                                      }
+                                      // Resetear el flag
+                                      _isProcessingGameEnd = false;
+                                    },
+                                  ),
+                                ),
+                              ).then((_) {
+                                // Resetear el flag si se cierra la pantalla de otra manera
+                                _isProcessingGameEnd = false;
                               });
                             },
                           ),
