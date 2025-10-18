@@ -10,14 +10,9 @@ import 'package:image_picker/image_picker.dart';
 class ParticipantsViewmodel extends ChangeNotifier {
   BuildContext? context;
 
-  final List<Player> _players = [
-    Player(id: 1, nombre: 'James'),
-    Player(id: 2, nombre: 'Laura'),
-    Player(id: 3, nombre: 'Karl'),
-    Player(id: 4, nombre: 'Helen'),
-  ];
+  final List<Player> _players = [];
 
-  int _nextPlayerId = 5;
+  int _nextPlayerId = 1;
   final TextEditingController _controller = TextEditingController();
   final ImagePicker _picker = ImagePicker();
 

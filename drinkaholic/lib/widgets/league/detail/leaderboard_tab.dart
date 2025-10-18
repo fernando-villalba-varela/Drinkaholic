@@ -26,6 +26,33 @@ class LeaderboardTab extends StatelessWidget {
       });
     final lastPos = players.length;
 
+    // Si no hay jugadores, mostrar mensaje
+    if (players.isEmpty) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.people_outline, size: 64, color: Colors.white54),
+            SizedBox(height: 16),
+            Text(
+              'No hay jugadores',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Agrega jugadores desde la pestaña "Jugadores"',
+              style: TextStyle(fontSize: 16, color: Colors.white70),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    }
+
     return ListView.builder(
       itemCount: players.length,
       itemBuilder: (_, i) {

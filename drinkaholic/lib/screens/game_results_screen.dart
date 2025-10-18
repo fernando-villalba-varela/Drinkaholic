@@ -8,6 +8,7 @@ class GameResultsScreen extends StatefulWidget {
   final Map<int, int> playerDrinks;
   final int maxRounds;
   final VoidCallback onConfirm;
+  final Map<int, String>? streakMessages; // Mensajes especiales de rachas
 
   const GameResultsScreen({
     super.key,
@@ -15,17 +16,21 @@ class GameResultsScreen extends StatefulWidget {
     required this.playerDrinks,
     required this.maxRounds,
     required this.onConfirm,
+    this.streakMessages,
   });
 
   @override
   State<GameResultsScreen> createState() => _GameResultsScreenState();
 }
 
-class _GameResultsScreenState extends State<GameResultsScreen> {
+class _GameResultsScreenState extends State<GameResultsScreen>
+    with TickerProviderStateMixin {
   Player? _resolvedMVP;
   Player? _resolvedRatita;
   bool _mvpTieResolved = false;
   bool _ratitaTieResolved = false;
+  bool _isConfirming = false; // Prevenir múltiples ejecuciones
+  AnimationController? _glowController;
 
   @override
   void initState() {
@@ -36,6 +41,12 @@ class _GameResultsScreenState extends State<GameResultsScreen> {
       DeviceOrientation.portraitDown,
     ]);
 
+    // Inicializar animación de parpadeo
+    _glowController = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    )..repeat(reverse: true);
+
     // Inicializar verificación de empates
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkForTiebreakers();
@@ -44,6 +55,7 @@ class _GameResultsScreenState extends State<GameResultsScreen> {
 
   @override
   void dispose() {
+    _glowController?.dispose();
     // Restore portrait orientation when leaving this screen
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -53,14 +65,14 @@ class _GameResultsScreenState extends State<GameResultsScreen> {
   }
 
   void _checkForTiebreakers() {
-    // Encontrar jugadores con más tragos (MVP)
+    // MVDP = jugadores con MÁS tragos
     int maxDrinks = widget.playerDrinks.values.reduce((a, b) => a > b ? a : b);
     List<int> mvpPlayerIds = widget.playerDrinks.entries
         .where((entry) => entry.value == maxDrinks)
         .map((entry) => entry.key)
         .toList();
 
-    // Encontrar jugadores con menos tragos (Ratita)
+    // Ratita = jugadores con MENOS tragos
     int minDrinks = widget.playerDrinks.values.reduce((a, b) => a < b ? a : b);
     List<int> ratitaPlayerIds = widget.playerDrinks.entries
         .where((entry) => entry.value == minDrinks)
@@ -129,7 +141,7 @@ class _GameResultsScreenState extends State<GameResultsScreen> {
   @override
   Widget build(BuildContext context) {
     // playerDrinks ahora es Map<playerId, drinks>
-    // Calcular MVP (más tragos) y Ratita (menos tragos)
+    // Calcular MVDP (más tragos) y Ratita (menos tragos)
     int maxDrinks = widget.playerDrinks.values.reduce((a, b) => a > b ? a : b);
     int minDrinks = widget.playerDrinks.values.reduce((a, b) => a < b ? a : b);
 
@@ -140,7 +152,7 @@ class _GameResultsScreenState extends State<GameResultsScreen> {
     if (_resolvedMVP != null) {
       mvp = _resolvedMVP!;
     } else {
-      // Encontrar MVP sin desempate
+      // MVDP = quien MÁS bebió (más tragos)
       int mvpPlayerId = widget.playerDrinks.entries
           .firstWhere((entry) => entry.value == maxDrinks)
           .key;
@@ -153,7 +165,7 @@ class _GameResultsScreenState extends State<GameResultsScreen> {
     if (_resolvedRatita != null) {
       ratita = _resolvedRatita!;
     } else {
-      // Encontrar Ratita sin desempate
+      // Ratita = quien MENOS bebió (menos tragos)
       int ratitaPlayerId = widget.playerDrinks.entries
           .firstWhere((entry) => entry.value == minDrinks)
           .key;
@@ -352,6 +364,10 @@ class _GameResultsScreenState extends State<GameResultsScreen> {
                             ],
                           ),
                         ),
+                        // Mensajes de Rachas Especiales
+                        if (widget.streakMessages != null &&
+                            widget.streakMessages!.isNotEmpty)
+                          _buildStreakMessagesSection(isSmallScreen),
                       ],
                     ),
                   ),
@@ -362,7 +378,15 @@ class _GameResultsScreenState extends State<GameResultsScreen> {
                   child: SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: widget.onConfirm,
+                      onPressed: _isConfirming
+                          ? null
+                          : () {
+                              if (_isConfirming) return;
+                              setState(() {
+                                _isConfirming = true;
+                              });
+                              widget.onConfirm();
+                            },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF00C9FF),
                         foregroundColor: Colors.white,
@@ -543,6 +567,313 @@ class _GameResultsScreenState extends State<GameResultsScreen> {
               ),
             )
           : null,
+    );
+  }
+
+  Widget _buildStreakMessagesSection(bool isSmallScreen) {
+    // Filtrar solo los mensajes que no están vacíos
+    final messagesWithContent = widget.streakMessages!.entries
+        .where((entry) => entry.value.isNotEmpty)
+        .toList();
+
+    if (messagesWithContent.isEmpty) return const SizedBox.shrink();
+
+    // Si el controlador no está inicializado, mostrar contenedor sin animación
+    if (_glowController == null) {
+      return Container(
+        margin: EdgeInsets.only(top: isSmallScreen ? 16 : 24),
+        padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.white.withOpacity(0.2)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: isSmallScreen ? 8 : 12,
+                vertical: isSmallScreen ? 4 : 6,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.95), // Fondo blanco brillante
+                borderRadius: BorderRadius.circular(6),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.white.withOpacity(0.3),
+                    blurRadius: 4,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+              child: RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: '👺 ',
+                      style: TextStyle(
+                        fontSize: isSmallScreen ? 15.0 : 18.0,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    TextSpan(
+                      text: 'BREAKING',
+                      style: TextStyle(
+                        color: const Color(0xFFCC0000), // Rojo CNN
+                        fontSize: isSmallScreen ? 15.0 : 18.0,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.5,
+                        shadows: [
+                          Shadow(
+                            color: const Color(0xFFCC0000).withOpacity(0.7),
+                            blurRadius: 4,
+                            offset: const Offset(0, 0),
+                          ),
+                        ],
+                      ),
+                    ),
+                    TextSpan(
+                      text: ' ',
+                      style: TextStyle(
+                        fontSize: isSmallScreen ? 15.0 : 18.0,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    TextSpan(
+                      text: 'NEWS',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: isSmallScreen ? 15.0 : 18.0,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.5,
+                        shadows: [
+                          Shadow(
+                            color: Colors.white.withOpacity(0.8),
+                            blurRadius: 6,
+                            offset: const Offset(0, 0),
+                          ),
+                        ],
+                      ),
+                    ),
+                    TextSpan(
+                      text:
+                          ' -> El duende con un litte boy en la mano anuncia lo siguiente:',
+                      style: TextStyle(
+                        color: const Color(0xFFCC0000), // Rojo CNN
+                        fontSize: isSmallScreen ? 15.0 : 18.0,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: isSmallScreen ? 12 : 16),
+            ...messagesWithContent.map((entry) {
+              final playerId = entry.key;
+              final message = entry.value;
+              widget.players.firstWhere(
+                (p) => p.id == playerId,
+                orElse: () => widget.players.first,
+              );
+
+              // Determinar si es racha de victorias o derrotas
+              final isLossStreak = message.contains('rata asquerosa');
+              final backgroundColor = isLossStreak
+                  ? Colors.red.withOpacity(0.2)
+                  : Colors.orange.withOpacity(0.2);
+              final iconColor = isLossStreak ? Colors.red : Colors.orange;
+              final icon = isLossStreak
+                  ? Icons.cleaning_services
+                  : Icons.emoji_events;
+
+              return Container(
+                margin: EdgeInsets.only(bottom: isSmallScreen ? 8 : 12),
+                padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
+                decoration: BoxDecoration(
+                  color: backgroundColor,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: iconColor.withOpacity(0.3)),
+                ),
+                child: Row(
+                  children: [
+                    Icon(icon, color: iconColor, size: isSmallScreen ? 20 : 24),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        message,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: isSmallScreen ? 13.0 : 16.0,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
+          ],
+        ),
+      );
+    }
+
+    return AnimatedBuilder(
+      animation: _glowController!,
+      builder: (context, child) {
+        final animationValue = _glowController?.value ?? 0.0;
+        return Container(
+          margin: EdgeInsets.only(top: isSmallScreen ? 16 : 24),
+          padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: Color.lerp(
+                const Color(
+                  0xFF228B22,
+                ).withOpacity(0.4), // Verde oscuro de bosque
+                const Color(
+                  0xFF32CD32,
+                ).withOpacity(0.9), // Verde duende brillante
+                animationValue,
+              )!,
+              width: 2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Color.lerp(
+                  const Color(
+                    0xFF228B22,
+                  ).withOpacity(0.2), // Verde oscuro suave
+                  const Color(0xFF32CD32).withOpacity(0.6), // Verde brillante
+                  animationValue,
+                )!,
+                blurRadius: 8,
+                spreadRadius: 2,
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: '👺 ',
+                      style: TextStyle(
+                        fontSize: isSmallScreen ? 15.0 : 18.0,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    TextSpan(
+                      text: 'BREAKING',
+                      style: TextStyle(
+                        color: const Color(0xFFCC0000), // Rojo CNN
+                        fontSize: isSmallScreen ? 15.0 : 18.0,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.5,
+                        shadows: [
+                          Shadow(
+                            color: const Color(0xFFCC0000).withOpacity(0.7),
+                            blurRadius: 4,
+                            offset: const Offset(0, 0),
+                          ),
+                        ],
+                      ),
+                    ),
+                    TextSpan(
+                      text: ' ',
+                      style: TextStyle(
+                        fontSize: isSmallScreen ? 15.0 : 18.0,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    TextSpan(
+                      text: 'NEWS',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: isSmallScreen ? 15.0 : 18.0,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.5,
+                        shadows: [
+                          Shadow(
+                            color: Colors.white.withOpacity(0.8),
+                            blurRadius: 6,
+                            offset: const Offset(0, 0),
+                          ),
+                        ],
+                      ),
+                    ),
+                    TextSpan(
+                      text:
+                          ' -> El duende con un litte boy en la mano anuncia lo siguiente:',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: isSmallScreen ? 15.0 : 18.0,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: isSmallScreen ? 12 : 16),
+              ...messagesWithContent.map((entry) {
+                final playerId = entry.key;
+                final message = entry.value;
+                widget.players.firstWhere(
+                  (p) => p.id == playerId,
+                  orElse: () => widget.players.first,
+                );
+
+                // Determinar si es racha de victorias o derrotas
+                final isLossStreak = message.contains('rata asquerosa');
+                final backgroundColor = isLossStreak
+                    ? Colors.red.withOpacity(0.2)
+                    : Colors.orange.withOpacity(0.2);
+                final iconColor = isLossStreak ? Colors.red : Colors.orange;
+                final icon = isLossStreak
+                    ? Icons.cleaning_services
+                    : Icons.emoji_events;
+
+                return Container(
+                  margin: EdgeInsets.only(bottom: isSmallScreen ? 8 : 12),
+                  padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
+                  decoration: BoxDecoration(
+                    color: backgroundColor,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: iconColor.withOpacity(0.3)),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        icon,
+                        color: iconColor,
+                        size: isSmallScreen ? 20 : 24,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          message,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: isSmallScreen ? 13.0 : 16.0,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+            ],
+          ),
+        );
+      },
     );
   }
 }

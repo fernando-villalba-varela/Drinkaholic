@@ -741,7 +741,6 @@ class _QuickGameScreenState extends State<QuickGameScreen>
                           onTap: () => Navigator.of(context).pop(),
                           child: Container(
                             margin: EdgeInsets.only(bottom: containerMargin),
-
                             padding: const EdgeInsets.all(7),
                             decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.2),
@@ -752,7 +751,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
                               ),
                             ),
                             child: Icon(
-                              Icons.close,
+                              Icons.group_outlined,
                               color: Colors.white,
                               size: iconSize,
                             ),

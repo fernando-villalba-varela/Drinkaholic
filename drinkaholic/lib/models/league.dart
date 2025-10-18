@@ -9,6 +9,12 @@ class League {
   String code;
   final List<LeaguePlayerStats> players;
   final List<MatchResult> matches;
+  
+  // Rachas consecutivas entre partidas
+  int? currentMvpStreak; // playerId del actual MVP en racha
+  int mvpStreakCount; // cuántas veces consecutivas ha ganado
+  int? currentRatitaStreak; // playerId de la actual Ratita en racha  
+  int ratitaStreakCount; // cuántas veces consecutivas ha perdido
 
   League({
     required this.id,
@@ -16,6 +22,10 @@ class League {
     required this.code,
     required this.players,
     List<MatchResult>? matches,
+    this.currentMvpStreak,
+    this.mvpStreakCount = 0,
+    this.currentRatitaStreak,
+    this.ratitaStreakCount = 0,
   }) : matches = matches ?? <MatchResult>[];
 
   factory League.newLeague(String name) => League(
@@ -23,6 +33,8 @@ class League {
     name: name,
     code: const Uuid().v4().substring(0, 8),
     players: [],
+    mvpStreakCount: 0,
+    ratitaStreakCount: 0,
   );
 
   Map<String, dynamic> toJson() => {
@@ -31,6 +43,10 @@ class League {
     'code': code,
     'players': players.map((p) => p.toJson()).toList(),
     'matches': matches.map((m) => m.toJson()).toList(),
+    'currentMvpStreak': currentMvpStreak,
+    'mvpStreakCount': mvpStreakCount,
+    'currentRatitaStreak': currentRatitaStreak,
+    'ratitaStreakCount': ratitaStreakCount,
   };
 
   factory League.fromJson(Map<String, dynamic> j) => League(
@@ -43,5 +59,9 @@ class League {
     matches: (j['matches'] as List)
         .map((e) => MatchResult.fromJson(e))
         .toList(),
+    currentMvpStreak: j['currentMvpStreak'],
+    mvpStreakCount: j['mvpStreakCount'] ?? 0,
+    currentRatitaStreak: j['currentRatitaStreak'],
+    ratitaStreakCount: j['ratitaStreakCount'] ?? 0,
   );
 }

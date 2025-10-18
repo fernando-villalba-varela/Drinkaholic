@@ -14,7 +14,6 @@ import '../widgets/league/game/floating_shapes_painter.dart';
 import '../widgets/league/game/game_card_widget.dart';
 import '../widgets/league/game/player_selector_overlay.dart';
 import '../widgets/league/game/letter_counter_overlay.dart';
-import 'game_results_screen.dart';
 
 class LeagueGameScreen extends StatefulWidget {
   final List<Player> players;
@@ -53,6 +52,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
   bool _gameStarted = false;
   final Map<int, int> _playerWeights = {};
   final Map<int, int> _playerDrinks = {}; // Contador de tragos por jugador
+
   int _currentRound = 1;
   List<ConstantChallenge> _constantChallenges = [];
   ConstantChallengeEnd? _currentChallengeEnd;
@@ -825,22 +825,9 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
 
     if (!mounted) return;
 
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => GameResultsScreen(
-          players: widget.players,
-          playerDrinks: _playerDrinks,
-          maxRounds: widget.maxRounds,
-          onConfirm: () {
-            widget.onGameEnd(_playerDrinks);
-            // Cerrar GameResultsScreen y volver a LeagueGameScreen
-            Navigator.of(context).pop(); // Cierra GameResultsScreen
-            // Luego cerrar LeagueGameScreen para volver a PlayTab
-            Navigator.of(context).pop(); // Cierra LeagueGameScreen
-          },
-        ),
-      ),
-    );
+    // Llamar onGameEnd - el callback se encarga de toda la navegación
+    widget.onGameEnd(_playerDrinks);
+    // No hacemos Navigator.pop() aquí porque el callback usa pushReplacement
   }
 
   @override

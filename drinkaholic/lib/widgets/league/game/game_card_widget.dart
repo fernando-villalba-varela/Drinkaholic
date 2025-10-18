@@ -182,12 +182,62 @@ class GameCard extends StatelessWidget {
           large: 60, // Aumentado de 24
         );
 
-        final buttonWidth = getResponsiveSize(
-          context,
-          small: 230, // Aumentado de 16
-          medium: 150, // Aumentado de 20
-          large: 200, // Aumentado de 24
-        );
+        // Función para calcular ancho responsive basado en el nombre y si está seleccionado
+        double getButtonWidth(String playerName, bool isSelected) {
+          final baseWidth = getResponsiveSize(
+            context,
+            small: 80, // Ancho base más pequeño
+            medium: 90,
+            large: 100,
+          );
+
+          // Calcular ancho adicional basado en la longitud del nombre
+          final extraWidth =
+              (playerName.length - 1) *
+              getResponsiveSize(
+                context,
+                small: 12, // Píxeles adicionales por carácter
+                medium: 14,
+                large: 16,
+              );
+
+          // Espacio adicional para el check cuando está seleccionado
+          final checkWidth = isSelected
+              ? getResponsiveSize(
+                  context,
+                  small: 30, // Espacio para el check + padding
+                  medium: 35,
+                  large: 40,
+                )
+              : 0;
+
+          // Ancho mínimo y máximo (aumentados para nombres muy largos)
+          final minWidth = getResponsiveSize(
+            context,
+            small: 80,
+            medium: 90,
+            large: 100,
+          );
+          final maxWidth = getResponsiveSize(
+            context,
+            small: 250,
+            medium: 280,
+            large: 300,
+          );
+
+          // Margen de seguridad duplicado (más conservador)
+          final safetyMargin = getResponsiveSize(
+            context,
+            small: 10,
+            medium: 12,
+            large: 15,
+          );
+
+          return (baseWidth + extraWidth + checkWidth + safetyMargin).clamp(
+            minWidth,
+            maxWidth,
+          );
+        }
 
         final avatarSize = 24.0;
         final spacing = 6.0;
@@ -224,7 +274,7 @@ class GameCard extends StatelessWidget {
                     });
                   },
                   child: Container(
-                    width: buttonWidth,
+                    width: getButtonWidth(player.nombre, isSelected),
                     height: buttonHeight,
                     padding: EdgeInsets.symmetric(horizontal: 10),
                     decoration: BoxDecoration(
@@ -317,12 +367,16 @@ class GameCard extends StatelessWidget {
     }
 
     return CircleAvatar(
-      radius: iconSize,
+      radius: iconSize * 0.6, // Reducido el tamaño del avatar
       backgroundImage: img,
+      backgroundColor: Colors.grey.withOpacity(0.3),
       child: img == null
           ? Text(
               player.nombre.isNotEmpty ? player.nombre[0].toUpperCase() : '?',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: fontSize),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: fontSize * 0.7,
+              ),
             )
           : null,
     );

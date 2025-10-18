@@ -830,9 +830,15 @@ Widget _buildSinglePlayerAvatar(GameState gameState) {
         ),
         child: ClipOval(
           child: gameState.currentPlayer!.imagen != null
-              ? Image.file(gameState.currentPlayer!.imagen!, fit: BoxFit.cover)
+              ? Image.file(
+                  gameState.currentPlayer!.imagen!,
+                  fit: BoxFit.contain,
+                ) // Cambiado de cover a contain
               : gameState.currentPlayer!.avatar != null
-              ? Image.asset(gameState.currentPlayer!.avatar!, fit: BoxFit.cover)
+              ? Image.asset(
+                  gameState.currentPlayer!.avatar!,
+                  fit: BoxFit.contain,
+                ) // Cambiado de cover a contain
               : Container(
                   color: Colors.white.withOpacity(0.2),
                   child: Icon(
@@ -987,9 +993,15 @@ Widget _buildPlayerImage(
   );
 
   return player.imagen != null
-      ? Image.file(player.imagen!, fit: BoxFit.cover)
+      ? Image.file(
+          player.imagen!,
+          fit: BoxFit.contain,
+        ) // Cambiado de cover a contain
       : player.avatar != null
-      ? Image.asset(player.avatar!, fit: BoxFit.cover)
+      ? Image.asset(
+          player.avatar!,
+          fit: BoxFit.contain,
+        ) // Cambiado de cover a contain
       : Container(
           color: Colors.white.withOpacity(0.2),
           child: Icon(

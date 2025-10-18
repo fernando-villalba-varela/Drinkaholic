@@ -112,10 +112,11 @@ class _LeagueListScreenState extends State<LeagueListScreen>
                   ),
                 ),
               ),
-              LeagueAppBarButton(
-                onTap: () => vm.showImportLeagueDialog(context),
-                icon: Icons.download,
-              ),
+              // FUTURA IMPLEMENTACION: Importar liga desde JSON
+              // LeagueAppBarButton(
+              //   onTap: () => vm.showImportLeagueDialog(context),
+              //   icon: Icons.download,
+              // ),
             ],
           ),
         ),
