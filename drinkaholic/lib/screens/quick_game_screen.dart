@@ -36,12 +36,15 @@ class _QuickGameScreenState extends State<QuickGameScreen>
   final List<Offset> _ripplePositions = [];
   final List<double> _rippleOpacities = [];
 
+  // Mutable players list to allow mid-game edits
+  late List<Player> _players;
+
   int _currentPlayerIndex = -1; // Start with no player selected
   int? _dualPlayerIndex; // Second player for dual challenges
   String _currentChallenge = '';
   bool _gameStarted = false;
-  final Map<int, int> _playerWeights =
-      {}; // Track how many times each player has been selected
+  // Track how many times each player has been selected, keyed by playerId
+  final Map<int, int> _playerWeights = {};
   int _currentRound = 1;
   List<ConstantChallenge> _constantChallenges = [];
   ConstantChallengeEnd? _currentChallengeEnd;
@@ -57,6 +60,9 @@ class _QuickGameScreenState extends State<QuickGameScreen>
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
+
+    // Initialize local players list
+    _players = List<Player>.from(widget.players);
 
     _cardAnimationController = AnimationController(
       duration: const Duration(milliseconds: 600),
@@ -106,9 +112,9 @@ class _QuickGameScreenState extends State<QuickGameScreen>
     _glowAnimationController.repeat(reverse: true);
     _pulseAnimationController.repeat(reverse: true);
 
-    // Initialize player weights (all start at 0)
-    for (int i = 0; i < widget.players.length; i++) {
-      _playerWeights[i] = 0;
+    // Initialize player weights (all start at 0) keyed by playerId
+    for (final p in _players) {
+      _playerWeights[p.id] = 0;
     }
 
     _initializeFirstChallenge();
@@ -131,10 +137,10 @@ class _QuickGameScreenState extends State<QuickGameScreen>
 
   Future<void> _generateNewChallenge() async {
     // Generar pregunta (30% probabilidad de ser genérica con jugador específico)
-    if (Random().nextDouble() < 0.3 && widget.players.isNotEmpty) {
+    if (Random().nextDouble() < 0.3 && _players.isNotEmpty) {
       // Seleccionar un jugador aleatorio para la pregunta genérica
-      final selectedPlayerIndex = Random().nextInt(widget.players.length);
-      final selectedPlayer = widget.players[selectedPlayerIndex];
+      final selectedPlayerIndex = Random().nextInt(_players.length);
+      final selectedPlayer = _players[selectedPlayerIndex];
 
       final question = await QuestionGenerator.generateRandomQuestionForPlayer(
         selectedPlayer.nombre,
@@ -212,45 +218,55 @@ class _QuickGameScreenState extends State<QuickGameScreen>
     // Una pregunta genérica es aquella donde ya se asignó un jugador específico
     // y el _currentPlayerIndex es válido (no -1)
     return _currentPlayerIndex >= 0 &&
-        _currentPlayerIndex < widget.players.length &&
+        _currentPlayerIndex < _players.length &&
         (_currentChallenge.contains(
-              '${widget.players[_currentPlayerIndex].nombre} bebe',
+              '${_players[_currentPlayerIndex].nombre} bebe',
             ) ||
             _currentChallenge.contains(
-              '${widget.players[_currentPlayerIndex].nombre} reparte',
+              '${_players[_currentPlayerIndex].nombre} reparte',
             ));
   }
 
   void _selectWeightedRandomPlayer() {
     // Find the minimum weight (players who have been selected least)
-    int minWeight = _playerWeights.values.reduce((a, b) => a < b ? a : b);
+    final minWeight = _playerWeights.values.isEmpty
+        ? 0
+        : _playerWeights.values.reduce((a, b) => a < b ? a : b);
 
-    // Create a list of players with minimum weight (most eligible)
-    List<int> eligiblePlayers = [];
-    _playerWeights.forEach((playerIndex, weight) {
-      if (weight == minWeight) {
-        eligiblePlayers.add(playerIndex);
-      }
-    });
-
-    // If all players have been selected equally, include players with minWeight + 1
-    if (eligiblePlayers.length < widget.players.length ~/ 2) {
-      _playerWeights.forEach((playerIndex, weight) {
-        if (weight == minWeight + 1 && !eligiblePlayers.contains(playerIndex)) {
-          eligiblePlayers.add(playerIndex);
-        }
-      });
+    // Build list of eligible indices based on playerId weights
+    final List<int> eligibleIndices = [];
+    for (int i = 0; i < _players.length; i++) {
+      final id = _players[i].id;
+      final w = _playerWeights[id] ?? 0;
+      if (w == minWeight) eligibleIndices.add(i);
     }
 
-    // Randomly select from eligible players
-    int selectedPlayer =
-        eligiblePlayers[Random().nextInt(eligiblePlayers.length)];
+    // If not enough, include players with minWeight + 1
+    if (eligibleIndices.length < (_players.length ~/ 2)) {
+      for (int i = 0; i < _players.length; i++) {
+        if (!eligibleIndices.contains(i)) {
+          final id = _players[i].id;
+          final w = _playerWeights[id] ?? 0;
+          if (w == minWeight + 1) eligibleIndices.add(i);
+        }
+      }
+    }
+
+    if (eligibleIndices.isEmpty) {
+      // fallback to any player
+      for (int i = 0; i < _players.length; i++) {
+        eligibleIndices.add(i);
+      }
+    }
+
+    // Randomly select from eligible indices
+    final selectedIndex = eligibleIndices[Random().nextInt(eligibleIndices.length)];
 
     setState(() {
-      _currentPlayerIndex = selectedPlayer;
-      // Increment the weight for the selected player
-      _playerWeights[selectedPlayer] =
-          (_playerWeights[selectedPlayer] ?? 0) + 1;
+      _currentPlayerIndex = selectedIndex;
+      // Increment the weight for the selected playerId
+      final pid = _players[selectedIndex].id;
+      _playerWeights[pid] = (_playerWeights[pid] ?? 0) + 1;
     });
   }
 
@@ -411,7 +427,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
           gameState.activeChallenges,
         )) {
       // 20% probabilidad de reto constante dual si hay suficientes jugadores
-      if (widget.players.length >= 2 && math.Random().nextDouble() < 0.2) {
+      if (_players.length >= 2 && math.Random().nextDouble() < 0.2) {
         await _generateNewDualConstantChallenge();
       } else {
         await _generateNewConstantChallenge();
@@ -421,7 +437,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
 
     // 7. Si no hay eventos ni retos constantes, generar un reto normal (incluyendo duales)
     // 15% probabilidad de challenge dual si hay suficientes jugadores
-    if (widget.players.length >= 2 && math.Random().nextDouble() < 0.15) {
+    if (_players.length >= 2 && math.Random().nextDouble() < 0.15) {
       await _generateNewDualChallenge();
     } else {
       await _generateNewChallenge();
@@ -483,7 +499,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
   Future<void> _generateNewConstantChallenge() async {
     final eligiblePlayer =
         ConstantChallengeGenerator.selectPlayerForNewChallenge(
-          widget.players,
+          _players,
           _constantChallenges
               .where((c) => c.isActiveAtRound(_currentRound))
               .toList(),
@@ -504,7 +520,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
     setState(() {
       _constantChallenges.add(constantChallenge);
       _currentChallenge = constantChallenge.description;
-      _currentPlayerIndex = widget.players.indexWhere(
+      _currentPlayerIndex = _players.indexWhere(
         (p) => p.id == eligiblePlayer.id,
       );
     });
@@ -571,19 +587,19 @@ class _QuickGameScreenState extends State<QuickGameScreen>
       player2.nombre,
     );
 
-    final player1Index = widget.players.indexOf(player1);
-    final player2Index = widget.players.indexOf(player2);
+    final player1Index = _players.indexOf(player1);
+    final player2Index = _players.indexOf(player2);
 
     setState(() {
       _currentChallenge = question.question;
       _currentPlayerIndex = player1Index;
       _dualPlayerIndex = player2Index;
 
-      // Incrementar pesos para ambos jugadores
-      _playerWeights[_currentPlayerIndex] =
-          (_playerWeights[_currentPlayerIndex] ?? 0) + 1;
-      _playerWeights[_dualPlayerIndex!] =
-          (_playerWeights[_dualPlayerIndex!] ?? 0) + 1;
+      // Incrementar pesos para ambos jugadores por playerId
+      final id1 = _players[_currentPlayerIndex].id;
+      final id2 = _players[_dualPlayerIndex!].id;
+      _playerWeights[id1] = (_playerWeights[id1] ?? 0) + 1;
+      _playerWeights[id2] = (_playerWeights[id2] ?? 0) + 1;
     });
   }
 
@@ -609,13 +625,13 @@ class _QuickGameScreenState extends State<QuickGameScreen>
     setState(() {
       _constantChallenges.add(constantChallenge);
       _currentChallenge = constantChallenge.description;
-      _currentPlayerIndex = widget.players.indexOf(player1);
-      _dualPlayerIndex = widget.players.indexOf(player2);
+      _currentPlayerIndex = _players.indexOf(player1);
+      _dualPlayerIndex = _players.indexOf(player2);
     });
   }
 
   List<Player> _selectTwoRandomPlayers() {
-    if (widget.players.length < 2) return [];
+    if (_players.length < 2) return [];
 
     // Crear una lista de jugadores elegibles basada en pesos
     List<Player> eligiblePlayers = [];
@@ -625,18 +641,17 @@ class _QuickGameScreenState extends State<QuickGameScreen>
         ? 0
         : _playerWeights.values.reduce((a, b) => a < b ? a : b);
 
-    // Añadir jugadores con peso mínimo
-    for (int i = 0; i < widget.players.length; i++) {
-      int weight = _playerWeights[i] ?? 0;
+    // Añadir jugadores con peso <= min+1
+    for (final p in _players) {
+      final weight = _playerWeights[p.id] ?? 0;
       if (weight <= minWeight + 1) {
-        // Permitir hasta 1 más que el mínimo
-        eligiblePlayers.add(widget.players[i]);
+        eligiblePlayers.add(p);
       }
     }
 
     // Si no hay suficientes jugadores elegibles, usar todos
     if (eligiblePlayers.length < 2) {
-      eligiblePlayers = List.from(widget.players);
+      eligiblePlayers = List.from(_players);
     }
 
     // Seleccionar dos jugadores diferentes aleatoriamente
@@ -728,7 +743,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
                               ),
                             ),
                             child: Icon(
-                              Icons.group_outlined,
+                              Icons.arrow_back,
                               color: Colors.white,
                               size: iconSize,
                             ),
@@ -889,12 +904,282 @@ class _QuickGameScreenState extends State<QuickGameScreen>
                     ),
                   ),
                 ),
+              // Edit players button (top-right)
+                Positioned(
+                  top: padding,
+                  right: padding,
+                  child: GestureDetector(
+                    onTap: _openPlayerManager,
+                    child: Container(
+                      padding: const EdgeInsets.all(7),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: Icon(
+                        Icons.group,
+                        color: Colors.white,
+                        size: iconSize,
+                      ),
+                    ),
+                  ),
+                ),
               ],
             );
           },
         ),
       ),
     );
+  }
+  void _openPlayerManager() async {
+    final updated = await showModalBottomSheet<List<Player>>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        final TextEditingController controller = TextEditingController();
+        List<Player> temp = List<Player>.from(_players);
+        return DraggableScrollableSheet(
+          initialChildSize: 0.6,
+          minChildSize: 0.4,
+          maxChildSize: 0.9,
+          builder: (context, scrollController) {
+            return Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFF2A2A3E),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                border: Border.all(color: Colors.white24),
+              ),
+              child: StatefulBuilder(
+                builder: (context, setModalState) {
+                  return Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.group, color: Colors.white),
+                            const SizedBox(width: 8),
+                            const Expanded(
+                              child: Text(
+                                'Editar jugadores',
+                                style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.close, color: Colors.white70),
+                              onPressed: () => Navigator.pop(context),
+                            )
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: controller,
+                                style: const TextStyle(color: Colors.white),
+                                decoration: const InputDecoration(
+                                  hintText: 'Añadir jugador...',
+                                  hintStyle: TextStyle(color: Colors.white70),
+                                  border: OutlineInputBorder(borderSide: BorderSide(color: Colors.white24)),
+                                ),
+                                onSubmitted: (value) {
+                                  if (value.trim().isEmpty) return;
+                                  setModalState(() {
+                                    temp.add(Player(
+                                      id: _nextPlayerId(temp),
+                                      nombre: value.trim(),
+                                    ));
+                                  });
+                                  controller.clear();
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            ElevatedButton(
+                              onPressed: () {
+                                final value = controller.text.trim();
+                                if (value.isEmpty) return;
+                                setModalState(() {
+                                  temp.add(Player(
+                                    id: _nextPlayerId(temp),
+                                    nombre: value,
+                                  ));
+                                });
+                                controller.clear();
+                              },
+                              child: const Text('Añadir'),
+                            )
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Expanded(
+                        child: ListView.builder(
+                          controller: scrollController,
+                          itemCount: temp.length,
+                          itemBuilder: (context, index) {
+                            final p = temp[index];
+                            return ListTile(
+                              title: Text(p.nombre, style: const TextStyle(color: Colors.white)),
+                              onTap: () async {
+                                final tc = TextEditingController(text: p.nombre);
+                                final newName = await showDialog<String>(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: const Text('Renombrar jugador'),
+                                      content: TextField(
+                                        controller: tc,
+                                        autofocus: true,
+                                        decoration: const InputDecoration(hintText: 'Nombre'),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(context),
+                                          child: const Text('Cancelar'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(context, tc.text.trim()),
+                                          child: const Text('Guardar'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                                if (newName != null && newName.isNotEmpty) {
+                                  setModalState(() {
+                                    temp[index] = Player(
+                                      id: p.id,
+                                      nombre: newName,
+                                      imagen: p.imagen,
+                                      avatar: p.avatar,
+                                    );
+                                  });
+                                }
+                              },
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.edit_outlined, color: Colors.white70),
+                                    onPressed: () async {
+                                      final tc = TextEditingController(text: p.nombre);
+                                      final newName = await showDialog<String>(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            title: const Text('Renombrar jugador'),
+                                            content: TextField(
+                                              controller: tc,
+                                              autofocus: true,
+                                              decoration: const InputDecoration(hintText: 'Nombre'),
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () => Navigator.pop(context),
+                                                child: const Text('Cancelar'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () => Navigator.pop(context, tc.text.trim()),
+                                                child: const Text('Guardar'),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                      if (newName != null && newName.isNotEmpty) {
+                                        setModalState(() {
+                                          temp[index] = Player(
+                                            id: p.id,
+                                            nombre: newName,
+                                            imagen: p.imagen,
+                                            avatar: p.avatar,
+                                          );
+                                        });
+                                      }
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
+                                    onPressed: () {
+                                      setModalState(() {
+                                        temp.removeAt(index);
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () => Navigator.pop(context, temp),
+                            child: const Text('Listo'),
+                          ),
+                        ),
+                      )
+                    ],
+                  );
+                },
+              ),
+            );
+          },
+        );
+      },
+    );
+
+    if (updated != null) {
+      _applyPlayersUpdate(updated);
+    }
+  }
+
+  int _nextPlayerId(List<Player> list) {
+    final ids = list.map((e) => e.id);
+    final maxId = ids.isEmpty ? 0 : ids.reduce((a, b) => a > b ? a : b);
+    return maxId + 1;
+  }
+
+  void _applyPlayersUpdate(List<Player> newPlayers) {
+    setState(() {
+      // Preserve weights for existing ids
+      final oldWeights = Map<int, int>.from(_playerWeights);
+      _players = List<Player>.from(newPlayers);
+      _playerWeights.clear();
+      for (final p in _players) {
+        _playerWeights[p.id] = oldWeights[p.id] ?? 0;
+      }
+
+      // Re-map current indices to new list based on player id
+      int? newCurrent;
+      int? newDual;
+      if (_currentPlayerIndex >= 0 && _currentPlayerIndex < _players.length) {
+        final prevId = (_currentPlayerIndex >= 0 && _currentPlayerIndex < _players.length)
+            ? _players[_currentPlayerIndex].id
+            : null;
+        if (prevId != null) {
+          newCurrent = _players.indexWhere((p) => p.id == prevId);
+        }
+      }
+      if (_dualPlayerIndex != null && _dualPlayerIndex! >= 0 && _dualPlayerIndex! < _players.length) {
+        final prevId2 = _players[_dualPlayerIndex!].id;
+        newDual = _players.indexWhere((p) => p.id == prevId2);
+      }
+      _currentPlayerIndex = (newCurrent != null && newCurrent >= 0) ? newCurrent : -1;
+      _dualPlayerIndex = (newDual != null && newDual >= 0) ? newDual : null;
+    });
   }
 }
 
