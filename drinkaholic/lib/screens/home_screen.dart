@@ -312,7 +312,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                               ),
                                               const SizedBox(height: 24),
                                               Text(
-                                                'Iniciando $_animatingButtonText...',
+                                                '$_animatingButtonText...',
                                                 style: const TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 24,

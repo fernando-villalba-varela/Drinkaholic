@@ -185,6 +185,10 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody>
                     ),
                     child: Material(
                       color: Colors.transparent,
+                      clipBehavior: Clip.antiAlias,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(32),
+                      ),
                       child: InkWell(
                         borderRadius: BorderRadius.circular(32),
                         onTap: () {
