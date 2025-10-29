@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../models/player.dart';
+import '../../../ui/components/drinkaholic_button.dart';
 
 class PlayerSelectorOverlay extends StatefulWidget {
   final List<Player> players;
@@ -102,7 +103,6 @@ class _PlayerSelectorOverlayState extends State<PlayerSelectorOverlay>
     final playerFontSize = isSmallScreen ? 15.0 : 18.0;
     final checkIconSize = isSmallScreen ? 24.0 : 28.0;
     final buttonPadding = isSmallScreen ? 12.0 : 16.0;
-    final buttonFontSize = isSmallScreen ? 14.0 : 16.0;
 
     return AnimatedBuilder(
       animation: _animationController,
@@ -290,60 +290,25 @@ class _PlayerSelectorOverlayState extends State<PlayerSelectorOverlay>
                           child: Row(
                             children: [
                               Expanded(
-                                child: OutlinedButton(
+                                child: DrinkaholicButton(
+                                  label: 'Cancelar',
                                   onPressed: _cancel,
-                                  style: OutlinedButton.styleFrom(
-                                    foregroundColor: Colors.white,
-                                    side: const BorderSide(
-                                      color: Colors.white54,
-                                    ),
-                                    padding: EdgeInsets.symmetric(
-                                      vertical: isSmallScreen ? 10 : 16,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'Cancelar',
-                                    style: TextStyle(
-                                      fontSize: buttonFontSize,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
+                                  variant: DrinkaholicButtonVariant.outline,
+                                  fullWidth: true,
+                                  height: isSmallScreen ? 40 : 48,
                                 ),
                               ),
                               const SizedBox(width: 12),
                               Expanded(
                                 flex: 2,
-                                child: ElevatedButton(
-                                  onPressed: _selectedPlayerIds.isEmpty
-                                      ? null
-                                      : _confirm,
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF00C9FF),
-                                    disabledBackgroundColor: const Color(
-                                      0xFF5A5A6E,
-                                    ),
-                                    foregroundColor: Colors.white,
-                                    padding: EdgeInsets.symmetric(
-                                      vertical: isSmallScreen ? 10 : 16,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    elevation: 4,
-                                  ),
-                                  child: Text(
-                                    _selectedPlayerIds.isEmpty
-                                        ? 'Selecciona jugadores'
-                                        : 'Confirmar (${_selectedPlayerIds.length})',
-                                    style: TextStyle(
-                                      fontSize: buttonFontSize,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
+                                child: DrinkaholicButton(
+                                  label: _selectedPlayerIds.isEmpty
+                                      ? 'Selecciona jugadores'
+                                      : 'Confirmar (${_selectedPlayerIds.length})',
+                                  onPressed: _selectedPlayerIds.isEmpty ? null : _confirm,
+                                  variant: DrinkaholicButtonVariant.primary,
+                                  fullWidth: true,
+                                  height: isSmallScreen ? 40 : 48,
                                 ),
                               ),
                             ],

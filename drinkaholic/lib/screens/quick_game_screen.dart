@@ -10,6 +10,7 @@ import '../models/constant_challenge_generator.dart';
 import '../models/event.dart';
 import '../models/event_generator.dart';
 import '../widgets/quick_game_widgets.dart'; // Añade este import arriba
+import '../widgets/common/animated_background.dart';
 
 class QuickGameScreen extends StatefulWidget {
   final List<Player> players;
@@ -25,13 +26,11 @@ class _QuickGameScreenState extends State<QuickGameScreen>
   late AnimationController _cardAnimationController;
   late AnimationController _glowAnimationController;
   late AnimationController _tapAnimationController;
-  late AnimationController _backgroundAnimationController;
   late AnimationController _rippleAnimationController;
   late AnimationController _pulseAnimationController;
 
   late Animation<double> _glowAnimation;
   late Animation<double> _tapAnimation;
-  late Animation<double> _backgroundAnimation;
   late Animation<double> _rippleAnimation;
 
   final List<Offset> _ripplePositions = [];
@@ -74,10 +73,6 @@ class _QuickGameScreenState extends State<QuickGameScreen>
       vsync: this,
     );
 
-    _backgroundAnimationController = AnimationController(
-      duration: const Duration(seconds: 20),
-      vsync: this,
-    );
 
     _rippleAnimationController = AnimationController(
       duration: const Duration(milliseconds: 800),
@@ -100,12 +95,6 @@ class _QuickGameScreenState extends State<QuickGameScreen>
       CurvedAnimation(parent: _tapAnimationController, curve: Curves.easeInOut),
     );
 
-    _backgroundAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _backgroundAnimationController,
-        curve: Curves.linear,
-      ),
-    );
 
     _rippleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
@@ -115,7 +104,6 @@ class _QuickGameScreenState extends State<QuickGameScreen>
     );
 
     _glowAnimationController.repeat(reverse: true);
-    _backgroundAnimationController.repeat();
     _pulseAnimationController.repeat(reverse: true);
 
     // Initialize player weights (all start at 0)
@@ -136,7 +124,6 @@ class _QuickGameScreenState extends State<QuickGameScreen>
     _cardAnimationController.dispose();
     _glowAnimationController.dispose();
     _tapAnimationController.dispose();
-    _backgroundAnimationController.dispose();
     _rippleAnimationController.dispose();
     _pulseAnimationController.dispose();
     super.dispose();
@@ -287,17 +274,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
   }
 
   Widget _buildAnimatedBackground() {
-    return Positioned.fill(
-      child: AnimatedBuilder(
-        animation: _backgroundAnimation,
-        builder: (context, child) {
-          return CustomPaint(
-            painter: FloatingShapesPainter(_backgroundAnimation.value),
-            child: Container(),
-          );
-        },
-      ),
-    );
+    return const AnimatedBackground();
   }
 
   Widget _buildRippleEffects() {
@@ -942,105 +919,3 @@ double getResponsiveSize(
   }
 }
 
-class FloatingShapesPainter extends CustomPainter {
-  final double animationValue;
-
-  FloatingShapesPainter(this.animationValue);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()..style = PaintingStyle.fill;
-
-    // Create multiple floating shapes with different speeds and sizes
-    final shapes = [
-      // Large circles
-      _FloatingShape(
-        Offset(
-          size.width * 0.1 + (sin(animationValue * 2 * pi) * 30),
-          size.height * 0.2 + (cos(animationValue * 2 * pi) * 20),
-        ),
-        30,
-        Colors.white.withOpacity(0.05),
-      ),
-      _FloatingShape(
-        Offset(
-          size.width * 0.8 + (sin(animationValue * 2 * pi + 1) * 40),
-          size.height * 0.7 + (cos(animationValue * 2 * pi + 1) * 30),
-        ),
-        25,
-        Colors.white.withOpacity(0.08),
-      ),
-      // Medium circles
-      _FloatingShape(
-        Offset(
-          size.width * 0.3 + (sin(animationValue * 2 * pi + 2) * 50),
-          size.height * 0.5 + (cos(animationValue * 2 * pi + 2) * 25),
-        ),
-        20,
-        Colors.white.withOpacity(0.04),
-      ),
-      _FloatingShape(
-        Offset(
-          size.width * 0.7 + (sin(animationValue * 2 * pi + 3) * 35),
-          size.height * 0.3 + (cos(animationValue * 2 * pi + 3) * 40),
-        ),
-        18,
-        Colors.cyan.withOpacity(0.06),
-      ),
-      // Small circles
-      _FloatingShape(
-        Offset(
-          size.width * 0.5 + (sin(animationValue * 2 * pi + 4) * 60),
-          size.height * 0.8 + (cos(animationValue * 2 * pi + 4) * 15),
-        ),
-        12,
-        Colors.white.withOpacity(0.03),
-      ),
-      _FloatingShape(
-        Offset(
-          size.width * 0.9 + (sin(animationValue * 2 * pi + 5) * 25),
-          size.height * 0.1 + (cos(animationValue * 2 * pi + 5) * 35),
-        ),
-        15,
-        Colors.green.withOpacity(0.05),
-      ),
-    ];
-
-    // Draw all shapes
-    for (final shape in shapes) {
-      paint.color = shape.color;
-      canvas.drawCircle(shape.position, shape.radius, paint);
-    }
-
-    // Add some triangular shapes for variety
-    final trianglePaint = Paint()
-      ..color = Colors.white.withOpacity(0.02)
-      ..style = PaintingStyle.fill;
-
-    final trianglePath = Path();
-    final triangleCenter = Offset(
-      size.width * 0.6 + (sin(animationValue * 2 * pi + 6) * 45),
-      size.height * 0.4 + (cos(animationValue * 2 * pi + 6) * 30),
-    );
-
-    trianglePath.moveTo(triangleCenter.dx, triangleCenter.dy - 15);
-    trianglePath.lineTo(triangleCenter.dx - 13, triangleCenter.dy + 10);
-    trianglePath.lineTo(triangleCenter.dx + 13, triangleCenter.dy + 10);
-    trianglePath.close();
-
-    canvas.drawPath(trianglePath, trianglePaint);
-  }
-
-  @override
-  bool shouldRepaint(FloatingShapesPainter oldDelegate) {
-    return oldDelegate.animationValue != animationValue;
-  }
-}
-
-class _FloatingShape {
-  final Offset position;
-  final double radius;
-  final Color color;
-
-  _FloatingShape(this.position, this.radius, this.color);
-}

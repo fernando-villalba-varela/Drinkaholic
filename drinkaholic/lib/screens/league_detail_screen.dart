@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/league_detail_viewmodel.dart';
 import '../widgets/league/league_app_bar_button.dart';
-import '../widgets/league/floating_shapes_painter.dart' as widget_painter;
+import '../widgets/common/animated_background.dart';
 import '../widgets/league/detail/leaderboard_tab.dart';
 import '../widgets/league/detail/participants_tab.dart';
 import '../widgets/league/detail/play_tab.dart';
@@ -16,47 +16,8 @@ class LeagueDetailScreen extends StatefulWidget {
 
 class _LeagueDetailScreenState extends State<LeagueDetailScreen>
     with TickerProviderStateMixin {
-  late AnimationController _backgroundAnimationController;
-  late Animation<double> _backgroundAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _backgroundAnimationController = AnimationController(
-      duration: const Duration(seconds: 20),
-      vsync: this,
-    );
-
-    _backgroundAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _backgroundAnimationController,
-        curve: Curves.linear,
-      ),
-    );
-
-    _backgroundAnimationController.repeat();
-  }
-
-  @override
-  void dispose() {
-    _backgroundAnimationController.dispose();
-    super.dispose();
-  }
-
   Widget _buildAnimatedBackground() {
-    return Positioned.fill(
-      child: AnimatedBuilder(
-        animation: _backgroundAnimation,
-        builder: (context, child) {
-          return CustomPaint(
-            painter: widget_painter.FloatingShapesPainter(
-              _backgroundAnimation.value,
-            ),
-            child: Container(),
-          );
-        },
-      ),
-    );
+    return const AnimatedBackground();
   }
 
   @override

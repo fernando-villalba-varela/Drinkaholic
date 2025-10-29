@@ -10,7 +10,7 @@ import '../models/constant_challenge.dart';
 import '../models/constant_challenge_generator.dart';
 import '../models/event.dart';
 import '../models/event_generator.dart';
-import '../widgets/league/game/floating_shapes_painter.dart';
+import '../widgets/common/animated_background.dart';
 import '../widgets/league/game/game_card_widget.dart';
 import '../widgets/league/game/player_selector_overlay.dart';
 import '../widgets/league/game/letter_counter_overlay.dart';
@@ -36,11 +36,9 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
   late AnimationController _cardAnimationController;
   late AnimationController _glowAnimationController;
   late AnimationController _tapAnimationController;
-  late AnimationController _backgroundAnimationController;
   late AnimationController _rippleAnimationController;
   late Animation<double> _glowAnimation;
   late Animation<double> _tapAnimation;
-  late Animation<double> _backgroundAnimation;
   late Animation<double> _rippleAnimation;
 
   final List<Offset> _ripplePositions = [];
@@ -92,10 +90,6 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
       vsync: this,
     );
 
-    _backgroundAnimationController = AnimationController(
-      duration: const Duration(seconds: 20),
-      vsync: this,
-    );
 
     _rippleAnimationController = AnimationController(
       duration: const Duration(milliseconds: 800),
@@ -113,12 +107,6 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
       CurvedAnimation(parent: _tapAnimationController, curve: Curves.easeInOut),
     );
 
-    _backgroundAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _backgroundAnimationController,
-        curve: Curves.linear,
-      ),
-    );
 
     _rippleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
@@ -128,7 +116,6 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
     );
 
     _glowAnimationController.repeat(reverse: true);
-    _backgroundAnimationController.repeat();
 
     // Initialize player weights and drinks usando playerId
     for (int i = 0; i < widget.players.length; i++) {
@@ -148,7 +135,6 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
     _cardAnimationController.dispose();
     _glowAnimationController.dispose();
     _tapAnimationController.dispose();
-    _backgroundAnimationController.dispose();
     _rippleAnimationController.dispose();
     _toastTimer?.cancel(); // Cancelar el timer si está activo
     super.dispose();
@@ -458,19 +444,6 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
     }
   }
 
-  Widget _buildAnimatedBackground() {
-    return Positioned.fill(
-      child: AnimatedBuilder(
-        animation: _backgroundAnimation,
-        builder: (context, child) {
-          return CustomPaint(
-            painter: FloatingShapesPainter(_backgroundAnimation.value),
-            child: Container(),
-          );
-        },
-      ),
-    );
-  }
 
   Widget _buildRippleEffects() {
     if (_ripplePositions.isEmpty) return const SizedBox.shrink();
@@ -845,7 +818,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
                 ),
               ),
             ),
-            _buildAnimatedBackground(),
+            const AnimatedBackground(),
             ...List.generate(
               8,
               (index) => _buildFloatingParticle(

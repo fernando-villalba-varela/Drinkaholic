@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import 'dart:math';
 import 'dart:ui' as ui;
 import '../models/player.dart';
+import '../widgets/common/animated_background.dart';
+import '../ui/components/drinkaholic_button.dart';
 
 class WheelPainter extends CustomPainter {
   final List<Player> players;
@@ -380,223 +382,217 @@ class _TiebreakerScreenState extends State<TiebreakerScreen>
             colors: [Color(0xFF00C9FF), Color(0xFF92FE9D)],
           ),
         ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 24.0,
-              horizontal: 16.0,
-            ),
-            child: Column(
-              children: [
-                // Header
-                Text(
-                  title,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
+        child: Stack(
+          children: [
+            const AnimatedBackground(),
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 24.0,
+                  horizontal: 16.0,
                 ),
-                const SizedBox(height: 12),
-                // Subtitle con texto especial brillante
-                isMVP
-                    ? RichText(
-                        textAlign: TextAlign.center,
-                        text: TextSpan(
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 16,
-                          ),
-                          children: [
-                            TextSpan(
-                              text:
-                                  'Hay varios jugones empatados con ${widget.tiedScore} tragos\n (Solo puede haber un ',
-                            ),
-                            TextSpan(
-                              text: 'puto amo',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                                shadows: [
-                                  Shadow(
-                                    color: Color(
-                                      0xFFFFFF99,
-                                    ), // Amarillo claro brillante
-                                    blurRadius: 4,
-                                    offset: Offset(0, 0),
-                                  ),
-                                  Shadow(
-                                    color: Color(0xFFFFFF99),
-                                    blurRadius: 8,
-                                    offset: Offset(0, 0),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const TextSpan(text: ')'),
-                          ],
-                        ),
-                      )
-                    : RichText(
-                        textAlign: TextAlign.center,
-                        text: TextSpan(
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 16,
-                          ),
-                          children: [
-                            TextSpan(
-                              text:
-                                  'Manda huevos que hayais bebido ${widget.tiedScore} tragos\n (',
-                            ),
-                            TextSpan(
-                              text: 'sois escoria',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                                shadows: [
-                                  Shadow(
-                                    color: Color(
-                                      0xFF8B4513,
-                                    ), // Marrón caca brillante
-                                    blurRadius: 4,
-                                    offset: Offset(0, 0),
-                                  ),
-                                  Shadow(
-                                    color: Color(0xFF8B4513),
-                                    blurRadius: 8,
-                                    offset: Offset(0, 0),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const TextSpan(text: ')'),
-                          ],
-                        ),
+                child: Column(
+                  children: [
+                    // Header
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
                       ),
-                const SizedBox(height: 32),
-
-                // Ruleta con jugadores
-                Expanded(
-                  child: Column(
-                    children: [
-                      if (!_hasSpun && !_isSpinning) ...[
-                        Text(
-                          'Solo el Little Boy sabe tu destino...',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: 32),
-                      ] else if (_isSpinning) ...[
-                        Text(
-                          '¡Girando...!',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: 32),
-                      ] else ...[
-                        Text(
-                          isMVP
-                              ? '¡Se te ha caido esto! -> 👑'
-                              : '¡Ratitaa🐭🐭 (JAJA)!',
-                          style: TextStyle(
-                            color: isMVP
-                                ? const Color(0xFFFFD700)
-                                : const Color(0xFF8B4513),
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color:
-                                (isMVP
-                                        ? const Color(0xFFFFD700)
-                                        : const Color(0xFF8B4513))
-                                    .withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: isMVP
-                                  ? const Color(0xFFFFD700)
-                                  : const Color(0xFF8B4513),
-                              width: 2,
+                    ),
+                    const SizedBox(height: 12),
+                    // Subtitle con texto especial brillante
+                    isMVP
+                        ? RichText(
+                            textAlign: TextAlign.center,
+                            text: TextSpan(
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 16,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text:
+                                      'Hay varios jugones empatados con ${widget.tiedScore} tragos\n (Solo puede haber un ',
+                                ),
+                                TextSpan(
+                                  text: 'puto amo',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    shadows: [
+                                      Shadow(
+                                        color: Color(
+                                          0xFFFFFF99,
+                                        ), // Amarillo claro brillante
+                                        blurRadius: 4,
+                                        offset: Offset(0, 0),
+                                      ),
+                                      Shadow(
+                                        color: Color(0xFFFFFF99),
+                                        blurRadius: 8,
+                                        offset: Offset(0, 0),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const TextSpan(text: ')'),
+                              ],
+                            ),
+                          )
+                        : RichText(
+                            textAlign: TextAlign.center,
+                            text: TextSpan(
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 16,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text:
+                                      'Manda huevos que hayais bebido ${widget.tiedScore} tragos\n (',
+                                ),
+                                TextSpan(
+                                  text: 'sois escoria',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    shadows: [
+                                      Shadow(
+                                        color: Color(
+                                          0xFF8B4513,
+                                        ), // Marrón caca brillante
+                                        blurRadius: 4,
+                                        offset: Offset(0, 0),
+                                      ),
+                                      Shadow(
+                                        color: Color(0xFF8B4513),
+                                        blurRadius: 8,
+                                        offset: Offset(0, 0),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const TextSpan(text: ')'),
+                              ],
                             ),
                           ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              _buildPlayerAvatar(_winner!, size: 50),
-                              const SizedBox(width: 16),
-                              Text(
-                                _winner!.nombre,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
+                    const SizedBox(height: 32),
+
+                    // Ruleta con jugadores
+                    Expanded(
+                      child: Column(
+                        children: [
+                          if (!_hasSpun && !_isSpinning) ...[
+                            Text(
+                              'Solo el Little Boy sabe tu destino...',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 32),
+                          ] else if (_isSpinning) ...[
+                            Text(
+                              '¡Girando...!',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 32),
+                          ] else ...[
+                            Text(
+                              isMVP
+                                  ? '¡Se te ha caido esto! -> 👑'
+                                  : '¡Ratitaa🐭🐭 (JAJA)!',
+                              style: TextStyle(
+                                color: isMVP
+                                    ? const Color(0xFFFFD700)
+                                    : const Color(0xFF8B4513),
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color:
+                                    (isMVP
+                                            ? const Color(0xFFFFD700)
+                                            : const Color(0xFF8B4513))
+                                        .withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: isMVP
+                                      ? const Color(0xFFFFD700)
+                                      : const Color(0xFF8B4513),
+                                  width: 2,
                                 ),
                               ),
-                            ],
-                          ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  _buildPlayerAvatar(_winner!, size: 50),
+                                  const SizedBox(width: 16),
+                                  Text(
+                                    _winner!.nombre,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 32),
+                          ],
+
+                          // Ruleta circular con jugadores
+                          _buildSpinWheel(),
+                        ],
+                      ),
+                    ),
+
+                    // Botón para confirmar resultado
+                    if (_hasSpun && _winner != null)
+                      DrinkaholicButton(
+                        label: 'Confirmar Resultado',
+                        icon: Icons.check_circle_outline,
+                        onPressed: () {
+                          final loser = widget.tiedPlayers.length > 1
+                              ? widget.tiedPlayers.firstWhere(
+                                  (p) => p.id != _winner!.id,
+                                )
+                              : null;
+                          widget.onTiebreakerResolved(_winner!, loser);
+                        },
+                        variant: DrinkaholicButtonVariant.primary,
+                        fullWidth: false,
+                        height: 52,
+                      )
+                    else if (_isSpinning)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 16,
+                          horizontal: 32,
                         ),
-                        const SizedBox(height: 32),
-                      ],
-
-                      // Ruleta circular con jugadores
-                      _buildSpinWheel(),
-                    ],
-                  ),
+                        child: const CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      ),
+                    const SizedBox(height: 16),
+                  ],
                 ),
-
-                // Botón para confirmar resultado
-                if (_hasSpun && _winner != null)
-                  ElevatedButton(
-                    onPressed: () {
-                      final loser = widget.tiedPlayers.length > 1
-                          ? widget.tiedPlayers.firstWhere(
-                              (p) => p.id != _winner!.id,
-                            )
-                          : null;
-                      widget.onTiebreakerResolved(_winner!, loser);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF00C9FF),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 16,
-                        horizontal: 32,
-                      ),
-                      textStyle: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text('Confirmar Resultado'),
-                  )
-                else if (_isSpinning)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 16,
-                      horizontal: 32,
-                    ),
-                    child: const CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  ),
-                const SizedBox(height: 16),
-              ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );

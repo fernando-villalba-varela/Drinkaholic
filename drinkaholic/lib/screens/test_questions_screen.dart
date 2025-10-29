@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/question_generator.dart';
+import '../ui/components/drinkaholic_button.dart';
+import '../ui/components/drinkaholic_card.dart';
 
 class TestQuestionsScreen extends StatefulWidget {
   const TestQuestionsScreen({super.key});
@@ -105,15 +107,8 @@ class _TestQuestionsScreenState extends State<TestQuestionsScreen> {
         child: Column(
           children: [
             // Pregunta actual
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(20),
+            DrinkaholicCard(
               margin: const EdgeInsets.only(bottom: 20),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(15),
-                border: Border.all(color: Colors.white24),
-              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -155,21 +150,12 @@ class _TestQuestionsScreenState extends State<TestQuestionsScreen> {
             // Botón generar pregunta aleatoria
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: const Color(0xFF23606E),
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 4,
-                ),
+              child: DrinkaholicButton(
+                label: 'Generar Pregunta Aleatoria',
+                icon: Icons.shuffle,
                 onPressed: _isLoading ? null : _generateRandomQuestion,
-                child: const Text(
-                  'Generar Pregunta Aleatoria',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
+                variant: DrinkaholicButtonVariant.primary,
+                height: 56,
               ),
             ),
 
@@ -178,21 +164,12 @@ class _TestQuestionsScreenState extends State<TestQuestionsScreen> {
             // Botón test de probabilidades
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 4,
-                ),
+              child: DrinkaholicButton(
+                label: 'Test Probabilidades (Ver Consola)',
+                icon: Icons.analytics_outlined,
                 onPressed: _testProbabilities,
-                child: const Text(
-                  'Test Probabilidades (Ver Consola)',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
+                variant: DrinkaholicButtonVariant.secondary,
+                height: 52,
               ),
             ),
 
@@ -220,20 +197,12 @@ class _TestQuestionsScreenState extends State<TestQuestionsScreen> {
                 itemCount: _categories.length,
                 itemBuilder: (context, index) {
                   final category = _categories[index];
-                  return ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white24,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
+                  return DrinkaholicButton(
+                    label: category,
                     onPressed: _isLoading ? null : () => _generateQuestionByCategory(category),
-                    child: Text(
-                      category,
-                      style: const TextStyle(fontSize: 14),
-                      textAlign: TextAlign.center,
-                    ),
+                    variant: DrinkaholicButtonVariant.secondary,
+                    fullWidth: true,
+                    height: 44,
                   );
                 },
               ),
