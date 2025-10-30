@@ -24,12 +24,7 @@ class LeaguePlayerStats {
     this.lastWasRatita = false,
   });
 
-  void applyGame({
-    required int drinks,
-    bool isMvp = false,
-    bool isRatita = false,
-    int bonusDrinks = 0,
-  }) {
+  void applyGame({required int drinks, bool isMvp = false, bool isRatita = false, int bonusDrinks = 0}) {
     totalDrinks += drinks + bonusDrinks;
     gamesPlayed++;
     if (isMvp) mvdpCount++;
@@ -54,17 +49,16 @@ class LeaguePlayerStats {
     'lastWasRatita': lastWasRatita,
   };
 
-  factory LeaguePlayerStats.fromJson(Map<String, dynamic> j) =>
-      LeaguePlayerStats(
-        playerId: j['playerId'],
-        name: j['name'],
-        avatarPath: j['avatarPath'],
-        points: j['points'],
-        totalDrinks: j['totalDrinks'],
-        drinksGiven: j['drinksGiven'],
-        mvdpCount: j['mvdpCount'],
-        ratitaCount: j['ratitaCount'],
-        gamesPlayed: j['gamesPlayed'],
-        lastWasRatita: j['lastWasRatita'],
-      );
+  factory LeaguePlayerStats.fromJson(Map<String, dynamic> j) => LeaguePlayerStats(
+    playerId: j['playerId'],
+    name: j['name'],
+    avatarPath: j['avatarPath'],
+    points: j['points'],
+    totalDrinks: j['totalDrinks'],
+    drinksGiven: j['drinksGiven'],
+    mvdpCount: j['mvdpCount'],
+    ratitaCount: j['ratitaCount'],
+    gamesPlayed: j['gamesPlayed'],
+    lastWasRatita: j['lastWasRatita'],
+  );
 }

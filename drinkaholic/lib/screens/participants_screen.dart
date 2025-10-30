@@ -11,10 +11,7 @@ class ParticipantsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => ParticipantsViewmodel(),
-      child: const _ParticipantsScreenBody(),
-    );
+    return ChangeNotifierProvider(create: (_) => ParticipantsViewmodel(), child: const _ParticipantsScreenBody());
   }
 }
 
@@ -22,17 +19,12 @@ class _ParticipantsScreenBody extends StatefulWidget {
   const _ParticipantsScreenBody();
 
   @override
-  State<_ParticipantsScreenBody> createState() =>
-      _ParticipantsScreenBodyState();
+  State<_ParticipantsScreenBody> createState() => _ParticipantsScreenBodyState();
 }
 
-class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody>
-    with TickerProviderStateMixin {
-
-  List<Player> get _players =>
-      Provider.of<ParticipantsViewmodel>(context).players;
-  TextEditingController get _controller =>
-      Provider.of<ParticipantsViewmodel>(context).controller;
+class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody> with TickerProviderStateMixin {
+  List<Player> get _players => Provider.of<ParticipantsViewmodel>(context).players;
+  TextEditingController get _controller => Provider.of<ParticipantsViewmodel>(context).controller;
 
   @override
   void initState() {
@@ -40,13 +32,9 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody>
     // Background animation handled by AnimatedBackground widget
   }
 
-
   @override
   Widget build(BuildContext context) {
-    final viewModel = Provider.of<ParticipantsViewmodel>(
-      context,
-      listen: false,
-    );
+    final viewModel = Provider.of<ParticipantsViewmodel>(context, listen: false);
     viewModel.context = context;
 
     return Scaffold(
@@ -70,11 +58,8 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody>
           // Floating particles effect
           ...List.generate(
             8,
-            (index) => _buildFloatingParticle(
-              MediaQuery.of(context).size.width,
-              MediaQuery.of(context).size.height,
-              index,
-            ),
+            (index) =>
+                _buildFloatingParticle(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height, index),
           ),
           // Main content
           SafeArea(
@@ -93,10 +78,7 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody>
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: Colors.white.withOpacity(0.3),
-                              width: 1,
-                            ),
+                            border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.1),
@@ -105,19 +87,14 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody>
                               ),
                             ],
                           ),
-                          child: const Icon(
-                            Icons.arrow_back_ios_new,
-                            color: Colors.white,
-                            size: 20,
-                          ),
+                          child: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20),
                         ),
                       ),
                       const Spacer(),
                       // Title with modern styling
                       ShaderMask(
-                        shaderCallback: (bounds) => const LinearGradient(
-                          colors: [Colors.white, Color(0xFFE0F7FA)],
-                        ).createShader(bounds),
+                        shaderCallback: (bounds) =>
+                            const LinearGradient(colors: [Colors.white, Color(0xFFE0F7FA)]).createShader(bounds),
                         child: const Text(
                           'JUGADORES',
                           style: TextStyle(
@@ -125,20 +102,12 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody>
                             fontWeight: FontWeight.w900,
                             letterSpacing: 3,
                             color: Colors.white,
-                            shadows: [
-                              Shadow(
-                                color: Colors.black26,
-                                offset: Offset(1, 1),
-                                blurRadius: 3,
-                              ),
-                            ],
+                            shadows: [Shadow(color: Colors.black26, offset: Offset(1, 1), blurRadius: 3)],
                           ),
                         ),
                       ),
                       const Spacer(),
-                      const SizedBox(
-                        width: 44,
-                      ), // Balance space for back button
+                      const SizedBox(width: 44), // Balance space for back button
                     ],
                   ),
                 ),
@@ -166,10 +135,7 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody>
                     height: 65,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [
-                          Colors.white.withOpacity(0.9),
-                          Colors.white.withOpacity(0.7),
-                        ],
+                        colors: [Colors.white.withOpacity(0.9), Colors.white.withOpacity(0.7)],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
@@ -186,39 +152,24 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody>
                     child: Material(
                       color: Colors.transparent,
                       clipBehavior: Clip.antiAlias,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(32),
-                      ),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
                       child: InkWell(
                         borderRadius: BorderRadius.circular(32),
                         onTap: () {
-                          final viewModel = Provider.of<ParticipantsViewmodel>(
-                            context,
-                            listen: false,
-                          );
+                          final viewModel = Provider.of<ParticipantsViewmodel>(context, listen: false);
                           if (viewModel.players.isNotEmpty) {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    QuickGameScreen(players: viewModel.players),
-                              ),
+                              MaterialPageRoute(builder: (context) => QuickGameScreen(players: viewModel.players)),
                             );
                           }
                         },
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 16,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                           child: const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(
-                                Icons.sports_esports,
-                                color: Color(0xFF00C9FF),
-                                size: 28,
-                              ),
+                              Icon(Icons.sports_esports, color: Color(0xFF00C9FF), size: 28),
                               SizedBox(width: 12),
                               Text(
                                 '¡EMPEZAR A JUGAR!',
@@ -245,10 +196,7 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody>
   }
 
   Widget _buildPlayerCard(int index) {
-    final viewModel = Provider.of<ParticipantsViewmodel>(
-      context,
-      listen: false,
-    );
+    final viewModel = Provider.of<ParticipantsViewmodel>(context, listen: false);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
@@ -258,13 +206,7 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody>
           color: Colors.white.withOpacity(0.15),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, offset: const Offset(0, 4))],
         ),
         child: Row(
           children: [
@@ -276,21 +218,12 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody>
                 height: 72,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.white.withOpacity(0.5),
-                    width: 2,
-                  ),
+                  border: Border.all(color: Colors.white.withOpacity(0.5), width: 2),
                   boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
+                    BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 8, offset: const Offset(0, 2)),
                   ],
                 ),
-                child:
-                    (_players[index].imagen != null ||
-                        _players[index].avatar != null)
+                child: (_players[index].imagen != null || _players[index].avatar != null)
                     ? ClipOval(
                         child: _players[index].imagen != null
                             ? Image.file(
@@ -309,11 +242,7 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody>
                     : CircleAvatar(
                         radius: 34,
                         backgroundColor: Colors.white.withOpacity(0.2),
-                        child: const Icon(
-                          Icons.camera_alt,
-                          color: Colors.white,
-                          size: 26,
-                        ),
+                        child: const Icon(Icons.camera_alt, color: Colors.white, size: 26),
                       ),
               ),
             ),
@@ -328,23 +257,13 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody>
                     color: Colors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
-                    shadows: [
-                      Shadow(
-                        color: Colors.black26,
-                        offset: Offset(1, 1),
-                        blurRadius: 2,
-                      ),
-                    ],
+                    shadows: [Shadow(color: Colors.black26, offset: Offset(1, 1), blurRadius: 2)],
                   ),
                 ),
               ),
             ),
             // Delete indicator
-            Icon(
-              Icons.touch_app,
-              color: Colors.white.withOpacity(0.6),
-              size: 20,
-            ),
+            Icon(Icons.touch_app, color: Colors.white.withOpacity(0.6), size: 20),
           ],
         ),
       ),
@@ -352,10 +271,7 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody>
   }
 
   Widget _buildAddPlayerCard() {
-    final viewModel = Provider.of<ParticipantsViewmodel>(
-      context,
-      listen: false,
-    );
+    final viewModel = Provider.of<ParticipantsViewmodel>(context, listen: false);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
@@ -364,11 +280,7 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody>
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.1),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: Colors.white.withOpacity(0.3),
-            width: 1,
-            style: BorderStyle.solid,
-          ),
+          border: Border.all(color: Colors.white.withOpacity(0.3), width: 1, style: BorderStyle.solid),
         ),
         child: Row(
           children: [
@@ -379,33 +291,19 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody>
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white.withOpacity(0.2),
-                border: Border.all(
-                  color: Colors.white.withOpacity(0.4),
-                  width: 2,
-                ),
+                border: Border.all(color: Colors.white.withOpacity(0.4), width: 2),
               ),
-              child: const Icon(
-                Icons.person_add,
-                color: Colors.white,
-                size: 28,
-              ),
+              child: const Icon(Icons.person_add, color: Colors.white, size: 28),
             ),
             const SizedBox(width: 16),
             // Text field
             Expanded(
               child: TextField(
                 controller: _controller,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w500),
                 decoration: InputDecoration(
                   hintText: 'Añadir jugador...',
-                  hintStyle: TextStyle(
-                    color: Colors.white.withOpacity(0.7),
-                    fontSize: 16,
-                  ),
+                  hintStyle: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 16),
                   border: InputBorder.none,
                   enabledBorder: InputBorder.none,
                   focusedBorder: InputBorder.none,
@@ -435,11 +333,7 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody>
     return const AnimatedBackground();
   }
 
-  Widget _buildFloatingParticle(
-    double screenWidth,
-    double screenHeight,
-    int index,
-  ) {
+  Widget _buildFloatingParticle(double screenWidth, double screenHeight, int index) {
     final random = (index * 1234) % 1000;
     final size = 4.0 + (random % 8);
     final left = (random * 0.7) % screenWidth;
@@ -463,19 +357,13 @@ class _FloatingParticleWidget extends StatefulWidget {
   final double opacity;
   final Duration duration;
 
-  const _FloatingParticleWidget({
-    required this.size,
-    required this.opacity,
-    required this.duration,
-  });
+  const _FloatingParticleWidget({required this.size, required this.opacity, required this.duration});
 
   @override
-  State<_FloatingParticleWidget> createState() =>
-      _FloatingParticleWidgetState();
+  State<_FloatingParticleWidget> createState() => _FloatingParticleWidgetState();
 }
 
-class _FloatingParticleWidgetState extends State<_FloatingParticleWidget>
-    with SingleTickerProviderStateMixin {
+class _FloatingParticleWidgetState extends State<_FloatingParticleWidget> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -484,10 +372,7 @@ class _FloatingParticleWidgetState extends State<_FloatingParticleWidget>
     super.initState();
     _controller = AnimationController(duration: widget.duration, vsync: this);
 
-    _animation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+    _animation = Tween<double>(begin: 0, end: 1).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
     _startAnimation();
   }
@@ -522,13 +407,7 @@ class _FloatingParticleWidgetState extends State<_FloatingParticleWidget>
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.6),
                 shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.white.withOpacity(0.3),
-                    blurRadius: 4,
-                    spreadRadius: 1,
-                  ),
-                ],
+                boxShadow: [BoxShadow(color: Colors.white.withOpacity(0.3), blurRadius: 4, spreadRadius: 1)],
               ),
             ),
           ),

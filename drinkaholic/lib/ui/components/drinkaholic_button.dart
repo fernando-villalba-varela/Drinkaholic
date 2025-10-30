@@ -37,10 +37,9 @@ class DrinkaholicButton extends StatelessWidget {
         final colors = const [Color(0xFF00C9FF), Color(0xFF92FE9D)];
         decoration = BoxDecoration(
           gradient: isDisabled
-              ? LinearGradient(colors: [
-                  const Color(0xFF5A5A6E).withOpacity(0.6),
-                  const Color(0xFF7A7A8E).withOpacity(0.6),
-                ])
+              ? LinearGradient(
+                  colors: [const Color(0xFF5A5A6E).withOpacity(0.6), const Color(0xFF7A7A8E).withOpacity(0.6)],
+                )
               : LinearGradient(colors: colors, begin: Alignment.topLeft, end: Alignment.bottomRight),
           borderRadius: BorderRadius.circular(borderRadius),
           boxShadow: isDisabled
@@ -54,12 +53,7 @@ class DrinkaholicButton extends StatelessWidget {
                   ),
                 ],
         );
-        textStyle = const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-          fontSize: 16,
-          letterSpacing: 0.5,
-        );
+        textStyle = const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16, letterSpacing: 0.5);
         iconColor = Colors.white;
         break;
 
@@ -68,13 +62,7 @@ class DrinkaholicButton extends StatelessWidget {
           color: isDisabled ? Colors.white.withOpacity(0.20) : Colors.white.withOpacity(0.28),
           borderRadius: BorderRadius.circular(borderRadius),
           border: Border.all(color: Colors.white.withOpacity(0.45), width: 1.4),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.15),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.15), blurRadius: 10, offset: const Offset(0, 4))],
         );
         textStyle = TextStyle(
           color: Colors.white.withOpacity(isDisabled ? 0.7 : 0.95),
@@ -104,10 +92,7 @@ class DrinkaholicButton extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (icon != null) ...[
-          Icon(icon, color: iconColor, size: 20),
-          const SizedBox(width: 10),
-        ],
+        if (icon != null) ...[Icon(icon, color: iconColor, size: 20), const SizedBox(width: 10)],
         Flexible(
           child: Text(
             label,
@@ -128,10 +113,9 @@ class DrinkaholicButton extends StatelessWidget {
         child: InkWell(
           onTap: isDisabled ? null : onPressed,
           borderRadius: BorderRadius.circular(borderRadius),
-          child: Center(child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: child,
-          )),
+          child: Center(
+            child: Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: child),
+          ),
         ),
       ),
     );

@@ -48,13 +48,7 @@ class WheelPainter extends CustomPainter {
         ..color = sectionColor
         ..style = PaintingStyle.fill;
 
-      canvas.drawArc(
-        Rect.fromCircle(center: center, radius: radius),
-        startAngle,
-        sweepAngle,
-        true,
-        paint,
-      );
+      canvas.drawArc(Rect.fromCircle(center: center, radius: radius), startAngle, sweepAngle, true, paint);
 
       // Dibujar líneas divisorias
       final linePaint = Paint()
@@ -90,13 +84,7 @@ class WheelPainter extends CustomPainter {
             color: Colors.white,
             fontSize: 10, // Reducir tamaño para que quepa mejor
             fontWeight: isWinner ? FontWeight.bold : FontWeight.w600,
-            shadows: [
-              Shadow(
-                color: Colors.black.withOpacity(0.9),
-                offset: Offset(1, 1),
-                blurRadius: 3,
-              ),
-            ],
+            shadows: [Shadow(color: Colors.black.withOpacity(0.9), offset: Offset(1, 1), blurRadius: 3)],
           ),
         ),
         textDirection: TextDirection.ltr,
@@ -105,10 +93,7 @@ class WheelPainter extends CustomPainter {
       textPainter.layout();
 
       // Dibujar texto centrado horizontalmente respecto al avatar
-      textPainter.paint(
-        canvas,
-        Offset(textX - textPainter.width / 2, textY - textPainter.height / 2),
-      );
+      textPainter.paint(canvas, Offset(textX - textPainter.width / 2, textY - textPainter.height / 2));
     }
 
     // Dibujar borde exterior
@@ -120,19 +105,10 @@ class WheelPainter extends CustomPainter {
     canvas.drawCircle(center, radius, borderPaint);
   }
 
-  void _drawPlayerAvatar(
-    Canvas canvas,
-    Player player,
-    double x,
-    double y,
-    double radius,
-    bool isWinner,
-  ) {
+  void _drawPlayerAvatar(Canvas canvas, Player player, double x, double y, double radius, bool isWinner) {
     // Dibujar círculo de fondo para el avatar
     final avatarPaint = Paint()
-      ..color = isWinner
-          ? (isMVP ? const Color(0xFFFFD700) : const Color(0xFF8B4513))
-          : Colors.white.withOpacity(0.9)
+      ..color = isWinner ? (isMVP ? const Color(0xFFFFD700) : const Color(0xFF8B4513)) : Colors.white.withOpacity(0.9)
       ..style = PaintingStyle.fill;
 
     canvas.drawCircle(Offset(x, y), radius, avatarPaint);
@@ -158,10 +134,7 @@ class WheelPainter extends CustomPainter {
       );
 
       textPainter.layout();
-      textPainter.paint(
-        canvas,
-        Offset(x - textPainter.width / 2, y - textPainter.height / 2),
-      );
+      textPainter.paint(canvas, Offset(x - textPainter.width / 2, y - textPainter.height / 2));
     }
 
     // Dibujar borde del avatar encima de todo
@@ -173,20 +146,9 @@ class WheelPainter extends CustomPainter {
     canvas.drawCircle(Offset(x, y), radius, borderPaint);
   }
 
-  void _drawPlayerImage(
-    Canvas canvas,
-    ui.Image image,
-    double x,
-    double y,
-    double radius,
-  ) {
+  void _drawPlayerImage(Canvas canvas, ui.Image image, double x, double y, double radius) {
     final Rect rect = Rect.fromCircle(center: Offset(x, y), radius: radius);
-    final Rect srcRect = Rect.fromLTWH(
-      0,
-      0,
-      image.width.toDouble(),
-      image.height.toDouble(),
-    );
+    final Rect srcRect = Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble());
 
     // Crear un clip circular para la imagen
     canvas.save();
@@ -221,8 +183,7 @@ class TiebreakerScreen extends StatefulWidget {
   State<TiebreakerScreen> createState() => _TiebreakerScreenState();
 }
 
-class _TiebreakerScreenState extends State<TiebreakerScreen>
-    with TickerProviderStateMixin {
+class _TiebreakerScreenState extends State<TiebreakerScreen> with TickerProviderStateMixin {
   late AnimationController _spinController;
   late Animation<double> _spinAnimation;
   bool _isSpinning = false;
@@ -242,10 +203,7 @@ class _TiebreakerScreenState extends State<TiebreakerScreen>
   void initState() {
     super.initState();
     // Force portrait orientation
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
     // Generar colores fijos una sola vez
     _fixedColors = [
@@ -260,10 +218,7 @@ class _TiebreakerScreenState extends State<TiebreakerScreen>
     ];
 
     // Configurar animación de giro
-    _spinController = AnimationController(
-      duration: const Duration(milliseconds: 3000),
-      vsync: this,
-    );
+    _spinController = AnimationController(duration: const Duration(milliseconds: 3000), vsync: this);
 
     _spinAnimation = Tween<double>(
       begin: 0.0,
@@ -283,8 +238,7 @@ class _TiebreakerScreenState extends State<TiebreakerScreen>
           // Cargar imagen desde archivo
           final bytes = await player.imagen!.readAsBytes();
           image = await decodeImageFromList(bytes);
-        } else if (player.avatar != null &&
-            player.avatar!.startsWith('assets/')) {
+        } else if (player.avatar != null && player.avatar!.startsWith('assets/')) {
           // Cargar imagen desde assets
           final data = await rootBundle.load(player.avatar!);
           final bytes = data.buffer.asUint8List();
@@ -353,8 +307,7 @@ class _TiebreakerScreenState extends State<TiebreakerScreen>
 
     // La flecha en posición inicial (sin rotación) apunta a la sección 0
     // Cuando gira, necesitamos calcular a qué sección apunta
-    final sectionIndex =
-        (normalizedAngle / anglePerSection).floor() % playerCount;
+    final sectionIndex = (normalizedAngle / anglePerSection).floor() % playerCount;
 
     // Convertir el índice calculado al jugador correspondiente
     final winnerIndex = sectionIndex;
@@ -387,20 +340,13 @@ class _TiebreakerScreenState extends State<TiebreakerScreen>
             const AnimatedBackground(),
             SafeArea(
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 24.0,
-                  horizontal: 16.0,
-                ),
+                padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
                 child: Column(
                   children: [
                     // Header
                     Text(
                       title,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 12),
                     // Subtitle con texto especial brillante
@@ -408,10 +354,7 @@ class _TiebreakerScreenState extends State<TiebreakerScreen>
                         ? RichText(
                             textAlign: TextAlign.center,
                             text: TextSpan(
-                              style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 16,
-                              ),
+                              style: const TextStyle(color: Colors.white70, fontSize: 16),
                               children: [
                                 TextSpan(
                                   text:
@@ -424,17 +367,11 @@ class _TiebreakerScreenState extends State<TiebreakerScreen>
                                     color: Colors.white,
                                     shadows: [
                                       Shadow(
-                                        color: Color(
-                                          0xFFFFFF99,
-                                        ), // Amarillo claro brillante
+                                        color: Color(0xFFFFFF99), // Amarillo claro brillante
                                         blurRadius: 4,
                                         offset: Offset(0, 0),
                                       ),
-                                      Shadow(
-                                        color: Color(0xFFFFFF99),
-                                        blurRadius: 8,
-                                        offset: Offset(0, 0),
-                                      ),
+                                      Shadow(color: Color(0xFFFFFF99), blurRadius: 8, offset: Offset(0, 0)),
                                     ],
                                   ),
                                 ),
@@ -445,15 +382,9 @@ class _TiebreakerScreenState extends State<TiebreakerScreen>
                         : RichText(
                             textAlign: TextAlign.center,
                             text: TextSpan(
-                              style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 16,
-                              ),
+                              style: const TextStyle(color: Colors.white70, fontSize: 16),
                               children: [
-                                TextSpan(
-                                  text:
-                                      'Manda huevos que hayais bebido ${widget.tiedScore} tragos\n (',
-                                ),
+                                TextSpan(text: 'Manda huevos que hayais bebido ${widget.tiedScore} tragos\n ('),
                                 TextSpan(
                                   text: 'sois escoria',
                                   style: const TextStyle(
@@ -461,17 +392,11 @@ class _TiebreakerScreenState extends State<TiebreakerScreen>
                                     color: Colors.white,
                                     shadows: [
                                       Shadow(
-                                        color: Color(
-                                          0xFF8B4513,
-                                        ), // Marrón caca brillante
+                                        color: Color(0xFF8B4513), // Marrón caca brillante
                                         blurRadius: 4,
                                         offset: Offset(0, 0),
                                       ),
-                                      Shadow(
-                                        color: Color(0xFF8B4513),
-                                        blurRadius: 8,
-                                        offset: Offset(0, 0),
-                                      ),
+                                      Shadow(color: Color(0xFF8B4513), blurRadius: 8, offset: Offset(0, 0)),
                                     ],
                                   ),
                                 ),
@@ -488,32 +413,20 @@ class _TiebreakerScreenState extends State<TiebreakerScreen>
                           if (!_hasSpun && !_isSpinning) ...[
                             Text(
                               'Solo el Little Boy sabe tu destino...',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                              ),
+                              style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
                             ),
                             const SizedBox(height: 32),
                           ] else if (_isSpinning) ...[
                             Text(
                               '¡Girando...!',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                              ),
+                              style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
                             ),
                             const SizedBox(height: 32),
                           ] else ...[
                             Text(
-                              isMVP
-                                  ? '¡Se te ha caido esto! -> 👑'
-                                  : '¡Ratitaa🐭🐭 (JAJA)!',
+                              isMVP ? '¡Se te ha caido esto! -> 👑' : '¡Ratitaa🐭🐭 (JAJA)!',
                               style: TextStyle(
-                                color: isMVP
-                                    ? const Color(0xFFFFD700)
-                                    : const Color(0xFF8B4513),
+                                color: isMVP ? const Color(0xFFFFD700) : const Color(0xFF8B4513),
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -522,16 +435,10 @@ class _TiebreakerScreenState extends State<TiebreakerScreen>
                             Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color:
-                                    (isMVP
-                                            ? const Color(0xFFFFD700)
-                                            : const Color(0xFF8B4513))
-                                        .withOpacity(0.2),
+                                color: (isMVP ? const Color(0xFFFFD700) : const Color(0xFF8B4513)).withOpacity(0.2),
                                 borderRadius: BorderRadius.circular(16),
                                 border: Border.all(
-                                  color: isMVP
-                                      ? const Color(0xFFFFD700)
-                                      : const Color(0xFF8B4513),
+                                  color: isMVP ? const Color(0xFFFFD700) : const Color(0xFF8B4513),
                                   width: 2,
                                 ),
                               ),
@@ -567,9 +474,7 @@ class _TiebreakerScreenState extends State<TiebreakerScreen>
                         icon: Icons.check_circle_outline,
                         onPressed: () {
                           final loser = widget.tiedPlayers.length > 1
-                              ? widget.tiedPlayers.firstWhere(
-                                  (p) => p.id != _winner!.id,
-                                )
+                              ? widget.tiedPlayers.firstWhere((p) => p.id != _winner!.id)
                               : null;
                           widget.onTiebreakerResolved(_winner!, loser);
                         },
@@ -579,13 +484,8 @@ class _TiebreakerScreenState extends State<TiebreakerScreen>
                       )
                     else if (_isSpinning)
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 16,
-                          horizontal: 32,
-                        ),
-                        child: const CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+                        child: const CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
                       ),
                     const SizedBox(height: 16),
                   ],
@@ -630,9 +530,7 @@ class _TiebreakerScreenState extends State<TiebreakerScreen>
               animation: _spinAnimation,
               builder: (context, child) {
                 // Usar la posición final si ya terminó de girar
-                final angle = _hasSpun
-                    ? _finalBottleAngle
-                    : _spinAnimation.value;
+                final angle = _hasSpun ? _finalBottleAngle : _spinAnimation.value;
                 return Transform.rotate(
                   angle: angle,
                   child: Container(
@@ -643,32 +541,21 @@ class _TiebreakerScreenState extends State<TiebreakerScreen>
                       color: Colors.brown.withOpacity(0.8),
                       border: Border.all(color: Colors.brown, width: 2),
                       boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
-                        ),
+                        BoxShadow(color: Colors.black.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 4)),
                       ],
                     ),
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
                         // Cuerpo de la botella
-                        const Icon(
-                          Icons.local_drink,
-                          color: Colors.white,
-                          size: 30,
-                        ),
+                        const Icon(Icons.local_drink, color: Colors.white, size: 30),
                         // Punta que apunta al ganador
                         Positioned(
                           top: 8,
                           child: Container(
                             width: 4,
                             height: 15,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(2),
-                            ),
+                            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(2)),
                           ),
                         ),
                       ],
@@ -697,10 +584,7 @@ class _TiebreakerScreenState extends State<TiebreakerScreen>
       child: img == null
           ? Text(
               player.nombre.isNotEmpty ? player.nombre[0].toUpperCase() : '?',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: size * 0.4,
-              ),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: size * 0.4),
             )
           : null,
     );

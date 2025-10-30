@@ -14,8 +14,7 @@ class LeagueDetailScreen extends StatefulWidget {
   State<LeagueDetailScreen> createState() => _LeagueDetailScreenState();
 }
 
-class _LeagueDetailScreenState extends State<LeagueDetailScreen>
-    with TickerProviderStateMixin {
+class _LeagueDetailScreenState extends State<LeagueDetailScreen> with TickerProviderStateMixin {
   Widget _buildAnimatedBackground() {
     return const AnimatedBackground();
   }
@@ -35,10 +34,7 @@ class _LeagueDetailScreenState extends State<LeagueDetailScreen>
           automaticallyImplyLeading: false,
           title: Row(
             children: [
-              LeagueAppBarButton(
-                onTap: () => Navigator.of(context).pop(),
-                icon: Icons.arrow_back,
-              ),
+              LeagueAppBarButton(onTap: () => Navigator.of(context).pop(), icon: Icons.arrow_back),
               const SizedBox(width: 16),
               Expanded(
                 child: Text(
@@ -49,16 +45,8 @@ class _LeagueDetailScreenState extends State<LeagueDetailScreen>
                     color: Colors.white,
                     letterSpacing: 1,
                     shadows: [
-                      Shadow(
-                        color: Colors.black45,
-                        offset: Offset(2, 2),
-                        blurRadius: 4,
-                      ),
-                      Shadow(
-                        color: Colors.purple,
-                        offset: Offset(-1, -1),
-                        blurRadius: 2,
-                      ),
+                      Shadow(color: Colors.black45, offset: Offset(2, 2), blurRadius: 4),
+                      Shadow(color: Colors.purple, offset: Offset(-1, -1), blurRadius: 2),
                     ],
                   ),
                 ),
@@ -79,13 +67,7 @@ class _LeagueDetailScreenState extends State<LeagueDetailScreen>
                   color: const Color(0x26FFFFFF),
                   borderRadius: BorderRadius.circular(25),
                   border: Border.all(color: const Color(0x4DFFFFFF), width: 1),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color(0x1A000000),
-                      blurRadius: 10,
-                      offset: Offset(0, 4),
-                    ),
-                  ],
+                  boxShadow: const [BoxShadow(color: Color(0x1A000000), blurRadius: 10, offset: Offset(0, 4))],
                 ),
                 child: const TabBar(
                   labelColor: Colors.white,
@@ -93,14 +75,8 @@ class _LeagueDetailScreenState extends State<LeagueDetailScreen>
                   indicator: BoxDecoration(),
                   dividerColor: Colors.transparent,
                   dividerHeight: 0,
-                  labelStyle: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
-                  unselectedLabelStyle: TextStyle(
-                    fontWeight: FontWeight.normal,
-                    fontSize: 14,
-                  ),
+                  labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
                   tabs: [
                     Tab(text: 'Scoreboard'),
                     Tab(text: 'Jugadores'),
@@ -123,11 +99,7 @@ class _LeagueDetailScreenState extends State<LeagueDetailScreen>
               ),
             ),
             _buildAnimatedBackground(),
-            const SafeArea(
-              child: TabBarView(
-                children: [LeaderboardTab(), ParticipantsTab(), PlayTab()],
-              ),
-            ),
+            const SafeArea(child: TabBarView(children: [LeaderboardTab(), ParticipantsTab(), PlayTab()])),
           ],
         ),
       ),

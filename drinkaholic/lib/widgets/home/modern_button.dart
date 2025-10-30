@@ -52,11 +52,7 @@ class ModernButton extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    icon,
-                    color: Colors.white,
-                    size: isSmaller ? 20.sp : 22.sp,
-                  ),
+                  Icon(icon, color: Colors.white, size: isSmaller ? 20.sp : 22.sp),
                   SizedBox(width: 10.w),
                   Text(
                     text,

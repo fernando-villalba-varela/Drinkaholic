@@ -34,9 +34,7 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           title: 'Drinkaholic',
           debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
-          ),
+          theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal)),
           home: const HomeScreen(),
         );
       },

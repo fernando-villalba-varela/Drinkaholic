@@ -21,8 +21,7 @@ class QuickGameScreen extends StatefulWidget {
   State<QuickGameScreen> createState() => _QuickGameScreenState();
 }
 
-class _QuickGameScreenState extends State<QuickGameScreen>
-    with TickerProviderStateMixin {
+class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderStateMixin {
   late AnimationController _cardAnimationController;
   late AnimationController _glowAnimationController;
   late AnimationController _tapAnimationController;
@@ -56,58 +55,35 @@ class _QuickGameScreenState extends State<QuickGameScreen>
     super.initState();
 
     // Force landscape orientation
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-    ]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
 
     // Initialize local players list
     _players = List<Player>.from(widget.players);
 
-    _cardAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 600),
-      vsync: this,
-    );
+    _cardAnimationController = AnimationController(duration: const Duration(milliseconds: 600), vsync: this);
 
-    _glowAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
-      vsync: this,
-    );
+    _glowAnimationController = AnimationController(duration: const Duration(milliseconds: 1500), vsync: this);
 
-    _tapAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 200),
-      vsync: this,
-    );
+    _tapAnimationController = AnimationController(duration: const Duration(milliseconds: 200), vsync: this);
 
+    _rippleAnimationController = AnimationController(duration: const Duration(milliseconds: 800), vsync: this);
 
-    _rippleAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
-    );
+    _pulseAnimationController = AnimationController(duration: const Duration(milliseconds: 1200), vsync: this);
 
-    _pulseAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 1200),
-      vsync: this,
-    );
+    _glowAnimation = Tween<double>(
+      begin: 0.3,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _glowAnimationController, curve: Curves.easeInOut));
 
-    _glowAnimation = Tween<double>(begin: 0.3, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _glowAnimationController,
-        curve: Curves.easeInOut,
-      ),
-    );
+    _tapAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.95,
+    ).animate(CurvedAnimation(parent: _tapAnimationController, curve: Curves.easeInOut));
 
-    _tapAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
-      CurvedAnimation(parent: _tapAnimationController, curve: Curves.easeInOut),
-    );
-
-
-    _rippleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _rippleAnimationController,
-        curve: Curves.easeOut,
-      ),
-    );
+    _rippleAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _rippleAnimationController, curve: Curves.easeOut));
 
     _glowAnimationController.repeat(reverse: true);
     _pulseAnimationController.repeat(reverse: true);
@@ -123,10 +99,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
   @override
   void dispose() {
     // Restore portrait orientation when leaving
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     _cardAnimationController.dispose();
     _glowAnimationController.dispose();
     _tapAnimationController.dispose();
@@ -142,9 +115,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
       final selectedPlayerIndex = Random().nextInt(_players.length);
       final selectedPlayer = _players[selectedPlayerIndex];
 
-      final question = await QuestionGenerator.generateRandomQuestionForPlayer(
-        selectedPlayer.nombre,
-      );
+      final question = await QuestionGenerator.generateRandomQuestionForPlayer(selectedPlayer.nombre);
 
       setState(() {
         _currentChallenge = question.question;
@@ -165,9 +136,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
 
     // Solo selecciona jugador si el reto NO es para todos Y no es una pregunta genérica ya asignada Y no es un reto dual
     final gameState = _createGameState();
-    if (!gameState.isChallengeForAll &&
-        !_isGenericPlayerQuestion() &&
-        !gameState.isDualChallenge) {
+    if (!gameState.isChallengeForAll && !_isGenericPlayerQuestion() && !gameState.isDualChallenge) {
       _selectWeightedRandomPlayer();
     } else if (gameState.isChallengeForAll) {
       // Para desafíos que son para todos, mantener _currentPlayerIndex en -1
@@ -219,19 +188,13 @@ class _QuickGameScreenState extends State<QuickGameScreen>
     // y el _currentPlayerIndex es válido (no -1)
     return _currentPlayerIndex >= 0 &&
         _currentPlayerIndex < _players.length &&
-        (_currentChallenge.contains(
-              '${_players[_currentPlayerIndex].nombre} bebe',
-            ) ||
-            _currentChallenge.contains(
-              '${_players[_currentPlayerIndex].nombre} reparte',
-            ));
+        (_currentChallenge.contains('${_players[_currentPlayerIndex].nombre} bebe') ||
+            _currentChallenge.contains('${_players[_currentPlayerIndex].nombre} reparte'));
   }
 
   void _selectWeightedRandomPlayer() {
     // Find the minimum weight (players who have been selected least)
-    final minWeight = _playerWeights.values.isEmpty
-        ? 0
-        : _playerWeights.values.reduce((a, b) => a < b ? a : b);
+    final minWeight = _playerWeights.values.isEmpty ? 0 : _playerWeights.values.reduce((a, b) => a < b ? a : b);
 
     // Build list of eligible indices based on playerId weights
     final List<int> eligibleIndices = [];
@@ -303,9 +266,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
           children: _ripplePositions.asMap().entries.map((entry) {
             final index = entry.key;
             final position = entry.value;
-            final opacity = _rippleOpacities.length > index
-                ? _rippleOpacities[index]
-                : 0.0;
+            final opacity = _rippleOpacities.length > index ? _rippleOpacities[index] : 0.0;
             final animationValue = _rippleAnimation.value;
             final size = 150.0 * animationValue;
 
@@ -317,12 +278,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
                 height: size,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.white.withOpacity(
-                      opacity * (1 - animationValue) * 0.6,
-                    ),
-                    width: 3,
-                  ),
+                  border: Border.all(color: Colors.white.withOpacity(opacity * (1 - animationValue) * 0.6), width: 3),
                 ),
               ),
             );
@@ -332,11 +288,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
     );
   }
 
-  Widget _buildFloatingParticle(
-    double screenWidth,
-    double screenHeight,
-    int index,
-  ) {
+  Widget _buildFloatingParticle(double screenWidth, double screenHeight, int index) {
     final random = (index * 1234) % 1000;
     final size = 4.0 + (random % 8);
     final left = (random * 0.7) % screenWidth;
@@ -363,13 +315,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.6),
                   shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.white.withOpacity(0.3),
-                      blurRadius: 4,
-                      spreadRadius: 1,
-                    ),
-                  ],
+                  boxShadow: [BoxShadow(color: Colors.white.withOpacity(0.3), blurRadius: 4, spreadRadius: 1)],
                 ),
               ),
             ),
@@ -411,21 +357,14 @@ class _QuickGameScreenState extends State<QuickGameScreen>
 
     // 5. Verificar si debemos generar un nuevo evento (prioridad alta)
     final gameState = _createGameState();
-    if (gameState.canHaveEvents &&
-        EventGenerator.shouldGenerateEvent(
-          _currentRound,
-          gameState.activeEvents,
-        )) {
+    if (gameState.canHaveEvents && EventGenerator.shouldGenerateEvent(_currentRound, gameState.activeEvents)) {
       await _generateNewEvent();
       return;
     }
 
     // 6. Verificar si debemos generar un nuevo reto constante (incluyendo duales)
     if (gameState.canHaveConstantChallenges &&
-        ConstantChallengeGenerator.shouldGenerateConstantChallenge(
-          _currentRound,
-          gameState.activeChallenges,
-        )) {
+        ConstantChallengeGenerator.shouldGenerateConstantChallenge(_currentRound, gameState.activeChallenges)) {
       // 20% probabilidad de reto constante dual si hay suficientes jugadores
       if (_players.length >= 2 && math.Random().nextDouble() < 0.2) {
         await _generateNewDualConstantChallenge();
@@ -445,9 +384,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
 
     // 8. Solo selecciona jugador si el reto NO es para todos Y no es una pregunta genérica ya asignada Y no es un reto dual
     final gameState2 = _createGameState();
-    if (!gameState2.isChallengeForAll &&
-        !_isGenericPlayerQuestion() &&
-        !gameState2.isDualChallenge) {
+    if (!gameState2.isChallengeForAll && !_isGenericPlayerQuestion() && !gameState2.isDualChallenge) {
       _selectWeightedRandomPlayer();
     } else if (gameState2.isChallengeForAll) {
       setState(() {
@@ -459,36 +396,24 @@ class _QuickGameScreenState extends State<QuickGameScreen>
   }
 
   Future<void> _checkForConstantChallengeEnding() async {
-    final activeChallenges = _constantChallenges
-        .where((c) => c.isActiveAtRound(_currentRound))
-        .toList();
+    final activeChallenges = _constantChallenges.where((c) => c.isActiveAtRound(_currentRound)).toList();
 
     for (final challenge in activeChallenges) {
-      if (ConstantChallengeGenerator.shouldEndConstantChallenge(
-        challenge,
-        _currentRound,
-      )) {
-        final challengeEnd = ConstantChallengeGenerator.generateChallengeEnd(
-          challenge,
-          _currentRound,
-        );
+      if (ConstantChallengeGenerator.shouldEndConstantChallenge(challenge, _currentRound)) {
+        final challengeEnd = ConstantChallengeGenerator.generateChallengeEnd(challenge, _currentRound);
 
         setState(() {
           // Marcar el reto como terminado
           _constantChallenges = _constantChallenges.map((c) {
             if (c.id == challenge.id) {
-              return c.copyWith(
-                status: ConstantChallengeStatus.ended,
-                endRound: _currentRound,
-              );
+              return c.copyWith(status: ConstantChallengeStatus.ended, endRound: _currentRound);
             }
             return c;
           }).toList();
 
           _currentChallengeEnd = challengeEnd;
           _currentChallenge = challengeEnd.endDescription;
-          _currentPlayerIndex =
-              -1; // No hay jugador específico para este tipo de mensaje
+          _currentPlayerIndex = -1; // No hay jugador específico para este tipo de mensaje
         });
 
         return; // Solo terminamos un reto por ronda
@@ -497,13 +422,10 @@ class _QuickGameScreenState extends State<QuickGameScreen>
   }
 
   Future<void> _generateNewConstantChallenge() async {
-    final eligiblePlayer =
-        ConstantChallengeGenerator.selectPlayerForNewChallenge(
-          _players,
-          _constantChallenges
-              .where((c) => c.isActiveAtRound(_currentRound))
-              .toList(),
-        );
+    final eligiblePlayer = ConstantChallengeGenerator.selectPlayerForNewChallenge(
+      _players,
+      _constantChallenges.where((c) => c.isActiveAtRound(_currentRound)).toList(),
+    );
 
     if (eligiblePlayer == null) {
       // No hay jugadores elegibles, generar reto normal en su lugar
@@ -511,25 +433,20 @@ class _QuickGameScreenState extends State<QuickGameScreen>
       return;
     }
 
-    final constantChallenge =
-        await ConstantChallengeGenerator.generateRandomConstantChallenge(
-          eligiblePlayer,
-          _currentRound,
-        );
+    final constantChallenge = await ConstantChallengeGenerator.generateRandomConstantChallenge(
+      eligiblePlayer,
+      _currentRound,
+    );
 
     setState(() {
       _constantChallenges.add(constantChallenge);
       _currentChallenge = constantChallenge.description;
-      _currentPlayerIndex = _players.indexWhere(
-        (p) => p.id == eligiblePlayer.id,
-      );
+      _currentPlayerIndex = _players.indexWhere((p) => p.id == eligiblePlayer.id);
     });
   }
 
   Future<void> _checkForEventEnding() async {
-    final activeEvents = _events
-        .where((e) => e.isActiveAtRound(_currentRound))
-        .toList();
+    final activeEvents = _events.where((e) => e.isActiveAtRound(_currentRound)).toList();
 
     for (final event in activeEvents) {
       if (EventGenerator.shouldEndEvent(event, _currentRound)) {
@@ -539,18 +456,14 @@ class _QuickGameScreenState extends State<QuickGameScreen>
           // Marcar el evento como terminado
           _events = _events.map((e) {
             if (e.id == event.id) {
-              return e.copyWith(
-                status: EventStatus.ended,
-                endRound: _currentRound,
-              );
+              return e.copyWith(status: EventStatus.ended, endRound: _currentRound);
             }
             return e;
           }).toList();
 
           _currentEventEnd = eventEnd;
           _currentChallenge = eventEnd.endDescription;
-          _currentPlayerIndex =
-              -1; // Eventos son globales, no hay jugador específico
+          _currentPlayerIndex = -1; // Eventos son globales, no hay jugador específico
         });
 
         return; // Solo terminamos un evento por ronda
@@ -563,10 +476,8 @@ class _QuickGameScreenState extends State<QuickGameScreen>
 
     setState(() {
       _events.add(event);
-      _currentChallenge =
-          '${event.typeIcon} ${event.title}: ${event.description}';
-      _currentPlayerIndex =
-          -1; // Eventos son globales, no hay jugador específico
+      _currentChallenge = '${event.typeIcon} ${event.title}: ${event.description}';
+      _currentPlayerIndex = -1; // Eventos son globales, no hay jugador específico
     });
   }
 
@@ -582,10 +493,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
     final player1 = selectedPlayers[0];
     final player2 = selectedPlayers[1];
 
-    final question = await QuestionGenerator.generateRandomDualQuestion(
-      player1.nombre,
-      player2.nombre,
-    );
+    final question = await QuestionGenerator.generateRandomDualQuestion(player1.nombre, player2.nombre);
 
     final player1Index = _players.indexOf(player1);
     final player2Index = _players.indexOf(player2);
@@ -615,12 +523,11 @@ class _QuickGameScreenState extends State<QuickGameScreen>
     final player1 = selectedPlayers[0];
     final player2 = selectedPlayers[1];
 
-    final constantChallenge =
-        await ConstantChallengeGenerator.generateRandomDualConstantChallenge(
-          player1,
-          player2,
-          _currentRound,
-        );
+    final constantChallenge = await ConstantChallengeGenerator.generateRandomDualConstantChallenge(
+      player1,
+      player2,
+      _currentRound,
+    );
 
     setState(() {
       _constantChallenges.add(constantChallenge);
@@ -637,9 +544,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
     List<Player> eligiblePlayers = [];
 
     // Encontrar el peso mínimo
-    int minWeight = _playerWeights.values.isEmpty
-        ? 0
-        : _playerWeights.values.reduce((a, b) => a < b ? a : b);
+    int minWeight = _playerWeights.values.isEmpty ? 0 : _playerWeights.values.reduce((a, b) => a < b ? a : b);
 
     // Añadir jugadores con peso <= min+1
     for (final p in _players) {
@@ -737,16 +642,9 @@ class _QuickGameScreenState extends State<QuickGameScreen>
                             decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.2),
                               borderRadius: BorderRadius.circular(16),
-                              border: Border.all(
-                                color: Colors.white.withOpacity(0.3),
-                                width: 1,
-                              ),
+                              border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
                             ),
-                            child: Icon(
-                              Icons.arrow_back,
-                              color: Colors.white,
-                              size: iconSize,
-                            ),
+                            child: Icon(Icons.arrow_back, color: Colors.white, size: iconSize),
                           ),
                         ),
                         Expanded(
@@ -757,10 +655,8 @@ class _QuickGameScreenState extends State<QuickGameScreen>
                                 scale: _tapAnimation.value,
                                 child: GestureDetector(
                                   onTapDown: (details) {
-                                    final RenderBox renderBox =
-                                        context.findRenderObject() as RenderBox;
-                                    final localPosition = renderBox
-                                        .globalToLocal(details.globalPosition);
+                                    final RenderBox renderBox = context.findRenderObject() as RenderBox;
+                                    final localPosition = renderBox.globalToLocal(details.globalPosition);
                                     _addRippleEffect(localPosition);
                                   },
                                   onTap: _nextChallenge,
@@ -771,12 +667,9 @@ class _QuickGameScreenState extends State<QuickGameScreen>
                                         width: double.infinity,
                                         child: Center(
                                           child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
+                                            mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
-                                              buildCenterContent(
-                                                _createGameState(),
-                                              ),
+                                              buildCenterContent(_createGameState()),
                                               const SizedBox(height: 0),
                                               // Tap indicator (only show at the beginning)
                                               if (!_gameStarted)
@@ -784,69 +677,38 @@ class _QuickGameScreenState extends State<QuickGameScreen>
                                                   animation: _glowAnimation,
                                                   builder: (context, child) {
                                                     return Container(
-                                                      padding: EdgeInsets.all(
-                                                        7,
-                                                      ),
+                                                      padding: EdgeInsets.all(7),
                                                       decoration: BoxDecoration(
-                                                        color: Colors.white
-                                                            .withOpacity(0.1),
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              25,
-                                                            ),
+                                                        color: Colors.white.withOpacity(0.1),
+                                                        borderRadius: BorderRadius.circular(25),
                                                         border: Border.all(
-                                                          color: Colors.white
-                                                              .withOpacity(
-                                                                _glowAnimation
-                                                                        .value *
-                                                                    0.8,
-                                                              ),
+                                                          color: Colors.white.withOpacity(_glowAnimation.value * 0.8),
                                                           width: 2,
                                                         ),
                                                         boxShadow: [
                                                           BoxShadow(
-                                                            color: Colors.white
-                                                                .withOpacity(
-                                                                  _glowAnimation
-                                                                          .value *
-                                                                      0.3,
-                                                                ),
+                                                            color: Colors.white.withOpacity(_glowAnimation.value * 0.3),
                                                             blurRadius: 15,
                                                             spreadRadius: 2,
                                                           ),
                                                         ],
                                                       ),
                                                       child: Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.min,
+                                                        mainAxisSize: MainAxisSize.min,
                                                         children: [
                                                           Icon(
                                                             Icons.touch_app,
-                                                            color: Colors.white
-                                                                .withOpacity(
-                                                                  _glowAnimation
-                                                                      .value,
-                                                                ),
+                                                            color: Colors.white.withOpacity(_glowAnimation.value),
                                                             size: 25,
                                                           ),
-                                                          const SizedBox(
-                                                            width: 8,
-                                                          ),
+                                                          const SizedBox(width: 8),
                                                           Text(
                                                             'TOCA LA PANTALLA',
                                                             style: TextStyle(
-                                                              color: Colors
-                                                                  .white
-                                                                  .withOpacity(
-                                                                    _glowAnimation
-                                                                        .value,
-                                                                  ),
+                                                              color: Colors.white.withOpacity(_glowAnimation.value),
                                                               fontSize: 15,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              letterSpacing:
-                                                                  1.2,
+                                                              fontWeight: FontWeight.bold,
+                                                              letterSpacing: 1.2,
                                                             ),
                                                           ),
                                                         ],
@@ -904,7 +766,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
                     ),
                   ),
                 ),
-              // Edit players button (top-right)
+                // Edit players button (top-right)
                 Positioned(
                   top: padding,
                   right: padding,
@@ -915,16 +777,9 @@ class _QuickGameScreenState extends State<QuickGameScreen>
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.3),
-                          width: 1,
-                        ),
+                        border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
                       ),
-                      child: Icon(
-                        Icons.group,
-                        color: Colors.white,
-                        size: iconSize,
-                      ),
+                      child: Icon(Icons.group, color: Colors.white, size: iconSize),
                     ),
                   ),
                 ),
@@ -935,6 +790,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
       ),
     );
   }
+
   void _openPlayerManager() async {
     final updated = await showModalBottomSheet<List<Player>>(
       context: context,
@@ -973,7 +829,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
                             IconButton(
                               icon: const Icon(Icons.close, color: Colors.white70),
                               onPressed: () => Navigator.pop(context),
-                            )
+                            ),
                           ],
                         ),
                       ),
@@ -993,10 +849,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
                                 onSubmitted: (value) {
                                   if (value.trim().isEmpty) return;
                                   setModalState(() {
-                                    temp.add(Player(
-                                      id: _nextPlayerId(temp),
-                                      nombre: value.trim(),
-                                    ));
+                                    temp.add(Player(id: _nextPlayerId(temp), nombre: value.trim()));
                                   });
                                   controller.clear();
                                 },
@@ -1008,15 +861,12 @@ class _QuickGameScreenState extends State<QuickGameScreen>
                                 final value = controller.text.trim();
                                 if (value.isEmpty) return;
                                 setModalState(() {
-                                  temp.add(Player(
-                                    id: _nextPlayerId(temp),
-                                    nombre: value,
-                                  ));
+                                  temp.add(Player(id: _nextPlayerId(temp), nombre: value));
                                 });
                                 controller.clear();
                               },
                               child: const Text('Añadir'),
-                            )
+                            ),
                           ],
                         ),
                       ),
@@ -1056,12 +906,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
                                 );
                                 if (newName != null && newName.isNotEmpty) {
                                   setModalState(() {
-                                    temp[index] = Player(
-                                      id: p.id,
-                                      nombre: newName,
-                                      imagen: p.imagen,
-                                      avatar: p.avatar,
-                                    );
+                                    temp[index] = Player(id: p.id, nombre: newName, imagen: p.imagen, avatar: p.avatar);
                                   });
                                 }
                               },
@@ -1130,7 +975,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
                             child: const Text('Listo'),
                           ),
                         ),
-                      )
+                      ),
                     ],
                   );
                 },
@@ -1183,17 +1028,11 @@ class _QuickGameScreenState extends State<QuickGameScreen>
   }
 }
 
-double getResponsiveSize(
-  BuildContext context, {
-  required double small,
-  required double medium,
-  required double large,
-}) {
+double getResponsiveSize(BuildContext context, {required double small, required double medium, required double large}) {
   final width = MediaQuery.of(context).size.width;
   // Breakpoints ajustados para Nothing Phone (2400x1080)
   const breakpointSmall = 1000.0; // Móviles pequeños
-  const breakpointMedium =
-      1700.0; // Móviles medianos/grandes como Nothing Phone
+  const breakpointMedium = 1700.0; // Móviles medianos/grandes como Nothing Phone
 
   if (width <= breakpointSmall) {
     return small * 1.2; // Incremento del 20% para mejor visibilidad
@@ -1203,4 +1042,3 @@ double getResponsiveSize(
     return large * 2;
   }
 }
-

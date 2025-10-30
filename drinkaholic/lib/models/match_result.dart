@@ -2,23 +2,12 @@ class DrinkTransfer {
   final int fromPlayerId;
   final int toPlayerId;
   final int amount;
-  DrinkTransfer({
-    required this.fromPlayerId,
-    required this.toPlayerId,
-    required this.amount,
-  });
+  DrinkTransfer({required this.fromPlayerId, required this.toPlayerId, required this.amount});
 
-  Map<String, dynamic> toJson() => {
-    'from': fromPlayerId,
-    'to': toPlayerId,
-    'amount': amount,
-  };
+  Map<String, dynamic> toJson() => {'from': fromPlayerId, 'to': toPlayerId, 'amount': amount};
 
-  factory DrinkTransfer.fromJson(Map<String, dynamic> j) => DrinkTransfer(
-    fromPlayerId: j['from'],
-    toPlayerId: j['to'],
-    amount: j['amount'],
-  );
+  factory DrinkTransfer.fromJson(Map<String, dynamic> j) =>
+      DrinkTransfer(fromPlayerId: j['from'], toPlayerId: j['to'], amount: j['amount']);
 }
 
 class MatchResult {
@@ -54,13 +43,9 @@ class MatchResult {
     id: j['id'],
     leagueId: j['leagueId'],
     date: DateTime.parse(j['date']),
-    perPlayerDrinks: (j['perPlayerDrinks'] as Map).map(
-      (k, v) => MapEntry(int.parse(k as String), v as int),
-    ),
+    perPlayerDrinks: (j['perPlayerDrinks'] as Map).map((k, v) => MapEntry(int.parse(k as String), v as int)),
     mvpPlayerIds: List<int>.from(j['mvpPlayerIds']),
     ratitaPlayerIds: List<int>.from(j['ratitaPlayerIds']),
-    transfers: (j['transfers'] as List)
-        .map((e) => DrinkTransfer.fromJson(e))
-        .toList(),
+    transfers: (j['transfers'] as List).map((e) => DrinkTransfer.fromJson(e)).toList(),
   );
 }

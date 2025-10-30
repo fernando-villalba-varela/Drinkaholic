@@ -25,16 +25,11 @@ void showGameStatsDialog({
     }
   });
 
-  Player? mvp = mvpIndex >= 0 && mvpIndex < players.length
-      ? players[mvpIndex]
-      : null;
-  Player? ratita = ratitaIndex >= 0 && ratitaIndex < players.length
-      ? players[ratitaIndex]
-      : null;
+  Player? mvp = mvpIndex >= 0 && mvpIndex < players.length ? players[mvpIndex] : null;
+  Player? ratita = ratitaIndex >= 0 && ratitaIndex < players.length ? players[ratitaIndex] : null;
 
   // Ordenar jugadores por cantidad de tragos (de más a menos)
-  final sortedPlayers = List<MapEntry<int, int>>.from(playerDrinks.entries)
-    ..sort((a, b) => b.value.compareTo(a.value));
+  final sortedPlayers = List<MapEntry<int, int>>.from(playerDrinks.entries)..sort((a, b) => b.value.compareTo(a.value));
 
   final screenSize = MediaQuery.of(context).size;
   final isSmallScreen = screenSize.width < 600 || screenSize.height < 400;
@@ -73,13 +68,7 @@ void showGameStatsDialog({
               colors: [Color(0xFF1E1E2E), Color(0xFF2A2A3E)],
             ),
             borderRadius: BorderRadius.circular(24),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.5),
-                blurRadius: 30,
-                spreadRadius: 10,
-              ),
-            ],
+            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.5), blurRadius: 30, spreadRadius: 10)],
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -88,30 +77,17 @@ void showGameStatsDialog({
               Container(
                 padding: EdgeInsets.all(headerPadding),
                 decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xFF00C9FF), Color(0xFF92FE9D)],
-                  ),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(24),
-                    topRight: Radius.circular(24),
-                  ),
+                  gradient: LinearGradient(colors: [Color(0xFF00C9FF), Color(0xFF92FE9D)]),
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24)),
                 ),
                 child: Row(
                   children: [
-                    Icon(
-                      Icons.emoji_events,
-                      color: Colors.white,
-                      size: iconSize,
-                    ),
+                    Icon(Icons.emoji_events, color: Colors.white, size: iconSize),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
                         '¡Juego Terminado!',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: titleFontSize,
-                        ),
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: titleFontSize),
                       ),
                     ),
                   ],
@@ -125,10 +101,7 @@ void showGameStatsDialog({
                     children: [
                       Text(
                         'Se han completado $maxRounds rondas',
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: subtitleFontSize,
-                        ),
+                        style: TextStyle(color: Colors.white70, fontSize: subtitleFontSize),
                         textAlign: TextAlign.center,
                       ),
                       SizedBox(height: isSmallScreen ? 16 : 24),
@@ -162,9 +135,7 @@ void showGameStatsDialog({
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.05),
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.1),
-                          ),
+                          border: Border.all(color: Colors.white.withOpacity(0.1)),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -181,9 +152,7 @@ void showGameStatsDialog({
                             ...sortedPlayers.map((entry) {
                               final index = entry.key;
                               final drinks = entry.value;
-                              final player = index < players.length
-                                  ? players[index]
-                                  : null;
+                              final player = index < players.length ? players[index] : null;
                               if (player == null) {
                                 return const SizedBox.shrink();
                               }
@@ -192,15 +161,10 @@ void showGameStatsDialog({
                               final drinkIconSize = isSmallScreen ? 14.0 : 16.0;
 
                               return Padding(
-                                padding: EdgeInsets.only(
-                                  bottom: isSmallScreen ? 8 : 12,
-                                ),
+                                padding: EdgeInsets.only(bottom: isSmallScreen ? 8 : 12),
                                 child: Row(
                                   children: [
-                                    _buildPlayerAvatar(
-                                      player,
-                                      size: avatarSize,
-                                    ),
+                                    _buildPlayerAvatar(player, size: avatarSize),
                                     SizedBox(width: isSmallScreen ? 8 : 12),
                                     Expanded(
                                       child: Text(
@@ -219,19 +183,13 @@ void showGameStatsDialog({
                                         vertical: isSmallScreen ? 4 : 6,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: const Color(
-                                          0xFF00C9FF,
-                                        ).withOpacity(0.2),
+                                        color: const Color(0xFF00C9FF).withOpacity(0.2),
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          Icon(
-                                            Icons.local_drink,
-                                            color: const Color(0xFF00C9FF),
-                                            size: drinkIconSize,
-                                          ),
+                                          Icon(Icons.local_drink, color: const Color(0xFF00C9FF), size: drinkIconSize),
                                           const SizedBox(width: 6),
                                           Text(
                                             '$drinks',
@@ -265,16 +223,9 @@ void showGameStatsDialog({
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF00C9FF),
                       foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(
-                        vertical: isSmallScreen ? 12 : 16,
-                      ),
-                      textStyle: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: buttonFontSize,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                      padding: EdgeInsets.symmetric(vertical: isSmallScreen ? 12 : 16),
+                      textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: buttonFontSize),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       elevation: 4,
                     ),
                     child: const Text('Guardar y Volver'),
@@ -306,9 +257,7 @@ Widget _buildAwardCard({
   return Container(
     padding: EdgeInsets.all(padding),
     decoration: BoxDecoration(
-      gradient: LinearGradient(
-        colors: [color.withOpacity(0.2), color.withOpacity(0.05)],
-      ),
+      gradient: LinearGradient(colors: [color.withOpacity(0.2), color.withOpacity(0.05)]),
       borderRadius: BorderRadius.circular(16),
       border: Border.all(color: color.withOpacity(0.5), width: 2),
     ),
@@ -323,30 +272,19 @@ Widget _buildAwardCard({
             children: [
               Text(
                 title,
-                style: TextStyle(
-                  color: color,
-                  fontSize: awardFontSize,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(color: color, fontSize: awardFontSize, fontWeight: FontWeight.bold),
                 overflow: TextOverflow.ellipsis,
               ),
               SizedBox(height: isSmallScreen ? 2 : 4),
               Text(
                 player.nombre,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: playerNameFontSize,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(color: Colors.white, fontSize: playerNameFontSize, fontWeight: FontWeight.bold),
                 overflow: TextOverflow.ellipsis,
               ),
               SizedBox(height: isSmallScreen ? 2 : 4),
               Text(
                 subtitle,
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontSize: subtitleFontSize,
-                ),
+                style: TextStyle(color: Colors.white70, fontSize: subtitleFontSize),
               ),
             ],
           ),

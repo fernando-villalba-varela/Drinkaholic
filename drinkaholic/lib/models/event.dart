@@ -20,8 +20,7 @@ class Event {
   final int startRound;
   final int? endRound; // null si aún no ha terminado
   final EventStatus status;
-  final Map<String, dynamic>
-  metadata; // Para datos adicionales como multiplicadores, etc.
+  final Map<String, dynamic> metadata; // Para datos adicionales como multiplicadores, etc.
 
   const Event({
     required this.id,
@@ -67,8 +66,7 @@ class Event {
   /// Returns true if this event can be ended (has been active for at least the minimum duration)
   bool canBeEndedAtRound(int currentRound) {
     final minDuration = metadata['minDuration'] as int? ?? 3;
-    return status == EventStatus.active &&
-        currentRound >= (startRound + minDuration);
+    return status == EventStatus.active && currentRound >= (startRound + minDuration);
   }
 
   /// Returns a user-friendly duration description
@@ -127,9 +125,5 @@ class EventEnd {
   final String endDescription;
   final int endRound;
 
-  const EventEnd({
-    required this.eventId,
-    required this.endDescription,
-    required this.endRound,
-  });
+  const EventEnd({required this.eventId, required this.endDescription, required this.endRound});
 }

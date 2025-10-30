@@ -41,11 +41,7 @@ class AnimatedIconWidget extends StatelessWidget {
                     offset: Offset(0, trailOffset),
                     child: Opacity(
                       opacity: opacity.clamp(0.0, 1.0),
-                      child: Icon(
-                        Icons.circle,
-                        size: 8 - (index * 1.5),
-                        color: Colors.white,
-                      ),
+                      child: Icon(Icons.circle, size: 8 - (index * 1.5), color: Colors.white),
                     ),
                   );
                 }),
@@ -80,12 +76,7 @@ class AnimatedIconWidget extends StatelessWidget {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: Color.fromARGB(
-                        ((0.6 * opacityAnimation.value) * 255).round(),
-                        255,
-                        235,
-                        59,
-                      ),
+                      color: Color.fromARGB(((0.6 * opacityAnimation.value) * 255).round(), 255, 235, 59),
                       blurRadius: 30,
                       spreadRadius: 10,
                     ),
@@ -102,20 +93,13 @@ class AnimatedIconWidget extends StatelessWidget {
                   offset: Offset(x, y),
                   child: Opacity(
                     opacity: opacityAnimation.value,
-                    child: Icon(
-                      Icons.star,
-                      size: 12 + (8 * iconScaleAnimation.value),
-                      color: Colors.yellow,
-                    ),
+                    child: Icon(Icons.star, size: 12 + (8 * iconScaleAnimation.value), color: Colors.yellow),
                   ),
                 );
               }),
               // Main trophy icon with bounce
               Transform.translate(
-                offset: Offset(
-                  0,
-                  sin(iconRotationAnimation.value * 3.14159 / 180) * 20,
-                ),
+                offset: Offset(0, sin(iconRotationAnimation.value * 3.14159 / 180) * 20),
                 child: Transform.scale(
                   scale: iconScaleAnimation.value,
                   child: Icon(animatingIcon, size: 80, color: Colors.yellow),

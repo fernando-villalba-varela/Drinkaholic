@@ -5,18 +5,13 @@ class AnimatedBackground extends StatefulWidget {
   final Duration duration;
   final bool isActive;
 
-  const AnimatedBackground({
-    super.key,
-    this.duration = const Duration(seconds: 20),
-    this.isActive = true,
-  });
+  const AnimatedBackground({super.key, this.duration = const Duration(seconds: 20), this.isActive = true});
 
   @override
   State<AnimatedBackground> createState() => _AnimatedBackgroundState();
 }
 
-class _AnimatedBackgroundState extends State<AnimatedBackground>
-    with SingleTickerProviderStateMixin {
+class _AnimatedBackgroundState extends State<AnimatedBackground> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -24,9 +19,10 @@ class _AnimatedBackgroundState extends State<AnimatedBackground>
   void initState() {
     super.initState();
     _controller = AnimationController(duration: widget.duration, vsync: this);
-    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.linear),
-    );
+    _animation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.linear));
     if (widget.isActive) {
       _controller.repeat();
     }
@@ -54,9 +50,7 @@ class _AnimatedBackgroundState extends State<AnimatedBackground>
       child: AnimatedBuilder(
         animation: _animation,
         builder: (context, _) {
-          return CustomPaint(
-            painter: _FloatingShapesPainter(_animation.value),
-          );
+          return CustomPaint(painter: _FloatingShapesPainter(_animation.value));
         },
       ),
     );

@@ -20,19 +20,13 @@ class LeagueGameScreen extends StatefulWidget {
   final int maxRounds;
   final Function(Map<int, int>) onGameEnd; // Map de playerId -> drinks
 
-  const LeagueGameScreen({
-    super.key,
-    required this.players,
-    required this.maxRounds,
-    required this.onGameEnd,
-  });
+  const LeagueGameScreen({super.key, required this.players, required this.maxRounds, required this.onGameEnd});
 
   @override
   State<LeagueGameScreen> createState() => _LeagueGameScreenState();
 }
 
-class _LeagueGameScreenState extends State<LeagueGameScreen>
-    with TickerProviderStateMixin {
+class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProviderStateMixin {
   late AnimationController _cardAnimationController;
   late AnimationController _glowAnimationController;
   late AnimationController _tapAnimationController;
@@ -58,8 +52,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
   EventEnd? _currentEventEnd;
   bool _showingPlayerSelector = false;
   bool _showingLetterCounter = false;
-  List<int> _selectedPlayerIdsForLetterCounter =
-      []; // Guardar IDs seleccionados
+  List<int> _selectedPlayerIdsForLetterCounter = []; // Guardar IDs seleccionados
 
   // Variables para el doble tap "nadie cumple"
   DateTime? _lastTapTime;
@@ -70,50 +63,30 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
     super.initState();
 
     // Force landscape orientation
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-    ]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
 
-    _cardAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 600),
-      vsync: this,
-    );
+    _cardAnimationController = AnimationController(duration: const Duration(milliseconds: 600), vsync: this);
 
-    _glowAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
-      vsync: this,
-    );
+    _glowAnimationController = AnimationController(duration: const Duration(milliseconds: 1500), vsync: this);
 
-    _tapAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 200),
-      vsync: this,
-    );
+    _tapAnimationController = AnimationController(duration: const Duration(milliseconds: 200), vsync: this);
 
+    _rippleAnimationController = AnimationController(duration: const Duration(milliseconds: 800), vsync: this);
 
-    _rippleAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
-    );
+    _glowAnimation = Tween<double>(
+      begin: 0.3,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _glowAnimationController, curve: Curves.easeInOut));
 
-    _glowAnimation = Tween<double>(begin: 0.3, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _glowAnimationController,
-        curve: Curves.easeInOut,
-      ),
-    );
+    _tapAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.95,
+    ).animate(CurvedAnimation(parent: _tapAnimationController, curve: Curves.easeInOut));
 
-    _tapAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
-      CurvedAnimation(parent: _tapAnimationController, curve: Curves.easeInOut),
-    );
-
-
-    _rippleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _rippleAnimationController,
-        curve: Curves.easeOut,
-      ),
-    );
+    _rippleAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _rippleAnimationController, curve: Curves.easeOut));
 
     _glowAnimationController.repeat(reverse: true);
 
@@ -128,10 +101,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
 
   @override
   void dispose() {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     _cardAnimationController.dispose();
     _glowAnimationController.dispose();
     _tapAnimationController.dispose();
@@ -145,9 +115,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
       final selectedPlayerIndex = Random().nextInt(widget.players.length);
       final selectedPlayer = widget.players[selectedPlayerIndex];
 
-      final question = await QuestionGenerator.generateRandomQuestionForPlayer(
-        selectedPlayer.nombre,
-      );
+      final question = await QuestionGenerator.generateRandomQuestionForPlayer(selectedPlayer.nombre);
 
       setState(() {
         _currentChallenge = question.question;
@@ -166,9 +134,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
     await _generateNewChallenge();
 
     final gameState = _createGameState();
-    if (!gameState.isChallengeForAll &&
-        !_isGenericPlayerQuestion() &&
-        !gameState.isDualChallenge) {
+    if (!gameState.isChallengeForAll && !_isGenericPlayerQuestion() && !gameState.isDualChallenge) {
       _selectWeightedRandomPlayer();
     } else if (gameState.isChallengeForAll) {
       setState(() {
@@ -214,12 +180,8 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
 
     return _currentPlayerIndex >= 0 &&
         _currentPlayerIndex < widget.players.length &&
-        (_currentChallenge.contains(
-              '${widget.players[_currentPlayerIndex].nombre} bebe',
-            ) ||
-            _currentChallenge.contains(
-              '${widget.players[_currentPlayerIndex].nombre} reparte',
-            ));
+        (_currentChallenge.contains('${widget.players[_currentPlayerIndex].nombre} bebe') ||
+            _currentChallenge.contains('${widget.players[_currentPlayerIndex].nombre} reparte'));
   }
 
   bool _isConditionalQuestion() {
@@ -245,10 +207,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
   // Extraer la letra/vocal a contar
   String? _extractLetterToCount() {
     // Buscar patrones como "vocal A" o "letra E"
-    final match = RegExp(
-      r'vocal\s+([aeiouAEIOU])',
-      caseSensitive: false,
-    ).firstMatch(_currentChallenge);
+    final match = RegExp(r'vocal\s+([aeiouAEIOU])', caseSensitive: false).firstMatch(_currentChallenge);
     if (match != null) {
       return match.group(1)?.toUpperCase();
     }
@@ -299,8 +258,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
         (lowerChallenge.contains('entre') ||
             lowerChallenge.contains('juegan') ||
             lowerChallenge.contains('el que sea más') ||
-            lowerChallenge.contains('quien') &&
-                lowerChallenge.contains('primero'))) {
+            lowerChallenge.contains('quien') && lowerChallenge.contains('primero'))) {
       return false;
     }
 
@@ -322,15 +280,12 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
     }
 
     // Excluir "reparte X tragos por..." (son razones aleatorias, no condicionales)
-    if (lowerChallenge.contains('reparte') &&
-        lowerChallenge.contains('tragos por')) {
+    if (lowerChallenge.contains('reparte') && lowerChallenge.contains('tragos por')) {
       return false;
     }
 
     // Excluir "bebe X tragos por..." (razones aleatorias)
-    if (lowerChallenge.contains('bebe') &&
-        lowerChallenge.contains('tragos por') &&
-        !lowerChallenge.contains('vocal')) {
+    if (lowerChallenge.contains('bebe') && lowerChallenge.contains('tragos por') && !lowerChallenge.contains('vocal')) {
       return false;
     }
 
@@ -363,13 +318,11 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
       });
     }
 
-    int selectedPlayer =
-        eligiblePlayers[Random().nextInt(eligiblePlayers.length)];
+    int selectedPlayer = eligiblePlayers[Random().nextInt(eligiblePlayers.length)];
 
     setState(() {
       _currentPlayerIndex = selectedPlayer;
-      _playerWeights[selectedPlayer] =
-          (_playerWeights[selectedPlayer] ?? 0) + 1;
+      _playerWeights[selectedPlayer] = (_playerWeights[selectedPlayer] ?? 0) + 1;
     });
   }
 
@@ -394,8 +347,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
 
   void _handleDoubleTapForNobody() {
     final now = DateTime.now();
-    if (_lastTapTime != null &&
-        now.difference(_lastTapTime!).inMilliseconds < 1000) {
+    if (_lastTapTime != null && now.difference(_lastTapTime!).inMilliseconds < 1000) {
       // Doble tap detectado - cancelar el timer y nadie cumple
       _toastTimer?.cancel();
       setState(() {
@@ -420,30 +372,20 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
                 children: [
                   Icon(Icons.info_outlined, color: Colors.white, size: 16),
                   SizedBox(width: 8),
-                  Text(
-                    'Si nadie cumple, pulsa rápido 2 veces',
-                    style: TextStyle(color: Colors.white, fontSize: 14),
-                  ),
+                  Text('Si nadie cumple, pulsa rápido 2 veces', style: TextStyle(color: Colors.white, fontSize: 14)),
                 ],
               ),
               backgroundColor: Colors.red.shade600,
               duration: Duration(seconds: 2),
               behavior: SnackBarBehavior.floating,
-              margin: EdgeInsets.only(
-                bottom: MediaQuery.of(context).size.height * 0.1,
-                left: 20,
-                right: 20,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
+              margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.1, left: 20, right: 20),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
           );
         }
       });
     }
   }
-
 
   Widget _buildRippleEffects() {
     if (_ripplePositions.isEmpty) return const SizedBox.shrink();
@@ -455,9 +397,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
           children: _ripplePositions.asMap().entries.map((entry) {
             final index = entry.key;
             final position = entry.value;
-            final opacity = _rippleOpacities.length > index
-                ? _rippleOpacities[index]
-                : 0.0;
+            final opacity = _rippleOpacities.length > index ? _rippleOpacities[index] : 0.0;
             final animationValue = _rippleAnimation.value;
             final size = 150.0 * animationValue;
 
@@ -469,12 +409,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
                 height: size,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.white.withOpacity(
-                      opacity * (1 - animationValue) * 0.6,
-                    ),
-                    width: 3,
-                  ),
+                  border: Border.all(color: Colors.white.withOpacity(opacity * (1 - animationValue) * 0.6), width: 3),
                 ),
               ),
             );
@@ -484,11 +419,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
     );
   }
 
-  Widget _buildFloatingParticle(
-    double screenWidth,
-    double screenHeight,
-    int index,
-  ) {
+  Widget _buildFloatingParticle(double screenWidth, double screenHeight, int index) {
     final random = (index * 1234) % 1000;
     final size = 4.0 + (random % 8);
     final left = (random * 0.7) % screenWidth;
@@ -513,13 +444,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.6),
                   shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.white.withOpacity(0.4),
-                      blurRadius: 2,
-                      spreadRadius: 1,
-                    ),
-                  ],
+                  boxShadow: [BoxShadow(color: Colors.white.withOpacity(0.4), blurRadius: 2, spreadRadius: 1)],
                 ),
               ),
             ),
@@ -561,20 +486,13 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
     }
 
     final gameState = _createGameState();
-    if (gameState.canHaveEvents &&
-        EventGenerator.shouldGenerateEvent(
-          _currentRound,
-          gameState.activeEvents,
-        )) {
+    if (gameState.canHaveEvents && EventGenerator.shouldGenerateEvent(_currentRound, gameState.activeEvents)) {
       await _generateNewEvent();
       return;
     }
 
     if (gameState.canHaveConstantChallenges &&
-        ConstantChallengeGenerator.shouldGenerateConstantChallenge(
-          _currentRound,
-          gameState.activeChallenges,
-        )) {
+        ConstantChallengeGenerator.shouldGenerateConstantChallenge(_currentRound, gameState.activeChallenges)) {
       if (widget.players.length >= 2 && math.Random().nextDouble() < 0.2) {
         await _generateNewDualConstantChallenge();
       } else {
@@ -590,9 +508,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
     }
 
     final gameState2 = _createGameState();
-    if (!gameState2.isChallengeForAll &&
-        !_isGenericPlayerQuestion() &&
-        !gameState2.isDualChallenge) {
+    if (!gameState2.isChallengeForAll && !_isGenericPlayerQuestion() && !gameState2.isDualChallenge) {
       _selectWeightedRandomPlayer();
     } else if (gameState2.isChallengeForAll) {
       setState(() {
@@ -602,27 +518,16 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
   }
 
   Future<void> _checkForConstantChallengeEnding() async {
-    final activeChallenges = _constantChallenges
-        .where((c) => c.isActiveAtRound(_currentRound))
-        .toList();
+    final activeChallenges = _constantChallenges.where((c) => c.isActiveAtRound(_currentRound)).toList();
 
     for (final challenge in activeChallenges) {
-      if (ConstantChallengeGenerator.shouldEndConstantChallenge(
-        challenge,
-        _currentRound,
-      )) {
-        final challengeEnd = ConstantChallengeGenerator.generateChallengeEnd(
-          challenge,
-          _currentRound,
-        );
+      if (ConstantChallengeGenerator.shouldEndConstantChallenge(challenge, _currentRound)) {
+        final challengeEnd = ConstantChallengeGenerator.generateChallengeEnd(challenge, _currentRound);
 
         setState(() {
           _constantChallenges = _constantChallenges.map((c) {
             if (c.id == challenge.id) {
-              return c.copyWith(
-                status: ConstantChallengeStatus.ended,
-                endRound: _currentRound,
-              );
+              return c.copyWith(status: ConstantChallengeStatus.ended, endRound: _currentRound);
             }
             return c;
           }).toList();
@@ -638,38 +543,30 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
   }
 
   Future<void> _generateNewConstantChallenge() async {
-    final eligiblePlayer =
-        ConstantChallengeGenerator.selectPlayerForNewChallenge(
-          widget.players,
-          _constantChallenges
-              .where((c) => c.isActiveAtRound(_currentRound))
-              .toList(),
-        );
+    final eligiblePlayer = ConstantChallengeGenerator.selectPlayerForNewChallenge(
+      widget.players,
+      _constantChallenges.where((c) => c.isActiveAtRound(_currentRound)).toList(),
+    );
 
     if (eligiblePlayer == null) {
       await _generateNewChallenge();
       return;
     }
 
-    final constantChallenge =
-        await ConstantChallengeGenerator.generateRandomConstantChallenge(
-          eligiblePlayer,
-          _currentRound,
-        );
+    final constantChallenge = await ConstantChallengeGenerator.generateRandomConstantChallenge(
+      eligiblePlayer,
+      _currentRound,
+    );
 
     setState(() {
       _constantChallenges.add(constantChallenge);
       _currentChallenge = constantChallenge.description;
-      _currentPlayerIndex = widget.players.indexWhere(
-        (p) => p.id == eligiblePlayer.id,
-      );
+      _currentPlayerIndex = widget.players.indexWhere((p) => p.id == eligiblePlayer.id);
     });
   }
 
   Future<void> _checkForEventEnding() async {
-    final activeEvents = _events
-        .where((e) => e.isActiveAtRound(_currentRound))
-        .toList();
+    final activeEvents = _events.where((e) => e.isActiveAtRound(_currentRound)).toList();
 
     for (final event in activeEvents) {
       if (EventGenerator.shouldEndEvent(event, _currentRound)) {
@@ -678,10 +575,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
         setState(() {
           _events = _events.map((e) {
             if (e.id == event.id) {
-              return e.copyWith(
-                status: EventStatus.ended,
-                endRound: _currentRound,
-              );
+              return e.copyWith(status: EventStatus.ended, endRound: _currentRound);
             }
             return e;
           }).toList();
@@ -701,8 +595,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
 
     setState(() {
       _events.add(event);
-      _currentChallenge =
-          '${event.typeIcon} ${event.title}: ${event.description}';
+      _currentChallenge = '${event.typeIcon} ${event.title}: ${event.description}';
       _currentPlayerIndex = -1;
     });
   }
@@ -717,10 +610,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
     final player1 = selectedPlayers[0];
     final player2 = selectedPlayers[1];
 
-    final question = await QuestionGenerator.generateRandomDualQuestion(
-      player1.nombre,
-      player2.nombre,
-    );
+    final question = await QuestionGenerator.generateRandomDualQuestion(player1.nombre, player2.nombre);
 
     final player1Index = widget.players.indexOf(player1);
     final player2Index = widget.players.indexOf(player2);
@@ -730,10 +620,8 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
       _currentPlayerIndex = player1Index;
       _dualPlayerIndex = player2Index;
 
-      _playerWeights[_currentPlayerIndex] =
-          (_playerWeights[_currentPlayerIndex] ?? 0) + 1;
-      _playerWeights[_dualPlayerIndex!] =
-          (_playerWeights[_dualPlayerIndex!] ?? 0) + 1;
+      _playerWeights[_currentPlayerIndex] = (_playerWeights[_currentPlayerIndex] ?? 0) + 1;
+      _playerWeights[_dualPlayerIndex!] = (_playerWeights[_dualPlayerIndex!] ?? 0) + 1;
     });
   }
 
@@ -747,12 +635,11 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
     final player1 = selectedPlayers[0];
     final player2 = selectedPlayers[1];
 
-    final constantChallenge =
-        await ConstantChallengeGenerator.generateRandomDualConstantChallenge(
-          player1,
-          player2,
-          _currentRound,
-        );
+    final constantChallenge = await ConstantChallengeGenerator.generateRandomDualConstantChallenge(
+      player1,
+      player2,
+      _currentRound,
+    );
 
     setState(() {
       _constantChallenges.add(constantChallenge);
@@ -767,9 +654,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
 
     List<Player> eligiblePlayers = [];
 
-    int minWeight = _playerWeights.values.isEmpty
-        ? 0
-        : _playerWeights.values.reduce((a, b) => a < b ? a : b);
+    int minWeight = _playerWeights.values.isEmpty ? 0 : _playerWeights.values.reduce((a, b) => a < b ? a : b);
 
     for (int i = 0; i < widget.players.length; i++) {
       int weight = _playerWeights[i] ?? 0;
@@ -788,10 +673,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
 
   void _endGame() async {
     // Cambiar a vertical ANTES de navegar para evitar parpadeo
-    await SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
+    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
     // Dar más tiempo para que la orientación se aplique completamente
     await Future.delayed(const Duration(milliseconds: 300));
@@ -821,11 +703,8 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
             const AnimatedBackground(),
             ...List.generate(
               8,
-              (index) => _buildFloatingParticle(
-                MediaQuery.of(context).size.width,
-                MediaQuery.of(context).size.height,
-                index,
-              ),
+              (index) =>
+                  _buildFloatingParticle(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height, index),
             ),
             SafeArea(
               child: Stack(
@@ -834,23 +713,16 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
                   LayoutBuilder(
                     builder: (context, constraints) {
                       final hasActiveSelector =
-                          _isConditionalQuestion() &&
-                          !_showingPlayerSelector &&
-                          !_showingLetterCounter;
+                          _isConditionalQuestion() && !_showingPlayerSelector && !_showingLetterCounter;
                       return GestureDetector(
                         onTapDown: hasActiveSelector
                             ? null
                             : (details) {
-                                final RenderBox renderBox =
-                                    context.findRenderObject() as RenderBox;
-                                final localPosition = renderBox.globalToLocal(
-                                  details.globalPosition,
-                                );
+                                final RenderBox renderBox = context.findRenderObject() as RenderBox;
+                                final localPosition = renderBox.globalToLocal(details.globalPosition);
                                 _addRippleEffect(localPosition);
                               },
-                        onTap: hasActiveSelector
-                            ? _handleDoubleTapForNobody
-                            : _nextChallenge,
+                        onTap: hasActiveSelector ? _handleDoubleTapForNobody : _nextChallenge,
                         behavior: HitTestBehavior.opaque,
                         child: AnimatedBuilder(
                           animation: _tapAnimation,
@@ -862,9 +734,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
                                   GameCard(
                                     gameState: _createGameState(),
                                     showPlayerSelector:
-                                        _isConditionalQuestion() &&
-                                        !_showingPlayerSelector &&
-                                        !_showingLetterCounter,
+                                        _isConditionalQuestion() && !_showingPlayerSelector && !_showingLetterCounter,
                                     onPlayersSelected: (selectedIds) {
                                       // Detectar si es una pregunta con multiplicador de letras
                                       if (_hasLetterMultiplier()) {
@@ -878,8 +748,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
 
                                           // Guardar los IDs seleccionados y mostrar el contador de letras
                                           setState(() {
-                                            _selectedPlayerIdsForLetterCounter =
-                                                selectedIds;
+                                            _selectedPlayerIdsForLetterCounter = selectedIds;
                                             _showingLetterCounter = true;
                                           });
                                           return;
@@ -889,23 +758,17 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
                                       // Añadir tragos SOLO si es una pregunta que cuenta (no duelos, repartos, retos)
                                       setState(() {
                                         if (_shouldCountDrinks()) {
-                                          final drinksAmount =
-                                              _extractDrinksFromChallenge();
+                                          final drinksAmount = _extractDrinksFromChallenge();
                                           for (final playerId in selectedIds) {
                                             // Usar directamente playerId como clave
-                                            _playerDrinks[playerId] =
-                                                (_playerDrinks[playerId] ?? 0) +
-                                                drinksAmount;
+                                            _playerDrinks[playerId] = (_playerDrinks[playerId] ?? 0) + drinksAmount;
                                           }
                                         }
                                       });
                                       // Avanzar automáticamente al siguiente reto
-                                      Future.delayed(
-                                        const Duration(milliseconds: 300),
-                                        () {
-                                          _nextChallenge();
-                                        },
-                                      );
+                                      Future.delayed(const Duration(milliseconds: 300), () {
+                                        _nextChallenge();
+                                      });
                                     },
                                   ),
                                   _buildRippleEffects(),
@@ -938,8 +801,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
                                 ),
                                 actions: [
                                   TextButton(
-                                    onPressed: () =>
-                                        Navigator.of(context).pop(),
+                                    onPressed: () => Navigator.of(context).pop(),
                                     child: const Text('Cancelar'),
                                   ),
                                   TextButton(
@@ -960,11 +822,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
                               color: Colors.white.withOpacity(0.2),
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: Icon(
-                              Icons.arrow_back,
-                              color: Colors.white,
-                              size: isSmallScreen ? 20 : 24,
-                            ),
+                            child: Icon(Icons.arrow_back, color: Colors.white, size: isSmallScreen ? 20 : 24),
                           ),
                         );
                       },
@@ -985,8 +843,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
                       final drinksAmount = _extractDrinksFromChallenge();
                       for (final playerId in selectedPlayerIds) {
                         // Usar directamente playerId como clave
-                        _playerDrinks[playerId] =
-                            (_playerDrinks[playerId] ?? 0) + drinksAmount;
+                        _playerDrinks[playerId] = (_playerDrinks[playerId] ?? 0) + drinksAmount;
                       }
                     }
                   });
@@ -1001,9 +858,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
             if (_showingLetterCounter)
               LetterCounterOverlay(
                 selectedPlayers: widget.players
-                    .where(
-                      (p) => _selectedPlayerIdsForLetterCounter.contains(p.id),
-                    )
+                    .where((p) => _selectedPlayerIdsForLetterCounter.contains(p.id))
                     .toList(),
                 letter: _extractLetterToCount() ?? 'A',
                 drinksPerLetter: _extractDrinksFromChallenge(),
@@ -1013,8 +868,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen>
                     _selectedPlayerIdsForLetterCounter = [];
                     // Añadir los tragos calculados con multiplicador
                     playerDrinksMap.forEach((playerId, drinks) {
-                      _playerDrinks[playerId] =
-                          (_playerDrinks[playerId] ?? 0) + drinks;
+                      _playerDrinks[playerId] = (_playerDrinks[playerId] ?? 0) + drinks;
                     });
                   });
                   // Avanzar al siguiente reto

@@ -36,9 +36,7 @@ class EventTemplate {
       template: json['template'],
       endTemplate: json['endTemplate'],
       variables: Map<String, List<String>>.from(
-        json['variables'].map(
-          (key, value) => MapEntry(key, List<String>.from(value)),
-        ),
+        json['variables'].map((key, value) => MapEntry(key, List<String>.from(value))),
       ),
       categoria: json['categoria'],
       minRounds: json['minRounds'],
@@ -72,10 +70,8 @@ class EventGenerator {
     try {
       final String jsonString = await rootBundle.loadString('assets/events.json');
       final Map<String, dynamic> jsonData = json.decode(jsonString);
-      
-      _templates = (jsonData['templates'] as List)
-          .map((template) => EventTemplate.fromJson(template))
-          .toList();
+
+      _templates = (jsonData['templates'] as List).map((template) => EventTemplate.fromJson(template)).toList();
     } catch (e) {
       _templates = [];
     }
@@ -84,7 +80,7 @@ class EventGenerator {
   /// Generate a random event
   static Future<Event> generateRandomEvent(int currentRound) async {
     await loadTemplates();
-    
+
     if (_templates == null || _templates!.isEmpty) {
       // Multiple fallback events to provide variety
       final fallbackEvents = [
@@ -97,7 +93,8 @@ class EventGenerator {
         },
         {
           'title': 'Zona Sin Teléfonos',
-          'description': 'EVENTO: 🌐 Nadie puede usar el teléfono mientras dure este evento. Si alguien lo usa, bebe 3 tragos',
+          'description':
+              'EVENTO: 🌐 Nadie puede usar el teléfono mientras dure este evento. Si alguien lo usa, bebe 3 tragos',
           'type': EventType.global_rule,
           'duration': 4,
           'multiplier': 1,
@@ -117,9 +114,9 @@ class EventGenerator {
           'multiplier': 1,
         },
       ];
-      
+
       final selectedFallback = fallbackEvents[_random.nextInt(fallbackEvents.length)];
-      
+
       return Event(
         id: 'fallback_${selectedFallback['title']}_${_random.nextInt(10000)}',
         title: selectedFallback['title'] as String,
@@ -142,13 +139,10 @@ class EventGenerator {
   /// Generate an event to end an existing event
   static EventEnd generateEventEnd(Event event, int endRound) {
     String endDescription;
-    
+
     // Find the template using the templateId stored in metadata
     final templateId = event.metadata['templateId'] as String?;
-    final template = _templates?.firstWhere(
-      (t) => t.id == templateId,
-      orElse: () => _templates!.first,
-    );
+    final template = _templates?.firstWhere((t) => t.id == templateId, orElse: () => _templates!.first);
 
     if (template != null) {
       endDescription = template.endTemplate;
@@ -162,18 +156,11 @@ class EventGenerator {
       endDescription = 'El evento "${event.title}" ha terminado';
     }
 
-    return EventEnd(
-      eventId: event.id,
-      endDescription: endDescription,
-      endRound: endRound,
-    );
+    return EventEnd(eventId: event.id, endDescription: endDescription, endRound: endRound);
   }
 
   /// Generate an event from a specific template
-  static Event _generateEventFromTemplate(
-    EventTemplate template,
-    int currentRound,
-  ) {
+  static Event _generateEventFromTemplate(EventTemplate template, int currentRound) {
     String title = template.title;
     String description = template.template;
     Map<String, dynamic> metadata = {
@@ -211,16 +198,13 @@ class EventGenerator {
   }
 
   /// Determines if an event should be generated this round
-  static bool shouldGenerateEvent(
-    int currentRound,
-    List<Event> activeEvents,
-  ) {
+  static bool shouldGenerateEvent(int currentRound, List<Event> activeEvents) {
     // No events before round 8
     if (currentRound < 8) return false;
 
     // Lower probability if there are active events
     final activeEventCount = activeEvents.length;
-    
+
     double baseProbability;
     if (activeEventCount == 0) {
       baseProbability = 0.12; // 12% chance if no active events
@@ -237,21 +221,48 @@ class EventGenerator {
   static bool shouldEndEvent(Event event, int currentRound) {
     if (!event.canBeEndedAtRound(currentRound)) return false;
 
-    // Use probabilistic ending similar to constant challenges
+    // Base probability grows with rounds active (older events more likely to end)
     final roundsActive = currentRound - event.startRound;
-    
-    double probability;
+
+    double baseProbability;
     if (roundsActive >= 10) {
-      probability = 0.25; // 25% chance after 10 rounds
+      baseProbability = 0.25; // 25% chance after 10 rounds
     } else if (roundsActive >= 8) {
-      probability = 0.15; // 15% chance after 8 rounds
+      baseProbability = 0.15; // 15% chance after 8 rounds
     } else if (roundsActive >= 6) {
-      probability = 0.08; // 8% chance after 6 rounds
+      baseProbability = 0.08; // 8% chance after 6 rounds
     } else if (roundsActive >= 4) {
-      probability = 0.05; // 5% chance after 4 rounds
+      baseProbability = 0.05; // 5% chance after 4 rounds
     } else {
-      probability = 0.02; // 2% chance after minimum duration (3 rounds)
+      baseProbability = 0.02; // 2% chance after minimum duration (3 rounds)
     }
+
+    // Difficulty-aware adjustment: eventos más duros (p.ej. x3) terminan antes que x2
+    int drinks = 1; // para PUNISHMENT
+    int templateMultiplier = 1; // variable MULTIPLIER (string)
+    int metadataMultiplier = event.metadata['multiplier'] is int
+        ? (event.metadata['multiplier'] as int)
+        : 1; // metadata numérica
+
+    final drinksRaw = event.metadata['PUNISHMENT'];
+    if (drinksRaw is int) {
+      drinks = drinksRaw;
+    } else if (drinksRaw is String) {
+      drinks = int.tryParse(drinksRaw) ?? 1;
+    }
+
+    final multRaw = event.metadata['MULTIPLIER'];
+    if (multRaw is int) {
+      templateMultiplier = multRaw;
+    } else if (multRaw is String) {
+      templateMultiplier = int.tryParse(multRaw) ?? 1;
+    }
+
+    final difficultyScore = [drinks, templateMultiplier, metadataMultiplier, 1].reduce((a, b) => a > b ? a : b);
+
+    // Escala lineal suave: cada punto de dificultad aumenta un 20% la probabilidad de terminar
+    final difficultyFactor = 1.0 + 0.20 * (difficultyScore - 1);
+    final probability = (baseProbability * difficultyFactor).clamp(0.0, 0.9);
 
     return _random.nextDouble() < probability;
   }

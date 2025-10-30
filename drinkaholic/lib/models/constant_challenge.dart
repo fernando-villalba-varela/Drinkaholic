@@ -2,14 +2,14 @@ import '../models/player.dart';
 
 enum ConstantChallengeType {
   restriction, // Restricciones (no puede hacer algo)
-  obligation,  // Obligaciones (debe hacer algo)
-  rule,       // Reglas especiales
+  obligation, // Obligaciones (debe hacer algo)
+  rule, // Reglas especiales
 }
 
 enum ConstantChallengeStatus {
-  active,   // El reto está activo
-  ended,    // El reto ha terminado
-  pending,  // El reto está esperando para activarse
+  active, // El reto está activo
+  ended, // El reto ha terminado
+  pending, // El reto está esperando para activarse
 }
 
 class ConstantChallenge {
@@ -63,14 +63,13 @@ class ConstantChallenge {
   /// Returns true if this challenge is currently active
   bool isActiveAtRound(int currentRound) {
     return status == ConstantChallengeStatus.active &&
-           currentRound >= startRound &&
-           (endRound == null || currentRound <= endRound!);
+        currentRound >= startRound &&
+        (endRound == null || currentRound <= endRound!);
   }
 
   /// Returns true if this challenge can be ended (has been active for at least 5 rounds)
   bool canBeEndedAtRound(int currentRound) {
-    return status == ConstantChallengeStatus.active &&
-           currentRound >= (startRound + 5);
+    return status == ConstantChallengeStatus.active && currentRound >= (startRound + 5);
   }
 
   /// Returns a user-friendly duration description

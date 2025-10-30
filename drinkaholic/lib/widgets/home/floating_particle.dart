@@ -5,12 +5,7 @@ class FloatingParticle extends StatelessWidget {
   final double screenHeight;
   final int index;
 
-  const FloatingParticle({
-    super.key,
-    required this.screenWidth,
-    required this.screenHeight,
-    required this.index,
-  });
+  const FloatingParticle({super.key, required this.screenWidth, required this.screenHeight, required this.index});
 
   @override
   Widget build(BuildContext context) {

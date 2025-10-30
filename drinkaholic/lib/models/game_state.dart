@@ -102,23 +102,17 @@ class GameState {
 
   /// Returns all active constant challenges for the current round
   List<ConstantChallenge> get activeChallenges {
-    return constantChallenges
-        .where((challenge) => challenge.isActiveAtRound(currentRound))
-        .toList();
+    return constantChallenges.where((challenge) => challenge.isActiveAtRound(currentRound)).toList();
   }
 
   /// Returns constant challenges that can be ended in the current round
   List<ConstantChallenge> get endableChallenges {
-    return constantChallenges
-        .where((challenge) => challenge.canBeEndedAtRound(currentRound))
-        .toList();
+    return constantChallenges.where((challenge) => challenge.canBeEndedAtRound(currentRound)).toList();
   }
 
   /// Returns active challenges for a specific player
   List<ConstantChallenge> getActiveChallengesForPlayer(Player player) {
-    return activeChallenges
-        .where((challenge) => challenge.targetPlayer.id == player.id)
-        .toList();
+    return activeChallenges.where((challenge) => challenge.targetPlayer.id == player.id).toList();
   }
 
   /// Returns true if we're showing a constant challenge (start or end)
@@ -129,10 +123,10 @@ class GameState {
   /// Returns true if the current challenge is a new constant challenge
   bool get isNewConstantChallenge {
     if (currentChallenge == null) return false;
-    return currentChallenge!.contains('no puede') || 
-           currentChallenge!.contains('debe') ||
-           currentChallenge!.contains('ya puede') ||
-           currentChallenge!.contains('regla:');
+    return currentChallenge!.contains('no puede') ||
+        currentChallenge!.contains('debe') ||
+        currentChallenge!.contains('ya puede') ||
+        currentChallenge!.contains('regla:');
   }
 
   /// Returns true if the current challenge is ending a constant challenge
@@ -147,16 +141,12 @@ class GameState {
 
   /// Returns all active events for the current round
   List<Event> get activeEvents {
-    return events
-        .where((event) => event.isActiveAtRound(currentRound))
-        .toList();
+    return events.where((event) => event.isActiveAtRound(currentRound)).toList();
   }
 
   /// Returns events that can be ended in the current round
   List<Event> get endableEvents {
-    return events
-        .where((event) => event.canBeEndedAtRound(currentRound))
-        .toList();
+    return events.where((event) => event.canBeEndedAtRound(currentRound)).toList();
   }
 
   /// Returns true if we're showing an event (start or end)
@@ -167,10 +157,10 @@ class GameState {
   /// Returns true if the current challenge is a new event
   bool get isNewEvent {
     if (currentChallenge == null) return false;
-    return currentChallenge!.contains('EVENTO:') || 
-           currentChallenge!.contains('🌐') ||
-           currentChallenge!.contains('✖️') ||
-           currentChallenge!.contains('⭐');
+    return currentChallenge!.contains('EVENTO:') ||
+        currentChallenge!.contains('🌐') ||
+        currentChallenge!.contains('✖️') ||
+        currentChallenge!.contains('⭐');
   }
 
   /// Returns true if the current challenge is ending an event
@@ -210,11 +200,11 @@ class GameState {
   /// Returns display names for dual challenges
   String get dualTurnDisplayName {
     if (!isDualChallenge) return currentTurnDisplayName;
-    
+
     // Use stored names if available, fallback to player objects
     final player1Name = dualPlayer1Name ?? currentPlayer?.nombre ?? 'JUGADOR1';
     final player2Name = dualPlayer2Name ?? dualPlayer?.nombre ?? 'JUGADOR2';
-    
+
     return '${player1Name.toUpperCase()} & ${player2Name.toUpperCase()}';
   }
 }

@@ -20,8 +20,7 @@ class LetterCounterOverlay extends StatefulWidget {
 }
 
 class _LetterCounterOverlayState extends State<LetterCounterOverlay> {
-  final Map<int, int> _letterCounts =
-      {}; // playerId -> count seleccionado manualmente
+  final Map<int, int> _letterCounts = {}; // playerId -> count seleccionado manualmente
 
   @override
   void initState() {
@@ -52,9 +51,7 @@ class _LetterCounterOverlayState extends State<LetterCounterOverlay> {
             children: [
               // Título
               Padding(
-                padding: EdgeInsets.symmetric(
-                  vertical: isSmallScreen ? 12 : 16,
-                ),
+                padding: EdgeInsets.symmetric(vertical: isSmallScreen ? 12 : 16),
                 child: Column(
                   children: [
                     Text(
@@ -69,10 +66,7 @@ class _LetterCounterOverlayState extends State<LetterCounterOverlay> {
                     SizedBox(height: isSmallScreen ? 4 : 8),
                     Text(
                       '${widget.drinksPerLetter} trago${widget.drinksPerLetter > 1 ? 's' : ''} por cada letra',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.9),
-                        fontSize: isSmallScreen ? 13 : 15,
-                      ),
+                      style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: isSmallScreen ? 13 : 15),
                     ),
                   ],
                 ),
@@ -85,8 +79,7 @@ class _LetterCounterOverlayState extends State<LetterCounterOverlay> {
                   child: Column(
                     children: widget.selectedPlayers.map((player) {
                       final selectedCount = _letterCounts[player.id] ?? 0;
-                      final totalDrinks =
-                          selectedCount * widget.drinksPerLetter;
+                      final totalDrinks = selectedCount * widget.drinksPerLetter;
 
                       return Container(
                         margin: EdgeInsets.only(bottom: isSmallScreen ? 8 : 10),
@@ -94,10 +87,7 @@ class _LetterCounterOverlayState extends State<LetterCounterOverlay> {
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.15),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.3),
-                            width: 2,
-                          ),
+                          border: Border.all(color: Colors.white.withOpacity(0.3), width: 2),
                         ),
                         child: Column(
                           children: [
@@ -125,19 +115,13 @@ class _LetterCounterOverlayState extends State<LetterCounterOverlay> {
                                     vertical: isSmallScreen ? 4 : 6,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: totalDrinks > 0
-                                        ? const Color(0xFF00C9FF)
-                                        : Colors.grey.withOpacity(0.5),
+                                    color: totalDrinks > 0 ? const Color(0xFF00C9FF) : Colors.grey.withOpacity(0.5),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Icon(
-                                        Icons.local_drink,
-                                        color: Colors.white,
-                                        size: isSmallScreen ? 14 : 16,
-                                      ),
+                                      Icon(Icons.local_drink, color: Colors.white, size: isSmallScreen ? 14 : 16),
                                       const SizedBox(width: 4),
                                       Text(
                                         '$totalDrinks',
@@ -168,21 +152,13 @@ class _LetterCounterOverlayState extends State<LetterCounterOverlay> {
                                       });
                                     },
                                     child: Container(
-                                      margin: EdgeInsets.symmetric(
-                                        horizontal: 2,
-                                      ),
-                                      padding: EdgeInsets.symmetric(
-                                        vertical: isSmallScreen ? 6 : 8,
-                                      ),
+                                      margin: EdgeInsets.symmetric(horizontal: 2),
+                                      padding: EdgeInsets.symmetric(vertical: isSmallScreen ? 6 : 8),
                                       decoration: BoxDecoration(
-                                        color: isSelected
-                                            ? Colors.white
-                                            : Colors.white.withOpacity(0.2),
+                                        color: isSelected ? Colors.white : Colors.white.withOpacity(0.2),
                                         borderRadius: BorderRadius.circular(8),
                                         border: Border.all(
-                                          color: isSelected
-                                              ? const Color(0xFF00C9FF)
-                                              : Colors.white.withOpacity(0.3),
+                                          color: isSelected ? const Color(0xFF00C9FF) : Colors.white.withOpacity(0.3),
                                           width: 2,
                                         ),
                                       ),
@@ -190,9 +166,7 @@ class _LetterCounterOverlayState extends State<LetterCounterOverlay> {
                                         '$index',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          color: isSelected
-                                              ? const Color(0xFF00C9FF)
-                                              : Colors.white,
+                                          color: isSelected ? const Color(0xFF00C9FF) : Colors.white,
                                           fontSize: isSmallScreen ? 14 : 16,
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -212,10 +186,7 @@ class _LetterCounterOverlayState extends State<LetterCounterOverlay> {
 
               // Botón Confirmar
               Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: isSmallScreen ? 16 : 20,
-                  vertical: isSmallScreen ? 12 : 16,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 16 : 20, vertical: isSmallScreen ? 12 : 16),
                 child: ElevatedButton(
                   onPressed: () {
                     // Calcular tragos totales y filtrar los que tienen 0
@@ -235,16 +206,11 @@ class _LetterCounterOverlayState extends State<LetterCounterOverlay> {
                       horizontal: isSmallScreen ? 32 : 48,
                       vertical: isSmallScreen ? 14 : 18,
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),
                   child: Text(
                     'Confirmar',
-                    style: TextStyle(
-                      fontSize: isSmallScreen ? 16 : 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: isSmallScreen ? 16 : 18, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -260,21 +226,11 @@ class _LetterCounterOverlayState extends State<LetterCounterOverlay> {
 
     if (player.imagen != null) {
       return ClipOval(
-        child: Image.file(
-          player.imagen!,
-          width: size,
-          height: size,
-          fit: BoxFit.cover,
-        ),
+        child: Image.file(player.imagen!, width: size, height: size, fit: BoxFit.cover),
       );
     } else if (player.avatar != null && player.avatar!.startsWith('assets/')) {
       return ClipOval(
-        child: Image.asset(
-          player.avatar!,
-          width: size,
-          height: size,
-          fit: BoxFit.cover,
-        ),
+        child: Image.asset(player.avatar!, width: size, height: size, fit: BoxFit.cover),
       );
     } else {
       return Container(
@@ -282,18 +238,12 @@ class _LetterCounterOverlayState extends State<LetterCounterOverlay> {
         height: size,
         decoration: const BoxDecoration(
           shape: BoxShape.circle,
-          gradient: LinearGradient(
-            colors: [Color(0xFF00C9FF), Color(0xFF92FE9D)],
-          ),
+          gradient: LinearGradient(colors: [Color(0xFF00C9FF), Color(0xFF92FE9D)]),
         ),
         child: Center(
           child: Text(
             player.nombre[0].toUpperCase(),
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: size * 0.5,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(color: Colors.white, fontSize: size * 0.5, fontWeight: FontWeight.bold),
           ),
         ),
       );

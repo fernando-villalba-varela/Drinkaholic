@@ -88,20 +88,6 @@
       "metadata": {}
     },
     {
-      "id": "reverse_mode",
-      "type": "special_condition",
-      "title": "Modo Invertido",
-      "template": "EVENTO: ⭐ Mientras dure este evento, los que normalmente beben reparten tragos, y los que reparten beben. Si se confunden, beben {PUNISHMENT} tragos extra",
-      "endTemplate": "El modo invertido ha terminado. Todo vuelve a la normalidad.",
-      "variables": {
-        "PUNISHMENT": ["2", "3"]
-      },
-      "categoria": "reverse",
-      "minRounds": 3,
-      "maxRounds": 5,
-      "metadata": {}
-    },
-    {
       "id": "dance_break",
       "type": "special_condition",
       "title": "Pausa de Baile",
@@ -217,6 +203,105 @@
       "categoria": "restriction",
       "minRounds": 4,
       "maxRounds": 7,
+      "metadata": {}
+    },
+    {
+      "id": "no_proper_names",
+      "type": "global_rule",
+      "title": "Sin Nombres Propios",
+      "template": "EVENTO: 🌐 Mientras dure este evento, está prohibido decir nombres propios. Si alguien lo hace, bebe {PUNISHMENT} tragos",
+      "endTemplate": "El evento sin nombres propios ha terminado.",
+      "variables": {
+        "PUNISHMENT": ["2", "3", "4"]
+      },
+      "categoria": "restriction",
+      "minRounds": 3,
+      "maxRounds": 6,
+      "metadata": {}
+    },
+    {
+      "id": "whisper_only",
+      "type": "global_rule",
+      "title": "Solo Susurros",
+      "template": "EVENTO: 🌐 Mientras dure este evento, solo se puede susurrar. Hablar alto = {PUNISHMENT} tragos",
+      "endTemplate": "El evento de susurros ha terminado.",
+      "variables": {
+        "PUNISHMENT": ["2", "3"]
+      },
+      "categoria": "restriction",
+      "minRounds": 2,
+      "maxRounds": 4,
+      "metadata": {}
+    },
+    {
+      "id": "freeze_tag",
+      "type": "global_rule",
+      "title": "Congelados",
+      "template": "EVENTO: 🌐 Cuando alguien grite '¡Freeze!', todos deben quedarse quietos 5 segundos. Quien se mueva bebe {PUNISHMENT} tragos",
+      "endTemplate": "El juego de congelados ha terminado.",
+      "variables": {
+        "PUNISHMENT": ["2", "3", "4"]
+      },
+      "categoria": "fun",
+      "minRounds": 3,
+      "maxRounds": 6,
+      "metadata": {}
+    },
+    {
+      "id": "ultra_fast_mode",
+      "type": "special_condition",
+      "title": "Modo Ultra Rápido",
+      "template": "EVENTO: ⭐ Solo {SECONDS} segundos para cumplir o responder. Fallar = {PUNISHMENT} tragos",
+      "endTemplate": "El modo ultra rápido ha terminado.",
+      "variables": {
+        "SECONDS": ["8", "12"],
+        "PUNISHMENT": ["2", "3", "4"]
+      },
+      "categoria": "time_limit",
+      "minRounds": 2,
+      "maxRounds": 4,
+      "metadata": {}
+    },
+    {
+      "id": "burst_triple_short",
+      "type": "multiplier",
+      "title": "Ráfaga Triple",
+      "template": "EVENTO: ✖️ Durante este evento, todos los tragos valen x{MULTIPLIER}",
+      "endTemplate": "La ráfaga triple ha terminado.",
+      "variables": {
+        "MULTIPLIER": ["3"]
+      },
+      "categoria": "multiplier",
+      "minRounds": 2,
+      "maxRounds": 3,
+      "metadata": {"multiplier": 3}
+    },
+    {
+      "id": "heavy_penalties",
+      "type": "global_rule",
+      "title": "Castigos Duros",
+      "template": "EVENTO: 🌐 Mientras dure este evento, cada error se penaliza con {PUNISHMENT} tragos",
+      "endTemplate": "Los castigos vuelven a la normalidad.",
+      "variables": {
+        "PUNISHMENT": ["4", "5", "6"]
+      },
+      "categoria": "group",
+      "minRounds": 2,
+      "maxRounds": 4,
+      "metadata": {}
+    },
+    {
+      "id": "mano_contraria",
+      "type": "global_rule",
+      "title": "Mano Contraria",
+      "template": "EVENTO: 🌐 Mientras dure este evento, deben beber con la mano contraria. Usar la habitual = {PUNISHMENT} tragos",
+      "endTemplate": "La mano vuelve a ser libre.",
+      "variables": {
+        "PUNISHMENT": ["2", "3"]
+      },
+      "categoria": "restriction",
+      "minRounds": 3,
+      "maxRounds": 5,
       "metadata": {}
     }
   ]

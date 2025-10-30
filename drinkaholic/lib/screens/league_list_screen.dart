@@ -15,8 +15,7 @@ class LeagueListScreen extends StatefulWidget {
   State<LeagueListScreen> createState() => _LeagueListScreenState();
 }
 
-class _LeagueListScreenState extends State<LeagueListScreen>
-    with TickerProviderStateMixin {
+class _LeagueListScreenState extends State<LeagueListScreen> with TickerProviderStateMixin {
   Widget _buildAnimatedBackground() {
     return const AnimatedBackground();
   }
@@ -45,10 +44,7 @@ class _LeagueListScreenState extends State<LeagueListScreen>
           automaticallyImplyLeading: false,
           title: Row(
             children: [
-              LeagueAppBarButton(
-                onTap: () => Navigator.of(context).pop(),
-                icon: Icons.arrow_back,
-              ),
+              LeagueAppBarButton(onTap: () => Navigator.of(context).pop(), icon: Icons.arrow_back),
               const SizedBox(width: 16),
               const Expanded(
                 child: Text(
@@ -59,16 +55,8 @@ class _LeagueListScreenState extends State<LeagueListScreen>
                     color: Colors.white,
                     letterSpacing: 1.5,
                     shadows: [
-                      Shadow(
-                        color: Colors.black45,
-                        offset: Offset(2, 2),
-                        blurRadius: 4,
-                      ),
-                      Shadow(
-                        color: Colors.purple,
-                        offset: Offset(-1, -1),
-                        blurRadius: 2,
-                      ),
+                      Shadow(color: Colors.black45, offset: Offset(2, 2), blurRadius: 4),
+                      Shadow(color: Colors.purple, offset: Offset(-1, -1), blurRadius: 2),
                     ],
                   ),
                 ),
@@ -105,9 +93,7 @@ class _LeagueListScreenState extends State<LeagueListScreen>
             ),
           ],
         ),
-        floatingActionButton: FabNewLeague(
-          onPressed: () => vm.showCreateLeagueDialog(context),
-        ),
+        floatingActionButton: FabNewLeague(onPressed: () => vm.showCreateLeagueDialog(context)),
       ),
     );
   }

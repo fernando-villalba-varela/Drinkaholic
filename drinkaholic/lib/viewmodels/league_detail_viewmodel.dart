@@ -18,14 +18,8 @@ class LeagueDetailViewModel extends ChangeNotifier {
 
   LeagueDetailViewModel(this.league, this.listVM);
 
-  void addPlayer({
-    required int playerId,
-    required String name,
-    String? avatar,
-  }) {
-    league.players.add(
-      LeaguePlayerStats(playerId: playerId, name: name, avatarPath: avatar),
-    );
+  void addPlayer({required int playerId, required String name, String? avatar}) {
+    league.players.add(LeaguePlayerStats(playerId: playerId, name: name, avatarPath: avatar));
     listVM.refresh();
     notifyListeners();
   }
@@ -38,14 +32,8 @@ class LeagueDetailViewModel extends ChangeNotifier {
     final maxVal = drinksMap.values.reduce((a, b) => a > b ? a : b);
     final minVal = drinksMap.values.reduce((a, b) => a < b ? a : b);
 
-    List<int> mvpIds = drinksMap.entries
-        .where((e) => e.value == maxVal)
-        .map((e) => e.key)
-        .toList();
-    List<int> ratitaIds = drinksMap.entries
-        .where((e) => e.value == minVal)
-        .map((e) => e.key)
-        .toList();
+    List<int> mvpIds = drinksMap.entries.where((e) => e.value == maxVal).map((e) => e.key).toList();
+    List<int> ratitaIds = drinksMap.entries.where((e) => e.value == minVal).map((e) => e.key).toList();
 
     if (mvpIds.length > 1) mvpIds = [_tieBreaker(mvpIds)];
     if (ratitaIds.length > 1) ratitaIds = [_tieBreaker(ratitaIds)];
@@ -78,9 +66,7 @@ class LeagueDetailViewModel extends ChangeNotifier {
 
     // Generar mensajes para rachas de Ratita (2 o más derrotas consecutivas)
     if (league.ratitaStreakCount >= 2) {
-      final ratitaPlayer = league.players.firstWhere(
-        (p) => p.playerId == ratitaId,
-      );
+      final ratitaPlayer = league.players.firstWhere((p) => p.playerId == ratitaId);
       streakMessages[ratitaId] =
           '${ratitaPlayer.name} ha perdido ${league.ratitaStreakCount} veces seguidas. El duende se mea en tu boca y bebes 10 tragos.';
     }
@@ -148,10 +134,7 @@ class LeagueDetailViewModel extends ChangeNotifier {
           children: [
             ListTile(
               leading: const Icon(Icons.collections, color: Colors.white),
-              title: const Text(
-                'Elegir avatar',
-                style: TextStyle(color: Colors.white),
-              ),
+              title: const Text('Elegir avatar', style: TextStyle(color: Colors.white)),
               onTap: () {
                 Navigator.pop(context);
                 _chooseAvatar(context, playerId);
@@ -159,30 +142,19 @@ class LeagueDetailViewModel extends ChangeNotifier {
             ),
             ListTile(
               leading: const Icon(Icons.camera_alt, color: Colors.white),
-              title: const Text(
-                'Tomar foto',
-                style: TextStyle(color: Colors.white),
-              ),
+              title: const Text('Tomar foto', style: TextStyle(color: Colors.white)),
               onTap: () {
                 Navigator.pop(context);
                 _takePhoto(context, playerId);
               },
             ),
-            if (league.players
-                    .firstWhere((p) => p.playerId == playerId)
-                    .avatarPath !=
-                null)
+            if (league.players.firstWhere((p) => p.playerId == playerId).avatarPath != null)
               ListTile(
                 leading: const Icon(Icons.delete_forever, color: Colors.white),
-                title: const Text(
-                  'Quitar avatar/foto',
-                  style: TextStyle(color: Colors.white),
-                ),
+                title: const Text('Quitar avatar/foto', style: TextStyle(color: Colors.white)),
                 onTap: () {
                   Navigator.pop(context);
-                  final p = league.players.firstWhere(
-                    (e) => e.playerId == playerId,
-                  );
+                  final p = league.players.firstWhere((e) => e.playerId == playerId);
                   p.avatarPath = null;
                   listVM.refresh();
                   notifyListeners();
@@ -193,10 +165,7 @@ class LeagueDetailViewModel extends ChangeNotifier {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text(
-              'Cancelar',
-              style: TextStyle(color: Colors.white70),
-            ),
+            child: const Text('Cancelar', style: TextStyle(color: Colors.white70)),
           ),
         ],
       ),
@@ -245,15 +214,9 @@ class LeagueDetailViewModel extends ChangeNotifier {
               itemBuilder: (_, i) {
                 final path = assets[i];
                 final isUsed = used.contains(path);
-                final current =
-                    league.players
-                        .firstWhere((p) => p.playerId == playerId)
-                        .avatarPath ==
-                    path;
+                final current = league.players.firstWhere((p) => p.playerId == playerId).avatarPath == path;
                 return GestureDetector(
-                  onTap: isUsed && !current
-                      ? null
-                      : () => Navigator.pop(context, path),
+                  onTap: isUsed && !current ? null : () => Navigator.pop(context, path),
                   child: Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
@@ -273,10 +236,7 @@ class LeagueDetailViewModel extends ChangeNotifier {
                                 Color(0xA6000000), // black with 65% opacity
                                 BlendMode.darken,
                               )
-                            : const ColorFilter.mode(
-                                Colors.transparent,
-                                BlendMode.multiply,
-                              ),
+                            : const ColorFilter.mode(Colors.transparent, BlendMode.multiply),
                         child: Image.asset(path, fit: BoxFit.cover),
                       ),
                     ),
@@ -288,10 +248,7 @@ class LeagueDetailViewModel extends ChangeNotifier {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text(
-                'Cancelar',
-                style: TextStyle(color: Colors.white70),
-              ),
+              child: const Text('Cancelar', style: TextStyle(color: Colors.white70)),
             ),
           ],
         ),
@@ -308,10 +265,7 @@ class LeagueDetailViewModel extends ChangeNotifier {
   Future<void> _takePhoto(BuildContext context, int playerId) async {
     final status = await Permission.camera.request();
     if (!status.isGranted) return;
-    final XFile? photo = await _picker.pickImage(
-      source: ImageSource.camera,
-      imageQuality: 60,
-    );
+    final XFile? photo = await _picker.pickImage(source: ImageSource.camera, imageQuality: 60);
     if (photo == null) return;
     final p = league.players.firstWhere((e) => e.playerId == playerId);
     p.avatarPath = photo.path;
@@ -320,20 +274,13 @@ class LeagueDetailViewModel extends ChangeNotifier {
   }
   // === FIN AVATAR / FOTO ===
 
-  Future<void> changeAvatar({
-    required BuildContext context,
-    required int playerId,
-  }) async {
+  Future<void> changeAvatar({required BuildContext context, required int playerId}) async {
     final player = league.players.firstWhere((p) => p.playerId == playerId);
     final used = league.players
         .where((p) => p.avatarPath != null && p.playerId != playerId)
         .map((p) => p.avatarPath!)
         .toSet();
-    final selected = await avatarService.pickAvatarFromAssets(
-      context: context,
-      used: used,
-      current: player.avatarPath,
-    );
+    final selected = await avatarService.pickAvatarFromAssets(context: context, used: used, current: player.avatarPath);
     if (selected != null) {
       player.avatarPath = selected;
       listVM.refresh();
@@ -341,10 +288,7 @@ class LeagueDetailViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> takePhotoAvatar({
-    required BuildContext context,
-    required int playerId,
-  }) async {
+  Future<void> takePhotoAvatar({required BuildContext context, required int playerId}) async {
     final file = await avatarService.takePhoto(context);
     if (file != null) {
       final p = league.players.firstWhere((e) => e.playerId == playerId);
@@ -354,15 +298,9 @@ class LeagueDetailViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> deleteAvatar({
-    required BuildContext context,
-    required int playerId,
-  }) async {
+  Future<void> deleteAvatar({required BuildContext context, required int playerId}) async {
     final p = league.players.firstWhere((e) => e.playerId == playerId);
-    final ok = await avatarService.confirmDelete(
-      context: context,
-      title: 'Eliminar avatar de ${p.name}?',
-    );
+    final ok = await avatarService.confirmDelete(context: context, title: 'Eliminar avatar de ${p.name}?');
     if (ok) {
       p.avatarPath = null;
       listVM.refresh();
@@ -378,10 +316,7 @@ class LeagueDetailViewModel extends ChangeNotifier {
         title: const Text('Eliminar jugador'),
         content: const Text('¿Seguro que quieres eliminarlo?'),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar'),
-          ),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
           TextButton(
             onPressed: () {
               league.players.removeWhere((p) => p.playerId == playerId);
@@ -398,9 +333,7 @@ class LeagueDetailViewModel extends ChangeNotifier {
 
   // === EXPORT LEAGUE ===
   void showExportDialog(BuildContext context) {
-    final jsonString = const JsonEncoder.withIndent(
-      '  ',
-    ).convert(league.toJson());
+    final jsonString = const JsonEncoder.withIndent('  ').convert(league.toJson());
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
@@ -417,10 +350,7 @@ class LeagueDetailViewModel extends ChangeNotifier {
             },
             child: const Text('Copiar'),
           ),
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cerrar'),
-          ),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cerrar')),
         ],
       ),
     );
