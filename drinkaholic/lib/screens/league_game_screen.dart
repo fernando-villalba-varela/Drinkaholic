@@ -696,7 +696,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Color(0xFF00C9FF), Color(0xFF92FE9D)],
+                  colors: [Color(0xFFFC466B), Color(0xFF3F5EFB)],
                 ),
               ),
             ),
