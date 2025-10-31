@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:math' as math;
 import '../models/player.dart';
 import 'tiebreaker_screen.dart';
 
@@ -31,25 +32,50 @@ class _GameResultsScreenState extends State<GameResultsScreen> with TickerProvid
   bool _isConfirming = false; // Prevenir múltiples ejecuciones
   AnimationController? _glowController;
 
+  // Confeti y overlay de orientación
+  late AnimationController _confettiController;
+  late AnimationController _orientationFadeController;
+  late Animation<double> _orientationFade;
+  bool _showOrientationOverlay = true;
+
   @override
   void initState() {
     super.initState();
-    // Force portrait orientation
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
-    // Inicializar animación de parpadeo
-    _glowController = AnimationController(duration: const Duration(milliseconds: 1500), vsync: this)
-      ..repeat(reverse: true);
+    // Overlay para suavizar orientación a retrato y confeti inicial
+    _orientationFadeController = AnimationController(duration: const Duration(milliseconds: 180), vsync: this);
+    _orientationFade = CurvedAnimation(parent: _orientationFadeController, curve: Curves.easeInOut);
+    _confettiController = AnimationController(duration: const Duration(milliseconds: 1800), vsync: this);
 
-    // Inicializar verificación de empates
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _orientationFadeController.forward();
+      await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+      await Future.delayed(const Duration(milliseconds: 80));
+      if (!mounted) return;
+      await _orientationFadeController.reverse();
+      if (mounted) {
+        setState(() {
+          _showOrientationOverlay = false;
+        });
+      }
+      // Disparo de confeti al entrar en resultados
+      if (mounted) {
+        _confettiController.forward();
+        HapticFeedback.lightImpact();
+      }
       _checkForTiebreakers();
     });
+
+    // Inicializar animación de parpadeo (para brillos)
+    _glowController = AnimationController(duration: const Duration(milliseconds: 1500), vsync: this)
+      ..repeat(reverse: true);
   }
 
   @override
   void dispose() {
     _glowController?.dispose();
+    _confettiController.dispose();
+    _orientationFadeController.dispose();
     // Restore portrait orientation when leaving this screen
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     super.dispose();
@@ -173,17 +199,21 @@ class _GameResultsScreenState extends State<GameResultsScreen> with TickerProvid
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
-        body: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFF00C9FF), Color(0xFF92FE9D)],
+        body: Stack(
+          children: [
+            Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFF00C9FF), Color(0xFF92FE9D)],
+                ),
+              ),
             ),
-          ),
-          child: SafeArea(
-            child: Column(
-              children: [
+            // Contenido principal
+            SafeArea(
+              child: Column(
+                children: [
                 // Header
                 Container(
                   padding: EdgeInsets.all(headerPadding),
@@ -351,6 +381,16 @@ class _GameResultsScreenState extends State<GameResultsScreen> with TickerProvid
               ],
             ),
           ),
+            // Confeti celebratorio y overlay de orientación
+            _buildConfettiOverlay(),
+            if (_showOrientationOverlay)
+              Positioned.fill(
+                child: AnimatedBuilder(
+                  animation: _orientationFade,
+                  builder: (context, _) => Container(color: Colors.black.withOpacity(_orientationFade.value)),
+                ),
+              ),
+          ],
         ),
       ),
     );
@@ -371,6 +411,13 @@ class _GameResultsScreenState extends State<GameResultsScreen> with TickerProvid
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFFFD700), width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFFFD700).withOpacity(0.25 + 0.35 * (_glowController?.value ?? 0.0)),
+            blurRadius: 24,
+            spreadRadius: 2,
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -425,6 +472,13 @@ class _GameResultsScreenState extends State<GameResultsScreen> with TickerProvid
         ),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: const Color.fromARGB(255, 98, 46, 33), width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF8B4513).withOpacity(0.20 + 0.30 * (_glowController?.value ?? 0.0)),
+            blurRadius: 18,
+            spreadRadius: 1,
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -729,5 +783,59 @@ class _GameResultsScreenState extends State<GameResultsScreen> with TickerProvid
         );
       },
     );
+  }
+
+  Widget _buildConfettiOverlay() {
+    return AnimatedBuilder(
+      animation: _confettiController,
+      builder: (context, _) {
+        final v = _confettiController.value;
+        if (v == 0.0) return const SizedBox.shrink();
+        return Positioned.fill(
+          child: CustomPaint(
+            painter: _ConfettiPainter(progress: v),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _ConfettiPainter extends CustomPainter {
+  final double progress; // 0..1
+  _ConfettiPainter({required this.progress});
+
+  final List<Color> colors = const [
+    Color(0xFFFFD700),
+    Color(0xFF00C9FF),
+    Color(0xFF92FE9D),
+    Color(0xFFFF6B6B),
+    Color(0xFF7F5AF0),
+  ];
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rnd = math.Random(42);
+    final count = 80;
+    for (int i = 0; i < count; i++) {
+      final t = (i / count + progress) % 1.0;
+      final x = rnd.nextDouble() * size.width;
+      final startY = -50.0 - rnd.nextDouble() * 200.0;
+      final y = startY + t * (size.height + 200.0);
+      final w = 4.0 + rnd.nextDouble() * 6.0;
+      final h = 6.0 + rnd.nextDouble() * 10.0;
+      final angle = rnd.nextDouble() * 3.1415;
+      final paint = Paint()..color = colors[i % colors.length].withOpacity(1.0 - (t * 0.8));
+      canvas.save();
+      canvas.translate(x, y);
+      canvas.rotate(angle);
+      canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromLTWH(-w / 2, -h / 2, w, h), const Radius.circular(2)), paint);
+      canvas.restore();
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _ConfettiPainter oldDelegate) {
+    return oldDelegate.progress != progress;
   }
 }

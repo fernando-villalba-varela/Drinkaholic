@@ -186,6 +186,8 @@ class TiebreakerScreen extends StatefulWidget {
 class _TiebreakerScreenState extends State<TiebreakerScreen> with TickerProviderStateMixin {
   late AnimationController _spinController;
   late Animation<double> _spinAnimation;
+  late AnimationController _winnerScaleController;
+  late Animation<double> _winnerScale;
   bool _isSpinning = false;
   bool _hasSpun = false;
   Player? _winner;
@@ -223,7 +225,12 @@ class _TiebreakerScreenState extends State<TiebreakerScreen> with TickerProvider
     _spinAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
-    ).animate(CurvedAnimation(parent: _spinController, curve: Curves.easeOut));
+    ).animate(CurvedAnimation(parent: _spinController, curve: Curves.easeOutCubic));
+
+    _winnerScaleController = AnimationController(duration: const Duration(milliseconds: 300), vsync: this);
+    _winnerScale = Tween<double>(begin: 0.85, end: 1.0).animate(
+      CurvedAnimation(parent: _winnerScaleController, curve: Curves.elasticOut),
+    );
 
     // Cargar imágenes de los jugadores
     _loadPlayerImages();
@@ -262,12 +269,15 @@ class _TiebreakerScreenState extends State<TiebreakerScreen> with TickerProvider
   @override
   void dispose() {
     _spinController.dispose();
+    _winnerScaleController.dispose();
     super.dispose();
   }
 
   void _spinBottle() async {
     if (_isSpinning || _hasSpun) return; // Solo se puede girar una vez
 
+    HapticFeedback.mediumImpact();
+    SystemSound.play(SystemSoundType.click);
     setState(() {
       _isSpinning = true;
       _winner = null;
@@ -317,6 +327,9 @@ class _TiebreakerScreenState extends State<TiebreakerScreen> with TickerProvider
       _isSpinning = false;
       _hasSpun = true;
     });
+    HapticFeedback.heavyImpact();
+    SystemSound.play(SystemSoundType.alert);
+    _winnerScaleController.forward(from: 0.0);
   }
 
   @override
@@ -432,30 +445,33 @@ class _TiebreakerScreenState extends State<TiebreakerScreen> with TickerProvider
                               ),
                             ),
                             const SizedBox(height: 16),
-                            Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: (isMVP ? const Color(0xFFFFD700) : const Color(0xFF8B4513)).withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(
-                                  color: isMVP ? const Color(0xFFFFD700) : const Color(0xFF8B4513),
-                                  width: 2,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  _buildPlayerAvatar(_winner!, size: 50),
-                                  const SizedBox(width: 16),
-                                  Text(
-                                    _winner!.nombre,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                            ScaleTransition(
+                              scale: _winnerScale,
+                              child: Container(
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: (isMVP ? const Color(0xFFFFD700) : const Color(0xFF8B4513)).withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color: isMVP ? const Color(0xFFFFD700) : const Color(0xFF8B4513),
+                                    width: 2,
                                   ),
-                                ],
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    _buildPlayerAvatar(_winner!, size: 50),
+                                    const SizedBox(width: 16),
+                                    Text(
+                                      _winner!.nombre,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                             const SizedBox(height: 32),

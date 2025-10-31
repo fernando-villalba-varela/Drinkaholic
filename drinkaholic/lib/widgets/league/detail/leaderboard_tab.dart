@@ -55,6 +55,9 @@ class LeaderboardTab extends StatelessWidget {
         final p = players[i];
         final img = _avatar(p.avatarPath);
         final pos = i + 1;
+        final league = vm.league;
+        final isMvpStreak = league.currentMvpStreak == p.playerId && league.mvpStreakCount >= 2;
+        final isRatitaStreak = league.currentRatitaStreak == p.playerId && league.ratitaStreakCount >= 2;
 
         return ListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -115,7 +118,21 @@ class LeaderboardTab extends StatelessWidget {
               ],
             ),
           ),
-          title: Text(p.name),
+          title: Row(
+            children: [
+              Expanded(child: Text(p.name)),
+              if (isMvpStreak)
+                Padding(
+                  padding: const EdgeInsets.only(left: 6),
+                  child: Text('🔥${league.mvpStreakCount}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+                ),
+              if (isRatitaStreak)
+                Padding(
+                  padding: const EdgeInsets.only(left: 6),
+                  child: Text('💩${league.ratitaStreakCount}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+                ),
+            ],
+          ),
           subtitle: Text(
             'MVDP: ${p.mvdpCount} | Tragos: ${p.totalDrinks} | Ratita: ${p.ratitaCount} | Partidas: ${p.gamesPlayed}',
           ),
@@ -126,9 +143,22 @@ class LeaderboardTab extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: theme.colorScheme.primary.withAlpha(0x59)),
             ),
-            child: Text(
-              '${p.points} pts',
-              style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w700),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '${p.points} pts',
+                  style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w700),
+                ),
+                if (isMvpStreak) ...[
+                  const SizedBox(width: 8),
+                  const Text('👑', style: TextStyle(fontSize: 16)),
+                ],
+                if (isRatitaStreak) ...[
+                  const SizedBox(width: 8),
+                  const Text('🐭', style: TextStyle(fontSize: 16)),
+                ],
+              ],
             ),
           ),
         );

@@ -35,6 +35,11 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
   late Animation<double> _tapAnimation;
   late Animation<double> _rippleAnimation;
 
+  // Overlay para suavizar el cambio de orientación
+  late AnimationController _orientationFadeController;
+  late Animation<double> _orientationFade;
+  bool _showOrientationOverlay = true;
+
   final List<Offset> _ripplePositions = [];
   final List<double> _rippleOpacities = [];
 
@@ -44,6 +49,8 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
   bool _gameStarted = false;
   final Map<int, int> _playerWeights = {};
   final Map<int, int> _playerDrinks = {}; // Contador de tragos por jugador
+  // Track already used questions to avoid repeats within this league game session
+  final Set<String> _usedQuestions = <String>{};
 
   int _currentRound = 1;
   List<ConstantChallenge> _constantChallenges = [];
@@ -62,8 +69,21 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
   void initState() {
     super.initState();
 
-    // Force landscape orientation
-    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
+    // Preparar overlay de orientación y ejecutar transición suave a landscape
+    _orientationFadeController = AnimationController(duration: const Duration(milliseconds: 180), vsync: this);
+    _orientationFade = CurvedAnimation(parent: _orientationFadeController, curve: Curves.easeInOut);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _orientationFadeController.forward();
+      await SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
+      await Future.delayed(const Duration(milliseconds: 80));
+      if (!mounted) return;
+      await _orientationFadeController.reverse();
+      if (mounted) {
+        setState(() {
+          _showOrientationOverlay = false;
+        });
+      }
+    });
 
     _cardAnimationController = AnimationController(duration: const Duration(milliseconds: 600), vsync: this);
 
@@ -106,6 +126,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
     _glowAnimationController.dispose();
     _tapAnimationController.dispose();
     _rippleAnimationController.dispose();
+    _orientationFadeController.dispose();
     _toastTimer?.cancel(); // Cancelar el timer si está activo
     super.dispose();
   }
@@ -115,14 +136,28 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
       final selectedPlayerIndex = Random().nextInt(widget.players.length);
       final selectedPlayer = widget.players[selectedPlayerIndex];
 
-      final question = await QuestionGenerator.generateRandomQuestionForPlayer(selectedPlayer.nombre);
+      // Intentar generar una pregunta única evitando repetidas
+      var attempts = 0;
+      GeneratedQuestion question;
+      do {
+        question = await QuestionGenerator.generateRandomQuestionForPlayer(selectedPlayer.nombre);
+        attempts++;
+      } while (_usedQuestions.contains(question.question) && attempts < 30);
+      _usedQuestions.add(question.question);
 
       setState(() {
         _currentChallenge = question.question;
         _currentPlayerIndex = selectedPlayerIndex;
       });
     } else {
-      final question = await QuestionGenerator.generateRandomQuestion();
+      var attempts = 0;
+      GeneratedQuestion question;
+      do {
+        question = await QuestionGenerator.generateRandomQuestion();
+        attempts++;
+      } while (_usedQuestions.contains(question.question) && attempts < 30);
+      _usedQuestions.add(question.question);
+
       setState(() {
         _currentChallenge = question.question;
         _currentPlayerIndex = -1;
@@ -610,7 +645,14 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
     final player1 = selectedPlayers[0];
     final player2 = selectedPlayers[1];
 
-    final question = await QuestionGenerator.generateRandomDualQuestion(player1.nombre, player2.nombre);
+    // Intentar generar una pregunta dual única evitando repetidas
+    var attempts = 0;
+    GeneratedQuestion question;
+    do {
+      question = await QuestionGenerator.generateRandomDualQuestion(player1.nombre, player2.nombre);
+      attempts++;
+    } while (_usedQuestions.contains(question.question) && attempts < 30);
+    _usedQuestions.add(question.question);
 
     final player1Index = widget.players.indexOf(player1);
     final player2Index = widget.players.indexOf(player2);
@@ -876,6 +918,16 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
                     _nextChallenge();
                   });
                 },
+              ),
+            // Overlay negro para suavizar el cambio de orientación
+            if (_showOrientationOverlay)
+              Positioned.fill(
+                child: AnimatedBuilder(
+                  animation: _orientationFade,
+                  builder: (context, _) => Container(
+                    color: Colors.black.withOpacity(_orientationFade.value),
+                  ),
+                ),
               ),
           ],
         ),

@@ -44,6 +44,8 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
   bool _gameStarted = false;
   // Track how many times each player has been selected, keyed by playerId
   final Map<int, int> _playerWeights = {};
+  // Track already used questions to avoid repeats within this game session
+  final Set<String> _usedQuestions = <String>{};
   int _currentRound = 1;
   List<ConstantChallenge> _constantChallenges = [];
   ConstantChallengeEnd? _currentChallengeEnd;
@@ -115,7 +117,14 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
       final selectedPlayerIndex = Random().nextInt(_players.length);
       final selectedPlayer = _players[selectedPlayerIndex];
 
-      final question = await QuestionGenerator.generateRandomQuestionForPlayer(selectedPlayer.nombre);
+      // Intentar generar una pregunta única evitando repetidas
+      var attempts = 0;
+      GeneratedQuestion question;
+      do {
+        question = await QuestionGenerator.generateRandomQuestionForPlayer(selectedPlayer.nombre);
+        attempts++;
+      } while (_usedQuestions.contains(question.question) && attempts < 30);
+      _usedQuestions.add(question.question);
 
       setState(() {
         _currentChallenge = question.question;
@@ -123,7 +132,14 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
       });
     } else {
       // Pregunta normal (sin jugador específico, se asignará después)
-      final question = await QuestionGenerator.generateRandomQuestion();
+      var attempts = 0;
+      GeneratedQuestion question;
+      do {
+        question = await QuestionGenerator.generateRandomQuestion();
+        attempts++;
+      } while (_usedQuestions.contains(question.question) && attempts < 30);
+      _usedQuestions.add(question.question);
+
       setState(() {
         _currentChallenge = question.question;
         _currentPlayerIndex = -1; // Marcar que no hay jugador asignado aún
@@ -493,7 +509,14 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
     final player1 = selectedPlayers[0];
     final player2 = selectedPlayers[1];
 
-    final question = await QuestionGenerator.generateRandomDualQuestion(player1.nombre, player2.nombre);
+    // Intentar generar una pregunta dual única evitando repetidas
+    var attempts = 0;
+    GeneratedQuestion question;
+    do {
+      question = await QuestionGenerator.generateRandomDualQuestion(player1.nombre, player2.nombre);
+      attempts++;
+    } while (_usedQuestions.contains(question.question) && attempts < 30);
+    _usedQuestions.add(question.question);
 
     final player1Index = _players.indexOf(player1);
     final player2Index = _players.indexOf(player2);
