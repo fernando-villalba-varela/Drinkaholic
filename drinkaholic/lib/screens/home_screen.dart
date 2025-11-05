@@ -137,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               children: [
                                 // Outline stroke for readability
                                 Text(
-                                  'DRINKAHOLIC',
+                                  'LA PREVIA',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: min(screenWidth * 0.12, 88),
@@ -160,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   ).createShader(bounds),
                                   blendMode: BlendMode.srcIn,
                                   child: Text(
-                                    'DRINKAHOLIC',
+                                    'LA PREVIA',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: min(screenWidth * 0.12, 88),
@@ -188,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
                             SizedBox(height: 6.h),
                             Text(
-                              'A beber como los duendes',
+                              'Dios se apiade de nosotros',
                               style: TextStyle(
                                 fontSize: 14.sp,
                                 color: const Color(0xCCFFFFFF),
