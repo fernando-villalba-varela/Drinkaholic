@@ -248,7 +248,7 @@
     },
     {
       "id": "dual_adivinanza",
-      "template": "{PLAYER1} piensa un número del 1 al 10, {PLAYER2} debe adivinarlo. Si acierta, {PLAYER1} bebe {AMOUNT1} tragos. Si falla, {PLAYER2} bebe {AMOUNT2} tragos",
+      "template": "{PLAYER1} le dice a otro jugador un número del 1 al 10, {PLAYER2} debe adivinarlo. Si acierta, {PLAYER1} bebe {AMOUNT1} tragos. Si falla, {PLAYER2} bebe {AMOUNT2} tragos",
       "variables": {
         "PLAYER1": ["DUAL_PLAYER1"],
         "PLAYER2": ["DUAL_PLAYER2"],
