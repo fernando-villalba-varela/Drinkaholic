@@ -41,10 +41,7 @@ class _ParticipantsTabState extends State<ParticipantsTab> {
             onAdd: () {
               final name = _addCtrl.text.trim();
               if (name.isEmpty) return;
-              vm.addPlayer(
-                playerId: DateTime.now().microsecondsSinceEpoch,
-                name: name,
-              );
+              vm.addPlayer(playerId: DateTime.now().microsecondsSinceEpoch, name: name);
               _addCtrl.clear();
             },
           );
@@ -87,9 +84,7 @@ class PlayerCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: const Color(0x2EFFFFFF), // white with 18% opacity
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: const Color(0x59FFFFFF),
-          ), // white with 35% opacity
+          border: Border.all(color: const Color(0x59FFFFFF)), // white with 35% opacity
         ),
         child: Row(
           children: [
@@ -97,18 +92,12 @@ class PlayerCard extends StatelessWidget {
               onTap: onAvatarTap,
               child: CircleAvatar(
                 radius: 30,
-                backgroundColor: const Color(
-                  0x40FFFFFF,
-                ), // white with 25% opacity
+                backgroundColor: const Color(0x40FFFFFF), // white with 25% opacity
                 backgroundImage: img,
                 child: img == null
                     ? Text(
                         name.isNotEmpty ? name[0].toUpperCase() : '?',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                        ),
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
                       )
                     : null,
               ),
@@ -121,13 +110,7 @@ class PlayerCard extends StatelessWidget {
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
-                  shadows: [
-                    Shadow(
-                      color: Colors.black54,
-                      blurRadius: 3,
-                      offset: Offset(1, 1),
-                    ),
-                  ],
+                  shadows: [Shadow(color: Colors.black54, blurRadius: 3, offset: Offset(1, 1))],
                 ),
               ),
             ),
@@ -147,11 +130,7 @@ class AddPlayerCard extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback onAdd;
 
-  const AddPlayerCard({
-    super.key,
-    required this.controller,
-    required this.onAdd,
-  });
+  const AddPlayerCard({super.key, required this.controller, required this.onAdd});
 
   @override
   Widget build(BuildContext context) {
@@ -160,9 +139,7 @@ class AddPlayerCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: const Color(0x59FFFFFF),
-        ), // white with 35% opacity
+        border: Border.all(color: const Color(0x59FFFFFF)), // white with 35% opacity
         color: const Color(0x1FFFFFFF), // white with 12% opacity
       ),
       child: Row(

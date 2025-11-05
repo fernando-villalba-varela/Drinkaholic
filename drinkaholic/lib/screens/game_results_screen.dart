@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:math' as math;
 import '../models/player.dart';
 import 'tiebreaker_screen.dart';
 
@@ -23,8 +24,7 @@ class GameResultsScreen extends StatefulWidget {
   State<GameResultsScreen> createState() => _GameResultsScreenState();
 }
 
-class _GameResultsScreenState extends State<GameResultsScreen>
-    with TickerProviderStateMixin {
+class _GameResultsScreenState extends State<GameResultsScreen> with TickerProviderStateMixin {
   Player? _resolvedMVP;
   Player? _resolvedRatita;
   bool _mvpTieResolved = false;
@@ -32,35 +32,49 @@ class _GameResultsScreenState extends State<GameResultsScreen>
   bool _isConfirming = false; // Prevenir múltiples ejecuciones
   AnimationController? _glowController;
 
+  // Confeti y overlay de orientación
+  late AnimationController _confettiController;
+  late AnimationController _orientationFadeController;
+  late Animation<double> _orientationFade;
+  bool _showOrientationOverlay = true;
+
   @override
   void initState() {
     super.initState();
-    // Force portrait orientation
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
 
-    // Inicializar animación de parpadeo
-    _glowController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
-      vsync: this,
-    )..repeat(reverse: true);
+    // Overlay para suavizar orientación a retrato y confeti inicial
+    _orientationFadeController = AnimationController(duration: const Duration(milliseconds: 180), vsync: this);
+    _orientationFade = CurvedAnimation(parent: _orientationFadeController, curve: Curves.easeInOut);
+    _confettiController = AnimationController(duration: const Duration(milliseconds: 5000), vsync: this);
 
-    // Inicializar verificación de empates
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkForTiebreakers();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _orientationFadeController.forward();
+      await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+      await Future.delayed(const Duration(milliseconds: 80));
+      if (!mounted) return;
+      await _orientationFadeController.reverse();
+      if (mounted) {
+        setState(() {
+          _showOrientationOverlay = false;
+        });
+      }
+      
+      // SOLO disparar confeti si NO hay desempates
+      _checkForTiebreakersAndStartConfetti();
     });
+
+    // Inicializar animación de parpadeo (para brillos)
+    _glowController = AnimationController(duration: const Duration(milliseconds: 1500), vsync: this)
+      ..repeat(reverse: true);
   }
 
   @override
   void dispose() {
     _glowController?.dispose();
+    _confettiController.dispose();
+    _orientationFadeController.dispose();
     // Restore portrait orientation when leaving this screen
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     super.dispose();
   }
 
@@ -79,11 +93,14 @@ class _GameResultsScreenState extends State<GameResultsScreen>
         .map((entry) => entry.key)
         .toList();
 
+    // EXCLUIR al MVP resuelto de la lista de candidatos a Ratita
+    if (_mvpTieResolved && _resolvedMVP != null) {
+      ratitaPlayerIds.removeWhere((id) => id == _resolvedMVP!.id);
+    }
+
     // Verificar empate MVP
     if (mvpPlayerIds.length > 1 && !_mvpTieResolved) {
-      List<Player> tiedMVPPlayers = widget.players
-          .where((p) => mvpPlayerIds.contains(p.id))
-          .toList();
+      List<Player> tiedMVPPlayers = widget.players.where((p) => mvpPlayerIds.contains(p.id)).toList();
 
       Navigator.push(
         context,
@@ -99,9 +116,18 @@ class _GameResultsScreenState extends State<GameResultsScreen>
               });
               Navigator.pop(context);
 
-              // Verificar empate Ratita después de resolver MVP
-              if (ratitaPlayerIds.length > 1 && !_ratitaTieResolved) {
-                _checkRatitaTiebreaker(ratitaPlayerIds, minDrinks);
+              // Recalcular candidatos a Ratita EXCLUYENDO al MVP ganador
+              List<int> updatedRatitaPlayerIds = widget.playerDrinks.entries
+                  .where((entry) => entry.value == minDrinks && entry.key != winner.id)
+                  .map((entry) => entry.key)
+                  .toList();
+
+              // Verificar empate Ratita después de resolver MVP (con lista actualizada)
+              if (updatedRatitaPlayerIds.length > 1 && !_ratitaTieResolved) {
+                _checkRatitaTiebreaker(updatedRatitaPlayerIds, minDrinks);
+              } else {
+                // NO hay más empates - disparar confeti
+                _startConfettiAnimation();
               }
             },
           ),
@@ -115,9 +141,7 @@ class _GameResultsScreenState extends State<GameResultsScreen>
   }
 
   void _checkRatitaTiebreaker(List<int> ratitaPlayerIds, int minDrinks) {
-    List<Player> tiedRatitaPlayers = widget.players
-        .where((p) => ratitaPlayerIds.contains(p.id))
-        .toList();
+    List<Player> tiedRatitaPlayers = widget.players.where((p) => ratitaPlayerIds.contains(p.id)).toList();
 
     Navigator.push(
       context,
@@ -132,10 +156,54 @@ class _GameResultsScreenState extends State<GameResultsScreen>
               _ratitaTieResolved = true;
             });
             Navigator.pop(context);
+            
+            // Después de resolver el último desempate - disparar confeti
+            _startConfettiAnimation();
           },
         ),
-      ),
-    );
+      ));
+  }
+
+  void _checkForTiebreakersAndStartConfetti() {
+    // MVDP = jugadores con MÁS tragos
+    int maxDrinks = widget.playerDrinks.values.reduce((a, b) => a > b ? a : b);
+    List<int> mvpPlayerIds = widget.playerDrinks.entries
+        .where((entry) => entry.value == maxDrinks)
+        .map((entry) => entry.key)
+        .toList();
+
+    // Ratita = jugadores con MENOS tragos
+    int minDrinks = widget.playerDrinks.values.reduce((a, b) => a < b ? a : b);
+    List<int> ratitaPlayerIds = widget.playerDrinks.entries
+        .where((entry) => entry.value == minDrinks)
+        .map((entry) => entry.key)
+        .toList();
+
+    // EXCLUIR al MVP resuelto de la lista de candidatos a Ratita
+    if (_mvpTieResolved && _resolvedMVP != null) {
+      ratitaPlayerIds.removeWhere((id) => id == _resolvedMVP!.id);
+    }
+
+    // Verificar si hay empates
+    bool hasMVPTie = mvpPlayerIds.length > 1;
+    bool hasRatitaTie = ratitaPlayerIds.length > 1;
+
+    if (!hasMVPTie && !hasRatitaTie) {
+      // NO hay empates - disparar confeti inmediatamente
+      _startConfettiAnimation();
+    } else {
+      // HAY empates - manejar desempates primero
+      _checkForTiebreakers();
+    }
+  }
+
+  void _startConfettiAnimation() {
+    if (mounted) {
+      _confettiController.forward().then((_) {
+        // Ya no usamos reset(), simplemente dejamos que termine y se desvanezca naturalmente
+      });
+      HapticFeedback.lightImpact();
+    }
   }
 
   @override
@@ -145,40 +213,40 @@ class _GameResultsScreenState extends State<GameResultsScreen>
     int maxDrinks = widget.playerDrinks.values.reduce((a, b) => a > b ? a : b);
     int minDrinks = widget.playerDrinks.values.reduce((a, b) => a < b ? a : b);
 
-    // Usar resultados de desempate si están disponibles, sino calcular normalmente
-    Player mvp;
-    Player ratita;
-
-    if (_resolvedMVP != null) {
-      mvp = _resolvedMVP!;
+    // Obtener MVP
+    Player mvpPlayer;
+    int mvpDrinks;
+    if (_mvpTieResolved && _resolvedMVP != null) {
+      mvpPlayer = _resolvedMVP!;
+      mvpDrinks = widget.playerDrinks[mvpPlayer.id] ?? 0;
     } else {
-      // MVDP = quien MÁS bebió (más tragos)
-      int mvpPlayerId = widget.playerDrinks.entries
-          .firstWhere((entry) => entry.value == maxDrinks)
-          .key;
-      mvp = widget.players.firstWhere(
-        (p) => p.id == mvpPlayerId,
-        orElse: () => widget.players.first,
-      );
+      mvpPlayer = widget.players.firstWhere((p) => widget.playerDrinks[p.id] == maxDrinks);
+      mvpDrinks = maxDrinks;
     }
 
-    if (_resolvedRatita != null) {
-      ratita = _resolvedRatita!;
+    // Obtener Ratita (EXCLUYENDO al MVP si es el mismo caso de empate total)
+    Player ratitaPlayer;
+    int ratitaDrinks;
+    if (_ratitaTieResolved && _resolvedRatita != null) {
+      ratitaPlayer = _resolvedRatita!;
+      ratitaDrinks = widget.playerDrinks[ratitaPlayer.id] ?? 0;
     } else {
-      // Ratita = quien MENOS bebió (menos tragos)
-      int ratitaPlayerId = widget.playerDrinks.entries
-          .firstWhere((entry) => entry.value == minDrinks)
-          .key;
-      ratita = widget.players.firstWhere(
-        (p) => p.id == ratitaPlayerId,
-        orElse: () => widget.players.last,
-      );
+      // Filtrar candidatos a Ratita excluyendo al MVP si ya fue resuelto
+      List<Player> ratitaCandidates = widget.players.where((p) {
+        bool hasMinDrinks = widget.playerDrinks[p.id] == minDrinks;
+        bool isNotResolvedMVP = !(_mvpTieResolved && _resolvedMVP != null && p.id == _resolvedMVP!.id);
+        return hasMinDrinks && isNotResolvedMVP;
+      }).toList();
+      
+      ratitaPlayer = ratitaCandidates.isNotEmpty 
+          ? ratitaCandidates.first 
+          : widget.players.firstWhere((p) => widget.playerDrinks[p.id] == minDrinks);
+      ratitaDrinks = minDrinks;
     }
 
     // Ordenar jugadores por cantidad de tragos (de más a menos)
-    final sortedPlayers = List<MapEntry<int, int>>.from(
-      widget.playerDrinks.entries,
-    )..sort((a, b) => b.value.compareTo(a.value));
+    final sortedPlayers = List<MapEntry<int, int>>.from(widget.playerDrinks.entries)
+      ..sort((a, b) => b.value.compareTo(a.value));
 
     final screenSize = MediaQuery.of(context).size;
     final isSmallScreen = screenSize.width < 600 || screenSize.height < 400;
@@ -197,41 +265,37 @@ class _GameResultsScreenState extends State<GameResultsScreen>
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
-        body: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFF00C9FF), Color(0xFF92FE9D)],
+        body: Stack(
+          children: [
+            Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFFFC466B), Color(0xFF3F5EFB)],
+                ),
+              ),
             ),
-          ),
-          child: SafeArea(
-            child: Column(
-              children: [
+            // Contenido principal
+            SafeArea(
+              child: Column(
+                children: [
                 // Header
                 Container(
                   padding: EdgeInsets.all(headerPadding),
                   decoration: const BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Color(0xFF00C9FF), Color(0xFF92FE9D)],
+                      colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
                     ),
                   ),
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.emoji_events,
-                        color: Colors.white,
-                        size: iconSize,
-                      ),
+                      Icon(Icons.emoji_events, color: Colors.white, size: iconSize),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
                           '¡Juego Terminado!',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: titleFontSize,
-                          ),
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: titleFontSize),
                         ),
                       ),
                     ],
@@ -245,17 +309,14 @@ class _GameResultsScreenState extends State<GameResultsScreen>
                       children: [
                         Text(
                           'Se han completado ${widget.maxRounds} rondas',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: subtitleFontSize,
-                          ),
+                          style: TextStyle(color: Colors.white, fontSize: subtitleFontSize),
                           textAlign: TextAlign.center,
                         ),
                         SizedBox(height: isSmallScreen ? 16 : 24),
-                        // MVP Section - TOP
+                        // MVP Section - TOP - USAR mvpPlayer en lugar de mvp
                         _buildMVPCard(
-                          player: mvp,
-                          drinks: widget.playerDrinks[mvp.id] ?? 0,
+                          player: mvpPlayer,
+                          drinks: widget.playerDrinks[mvpPlayer.id] ?? 0,
                           isSmallScreen: isSmallScreen,
                         ),
                         SizedBox(height: isSmallScreen ? 16 : 24),
@@ -265,9 +326,7 @@ class _GameResultsScreenState extends State<GameResultsScreen>
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: Colors.white.withOpacity(0.2),
-                            ),
+                            border: Border.all(color: Colors.white.withOpacity(0.2)),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -291,20 +350,13 @@ class _GameResultsScreenState extends State<GameResultsScreen>
                                 );
 
                                 final avatarSize = isSmallScreen ? 28.0 : 32.0;
-                                final drinkIconSize = isSmallScreen
-                                    ? 14.0
-                                    : 16.0;
+                                final drinkIconSize = isSmallScreen ? 14.0 : 16.0;
 
                                 return Padding(
-                                  padding: EdgeInsets.only(
-                                    bottom: isSmallScreen ? 8 : 12,
-                                  ),
+                                  padding: EdgeInsets.only(bottom: isSmallScreen ? 8 : 12),
                                   child: Row(
                                     children: [
-                                      _buildPlayerAvatar(
-                                        player,
-                                        size: avatarSize,
-                                      ),
+                                      _buildPlayerAvatar(player, size: avatarSize),
                                       SizedBox(width: isSmallScreen ? 8 : 12),
                                       Expanded(
                                         child: Text(
@@ -323,12 +375,8 @@ class _GameResultsScreenState extends State<GameResultsScreen>
                                           vertical: isSmallScreen ? 4 : 6,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: const Color(
-                                            0xFF00C9FF,
-                                          ).withOpacity(0.2),
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
+                                          color: const Color(0xFF00C9FF).withOpacity(0.2),
+                                          borderRadius: BorderRadius.circular(8),
                                         ),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
@@ -354,19 +402,18 @@ class _GameResultsScreenState extends State<GameResultsScreen>
                                   ),
                                 );
                               }),
-                              // Ratita Section - BOTTOM
+                              // Ratita Section - BOTTOM - USAR ratitaPlayer en lugar de ratita
                               SizedBox(height: isSmallScreen ? 12 : 16),
                               _buildRatitaCard(
-                                player: ratita,
-                                drinks: widget.playerDrinks[ratita.id] ?? 0,
+                                player: ratitaPlayer,
+                                drinks: widget.playerDrinks[ratitaPlayer.id] ?? 0,
                                 isSmallScreen: isSmallScreen,
                               ),
                             ],
                           ),
                         ),
                         // Mensajes de Rachas Especiales
-                        if (widget.streakMessages != null &&
-                            widget.streakMessages!.isNotEmpty)
+                        if (widget.streakMessages != null && widget.streakMessages!.isNotEmpty)
                           _buildStreakMessagesSection(isSmallScreen),
                       ],
                     ),
@@ -390,16 +437,9 @@ class _GameResultsScreenState extends State<GameResultsScreen>
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF00C9FF),
                         foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(
-                          vertical: isSmallScreen ? 12 : 16,
-                        ),
-                        textStyle: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: buttonFontSize,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                        padding: EdgeInsets.symmetric(vertical: isSmallScreen ? 12 : 16),
+                        textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: buttonFontSize),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         elevation: 4,
                       ),
                       child: const Text('Guardar y Volver'),
@@ -409,16 +449,22 @@ class _GameResultsScreenState extends State<GameResultsScreen>
               ],
             ),
           ),
+            // Confeti celebratorio y overlay de orientación
+            _buildConfettiOverlay(),
+            if (_showOrientationOverlay)
+              Positioned.fill(
+                child: AnimatedBuilder(
+                  animation: _orientationFade,
+                  builder: (context, _) => Container(color: Colors.black.withOpacity(_orientationFade.value)),
+                ),
+              ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildMVPCard({
-    required Player player,
-    required int drinks,
-    required bool isSmallScreen,
-  }) {
+  Widget _buildMVPCard({required Player player, required int drinks, required bool isSmallScreen}) {
     final avatarSize = isSmallScreen ? 50.0 : 60.0;
     final padding = isSmallScreen ? 12.0 : 16.0;
     final titleFontSize = isSmallScreen ? 12.0 : 14.0;
@@ -429,13 +475,17 @@ class _GameResultsScreenState extends State<GameResultsScreen>
       padding: EdgeInsets.all(padding),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            const Color(0xFFFFD700).withOpacity(0.3),
-            const Color(0xFFFFD700).withOpacity(0.1),
-          ],
+          colors: [const Color(0xFFFFD700).withOpacity(0.3), const Color(0xFFFFD700).withOpacity(0.1)],
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFFFD700), width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFFFD700).withOpacity(0.25 + 0.35 * (_glowController?.value ?? 0.0)),
+            blurRadius: 24,
+            spreadRadius: 2,
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -456,20 +506,13 @@ class _GameResultsScreenState extends State<GameResultsScreen>
                 SizedBox(height: isSmallScreen ? 4 : 6),
                 Text(
                   player.nombre,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: playerNameFontSize,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(color: Colors.white, fontSize: playerNameFontSize, fontWeight: FontWeight.bold),
                   overflow: TextOverflow.ellipsis,
                 ),
                 SizedBox(height: isSmallScreen ? 2 : 4),
                 Text(
                   '$drinks tragos',
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: drinksFontSize,
-                  ),
+                  style: TextStyle(color: Colors.white70, fontSize: drinksFontSize),
                 ),
               ],
             ),
@@ -479,11 +522,7 @@ class _GameResultsScreenState extends State<GameResultsScreen>
     );
   }
 
-  Widget _buildRatitaCard({
-    required Player player,
-    required int drinks,
-    required bool isSmallScreen,
-  }) {
+  Widget _buildRatitaCard({required Player player, required int drinks, required bool isSmallScreen}) {
     final avatarSize = isSmallScreen ? 40.0 : 48.0;
     final padding = isSmallScreen ? 10.0 : 12.0;
     final titleFontSize = isSmallScreen ? 11.0 : 13.0;
@@ -500,10 +539,14 @@ class _GameResultsScreenState extends State<GameResultsScreen>
           ],
         ),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: const Color.fromARGB(255, 98, 46, 33),
-          width: 2,
-        ),
+        border: Border.all(color: const Color.fromARGB(255, 98, 46, 33), width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF8B4513).withOpacity(0.20 + 0.30 * (_glowController?.value ?? 0.0)),
+            blurRadius: 18,
+            spreadRadius: 1,
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -524,20 +567,13 @@ class _GameResultsScreenState extends State<GameResultsScreen>
                 SizedBox(height: isSmallScreen ? 2 : 4),
                 Text(
                   player.nombre,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: playerNameFontSize,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(color: Colors.white, fontSize: playerNameFontSize, fontWeight: FontWeight.bold),
                   overflow: TextOverflow.ellipsis,
                 ),
                 SizedBox(height: isSmallScreen ? 2 : 4),
                 Text(
                   '$drinks tragos',
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: drinksFontSize,
-                  ),
+                  style: TextStyle(color: Colors.white70, fontSize: drinksFontSize),
                 ),
               ],
             ),
@@ -561,10 +597,7 @@ class _GameResultsScreenState extends State<GameResultsScreen>
       child: img == null
           ? Text(
               player.nombre.isNotEmpty ? player.nombre[0].toUpperCase() : '?',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: size * 0.4,
-              ),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: size * 0.4),
             )
           : null,
     );
@@ -572,9 +605,7 @@ class _GameResultsScreenState extends State<GameResultsScreen>
 
   Widget _buildStreakMessagesSection(bool isSmallScreen) {
     // Filtrar solo los mensajes que no están vacíos
-    final messagesWithContent = widget.streakMessages!.entries
-        .where((entry) => entry.value.isNotEmpty)
-        .toList();
+    final messagesWithContent = widget.streakMessages!.entries.where((entry) => entry.value.isNotEmpty).toList();
 
     if (messagesWithContent.isEmpty) return const SizedBox.shrink();
 
@@ -592,30 +623,18 @@ class _GameResultsScreenState extends State<GameResultsScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: isSmallScreen ? 8 : 12,
-                vertical: isSmallScreen ? 4 : 6,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 8 : 12, vertical: isSmallScreen ? 4 : 6),
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.95), // Fondo blanco brillante
                 borderRadius: BorderRadius.circular(6),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.white.withOpacity(0.3),
-                    blurRadius: 4,
-                    spreadRadius: 1,
-                  ),
-                ],
+                boxShadow: [BoxShadow(color: Colors.white.withOpacity(0.3), blurRadius: 4, spreadRadius: 1)],
               ),
               child: RichText(
                 text: TextSpan(
                   children: [
                     TextSpan(
                       text: '👺 ',
-                      style: TextStyle(
-                        fontSize: isSmallScreen ? 15.0 : 18.0,
-                        fontWeight: FontWeight.w900,
-                      ),
+                      style: TextStyle(fontSize: isSmallScreen ? 15.0 : 18.0, fontWeight: FontWeight.w900),
                     ),
                     TextSpan(
                       text: 'BREAKING',
@@ -635,10 +654,7 @@ class _GameResultsScreenState extends State<GameResultsScreen>
                     ),
                     TextSpan(
                       text: ' ',
-                      style: TextStyle(
-                        fontSize: isSmallScreen ? 15.0 : 18.0,
-                        fontWeight: FontWeight.w900,
-                      ),
+                      style: TextStyle(fontSize: isSmallScreen ? 15.0 : 18.0, fontWeight: FontWeight.w900),
                     ),
                     TextSpan(
                       text: 'NEWS',
@@ -648,17 +664,12 @@ class _GameResultsScreenState extends State<GameResultsScreen>
                         fontWeight: FontWeight.w900,
                         letterSpacing: 0.5,
                         shadows: [
-                          Shadow(
-                            color: Colors.white.withOpacity(0.8),
-                            blurRadius: 6,
-                            offset: const Offset(0, 0),
-                          ),
+                          Shadow(color: Colors.white.withOpacity(0.8), blurRadius: 6, offset: const Offset(0, 0)),
                         ],
                       ),
                     ),
                     TextSpan(
-                      text:
-                          ' -> El duende con un litte boy en la mano anuncia lo siguiente:',
+                      text: ' -> El duende con un litte boy en la mano anuncia lo siguiente:',
                       style: TextStyle(
                         color: const Color(0xFFCC0000), // Rojo CNN
                         fontSize: isSmallScreen ? 15.0 : 18.0,
@@ -674,20 +685,13 @@ class _GameResultsScreenState extends State<GameResultsScreen>
             ...messagesWithContent.map((entry) {
               final playerId = entry.key;
               final message = entry.value;
-              widget.players.firstWhere(
-                (p) => p.id == playerId,
-                orElse: () => widget.players.first,
-              );
+              widget.players.firstWhere((p) => p.id == playerId, orElse: () => widget.players.first);
 
               // Determinar si es racha de victorias o derrotas
               final isLossStreak = message.contains('rata asquerosa');
-              final backgroundColor = isLossStreak
-                  ? Colors.red.withOpacity(0.2)
-                  : Colors.orange.withOpacity(0.2);
+              final backgroundColor = isLossStreak ? Colors.red.withOpacity(0.2) : Colors.orange.withOpacity(0.2);
               final iconColor = isLossStreak ? Colors.red : Colors.orange;
-              final icon = isLossStreak
-                  ? Icons.cleaning_services
-                  : Icons.emoji_events;
+              final icon = isLossStreak ? Icons.cleaning_services : Icons.emoji_events;
 
               return Container(
                 margin: EdgeInsets.only(bottom: isSmallScreen ? 8 : 12),
@@ -732,12 +736,8 @@ class _GameResultsScreenState extends State<GameResultsScreen>
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: Color.lerp(
-                const Color(
-                  0xFF228B22,
-                ).withOpacity(0.4), // Verde oscuro de bosque
-                const Color(
-                  0xFF32CD32,
-                ).withOpacity(0.9), // Verde duende brillante
+                const Color(0xFF228B22).withOpacity(0.4), // Verde oscuro de bosque
+                const Color(0xFF32CD32).withOpacity(0.9), // Verde duende brillante
                 animationValue,
               )!,
               width: 2,
@@ -745,9 +745,7 @@ class _GameResultsScreenState extends State<GameResultsScreen>
             boxShadow: [
               BoxShadow(
                 color: Color.lerp(
-                  const Color(
-                    0xFF228B22,
-                  ).withOpacity(0.2), // Verde oscuro suave
+                  const Color(0xFF228B22).withOpacity(0.2), // Verde oscuro suave
                   const Color(0xFF32CD32).withOpacity(0.6), // Verde brillante
                   animationValue,
                 )!,
@@ -764,10 +762,7 @@ class _GameResultsScreenState extends State<GameResultsScreen>
                   children: [
                     TextSpan(
                       text: '👺 ',
-                      style: TextStyle(
-                        fontSize: isSmallScreen ? 15.0 : 18.0,
-                        fontWeight: FontWeight.w900,
-                      ),
+                      style: TextStyle(fontSize: isSmallScreen ? 15.0 : 18.0, fontWeight: FontWeight.w900),
                     ),
                     TextSpan(
                       text: 'BREAKING',
@@ -787,10 +782,7 @@ class _GameResultsScreenState extends State<GameResultsScreen>
                     ),
                     TextSpan(
                       text: ' ',
-                      style: TextStyle(
-                        fontSize: isSmallScreen ? 15.0 : 18.0,
-                        fontWeight: FontWeight.w900,
-                      ),
+                      style: TextStyle(fontSize: isSmallScreen ? 15.0 : 18.0, fontWeight: FontWeight.w900),
                     ),
                     TextSpan(
                       text: 'NEWS',
@@ -800,17 +792,12 @@ class _GameResultsScreenState extends State<GameResultsScreen>
                         fontWeight: FontWeight.w900,
                         letterSpacing: 0.5,
                         shadows: [
-                          Shadow(
-                            color: Colors.white.withOpacity(0.8),
-                            blurRadius: 6,
-                            offset: const Offset(0, 0),
-                          ),
+                          Shadow(color: Colors.white.withOpacity(0.8), blurRadius: 6, offset: const Offset(0, 0)),
                         ],
                       ),
                     ),
                     TextSpan(
-                      text:
-                          ' -> El duende con un litte boy en la mano anuncia lo siguiente:',
+                      text: ' -> El duende con un litte boy en la mano anuncia lo siguiente:',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: isSmallScreen ? 15.0 : 18.0,
@@ -825,20 +812,13 @@ class _GameResultsScreenState extends State<GameResultsScreen>
               ...messagesWithContent.map((entry) {
                 final playerId = entry.key;
                 final message = entry.value;
-                widget.players.firstWhere(
-                  (p) => p.id == playerId,
-                  orElse: () => widget.players.first,
-                );
+                widget.players.firstWhere((p) => p.id == playerId, orElse: () => widget.players.first);
 
                 // Determinar si es racha de victorias o derrotas
                 final isLossStreak = message.contains('rata asquerosa');
-                final backgroundColor = isLossStreak
-                    ? Colors.red.withOpacity(0.2)
-                    : Colors.orange.withOpacity(0.2);
+                final backgroundColor = isLossStreak ? Colors.red.withOpacity(0.2) : Colors.orange.withOpacity(0.2);
                 final iconColor = isLossStreak ? Colors.red : Colors.orange;
-                final icon = isLossStreak
-                    ? Icons.cleaning_services
-                    : Icons.emoji_events;
+                final icon = isLossStreak ? Icons.cleaning_services : Icons.emoji_events;
 
                 return Container(
                   margin: EdgeInsets.only(bottom: isSmallScreen ? 8 : 12),
@@ -850,11 +830,7 @@ class _GameResultsScreenState extends State<GameResultsScreen>
                   ),
                   child: Row(
                     children: [
-                      Icon(
-                        icon,
-                        color: iconColor,
-                        size: isSmallScreen ? 20 : 24,
-                      ),
+                      Icon(icon, color: iconColor, size: isSmallScreen ? 20 : 24),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
@@ -875,5 +851,83 @@ class _GameResultsScreenState extends State<GameResultsScreen>
         );
       },
     );
+  }
+
+  Widget _buildConfettiOverlay() {
+    return AnimatedBuilder(
+      animation: _confettiController,
+      builder: (context, _) {
+        final v = _confettiController.value;
+        // Solo ocultar cuando esté completamente en 0.0 O cuando haya terminado completamente
+        if (v == 0.0 || _confettiController.status == AnimationStatus.completed) {
+          // Si está completado, esperar un momento antes de ocultar para que termine el desvanecimiento
+          if (_confettiController.status == AnimationStatus.completed) {
+            Future.delayed(const Duration(milliseconds: 500), () {
+              if (mounted) {
+                _confettiController.reset();
+              }
+            });
+          }
+          return const SizedBox.shrink();
+        }
+        return Positioned.fill(
+          child: CustomPaint(
+            painter: _ConfettiPainter(progress: v),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _ConfettiPainter extends CustomPainter {
+  final double progress; // 0..1
+  _ConfettiPainter({required this.progress});
+
+  final List<Color> colors = const [
+    Color(0xFFFFD700),
+    Color(0xFF00C9FF),
+    Color(0xFF92FE9D),
+    Color(0xFFFF6B6B),
+    Color(0xFF7F5AF0),
+  ];
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rnd = math.Random(42);
+    final count = 80;
+    
+    // Desvanecimiento gradual en los últimos 2 segundos (0.6 a 1.0)
+    double globalOpacity = 1.0;
+    if (progress > 0.6) {
+      globalOpacity = 1.0 - ((progress - 0.6) / 0.4); // Se desvanece en los últimos 40%
+    }
+    
+    for (int i = 0; i < count; i++) {
+      // Las partículas siempre caen hacia abajo
+      final t = (i / count + progress * 0.7) % 1.0;
+      final x = rnd.nextDouble() * size.width;
+      final startY = -50.0 - rnd.nextDouble() * 200.0;
+      final y = startY + t * (size.height + 300.0);
+      final w = 4.0 + rnd.nextDouble() * 6.0;
+      final h = 6.0 + rnd.nextDouble() * 10.0;
+      final angle = rnd.nextDouble() * 3.1415;
+      
+      // Opacidad individual + opacidad global de desvanecimiento
+      final individualOpacity = 1.0 - (t * 0.2);
+      final finalOpacity = individualOpacity * globalOpacity;
+      
+      final paint = Paint()..color = colors[i % colors.length].withOpacity(finalOpacity);
+      canvas.save();
+      canvas.translate(x, y);
+      canvas.rotate(angle);
+      canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromLTWH(-w / 2, -h / 2, w, h), const Radius.circular(2)), paint);
+      canvas.restore();
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _ConfettiPainter oldDelegate) {
+    return oldDelegate.progress != progress;
   }
 }

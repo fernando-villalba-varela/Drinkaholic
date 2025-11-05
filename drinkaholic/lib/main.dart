@@ -2,6 +2,7 @@ import 'package:drinkaholic/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'ui/transitions/custom_page_transitions.dart';
 import 'viewmodels/league_list_viewmodel.dart';
 
 void main() async {
@@ -32,10 +33,20 @@ class MyApp extends StatelessWidget {
       splitScreenMode: true,
       builder: (context, child) {
         return MaterialApp(
-          title: 'Drinkaholic',
+          title: 'La Previa',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
+            pageTransitionsTheme: const PageTransitionsTheme(
+              builders: <TargetPlatform, PageTransitionsBuilder>{
+                TargetPlatform.android: FadeSlidePageTransitionsBuilder(),
+                TargetPlatform.iOS: FadeSlidePageTransitionsBuilder(),
+                TargetPlatform.macOS: FadeSlidePageTransitionsBuilder(),
+                TargetPlatform.linux: FadeSlidePageTransitionsBuilder(),
+                TargetPlatform.windows: FadeSlidePageTransitionsBuilder(),
+                TargetPlatform.fuchsia: FadeSlidePageTransitionsBuilder(),
+              },
+            ),
           ),
           home: const HomeScreen(),
         );

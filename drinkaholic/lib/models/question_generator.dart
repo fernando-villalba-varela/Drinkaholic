@@ -9,21 +9,14 @@ class QuestionTemplate {
   final Map<String, List<String>> variables;
   final String categoria;
 
-  QuestionTemplate({
-    required this.id,
-    required this.template,
-    required this.variables,
-    required this.categoria,
-  });
+  QuestionTemplate({required this.id, required this.template, required this.variables, required this.categoria});
 
   factory QuestionTemplate.fromJson(Map<String, dynamic> json) {
     return QuestionTemplate(
       id: json['id'],
       template: json['template'],
       variables: Map<String, List<String>>.from(
-        json['variables'].map(
-          (key, value) => MapEntry(key, List<String>.from(value)),
-        ),
+        json['variables'].map((key, value) => MapEntry(key, List<String>.from(value))),
       ),
       categoria: json['categoria'],
     );
@@ -35,11 +28,7 @@ class GeneratedQuestion {
   final String categoria;
   final Map<String, String> usedVariables;
 
-  GeneratedQuestion({
-    required this.question,
-    required this.categoria,
-    required this.usedVariables,
-  });
+  GeneratedQuestion({required this.question, required this.categoria, required this.usedVariables});
 
   // Getters
   String get getQuestion => question;
@@ -56,14 +45,10 @@ class QuestionGenerator {
     if (_templates != null) return;
 
     try {
-      final String jsonString = await rootBundle.loadString(
-        'assets/questions.json',
-      );
+      final String jsonString = await rootBundle.loadString('assets/questions.json');
       final Map<String, dynamic> jsonData = json.decode(jsonString);
 
-      _templates = (jsonData['templates'] as List)
-          .map((template) => QuestionTemplate.fromJson(template))
-          .toList();
+      _templates = (jsonData['templates'] as List).map((template) => QuestionTemplate.fromJson(template)).toList();
     } catch (e) {
       if (kDebugMode) {
         print('Error loading questions: $e');
@@ -100,9 +85,7 @@ class QuestionGenerator {
 
     // Filtrar templates que NO contengan la variable PLAYER ni variables duales
     final nonPlayerTemplates = _templates!.where((template) {
-      return !template.variables.values.any(
-            (values) => values.contains('PLAYER'),
-          ) &&
+      return !template.variables.values.any((values) => values.contains('PLAYER')) &&
           !(template.variables.containsKey('PLAYER1') &&
               template.variables.containsKey('PLAYER2') &&
               template.variables['PLAYER1']!.contains('DUAL_PLAYER1') &&
@@ -113,15 +96,12 @@ class QuestionGenerator {
       // Si todos los templates requieren PLAYER, usar uno cualquiera
       final template = _templates![_random.nextInt(_templates!.length)];
       if (kDebugMode) {
-        print(
-          'Generando pregunta de la categoría (fallback): ${template.template}',
-        );
+        print('Generando pregunta de la categoría (fallback): ${template.template}');
       }
       return _generateQuestionFromTemplate(template);
     }
 
-    final template =
-        nonPlayerTemplates[_random.nextInt(nonPlayerTemplates.length)];
+    final template = nonPlayerTemplates[_random.nextInt(nonPlayerTemplates.length)];
     if (kDebugMode) {
       print('Generando pregunta de la categoría: ${template.template}');
     }
@@ -129,9 +109,7 @@ class QuestionGenerator {
   }
 
   /// Generar una pregunta aleatoria con un jugador específico
-  static Future<GeneratedQuestion> generateRandomQuestionForPlayer(
-    String playerName,
-  ) async {
+  static Future<GeneratedQuestion> generateRandomQuestionForPlayer(String playerName) async {
     await loadTemplates();
 
     if (_templates == null || _templates!.isEmpty) {
@@ -144,9 +122,7 @@ class QuestionGenerator {
 
     // Filtrar solo templates que contengan la variable PLAYER (no dual)
     final playerTemplates = _templates!.where((template) {
-      return template.variables.values.any(
-            (values) => values.contains('PLAYER'),
-          ) &&
+      return template.variables.values.any((values) => values.contains('PLAYER')) &&
           !(template.variables.containsKey('PLAYER1') &&
               template.variables.containsKey('PLAYER2') &&
               template.variables['PLAYER1']!.contains('DUAL_PLAYER1') &&
@@ -164,10 +140,7 @@ class QuestionGenerator {
   }
 
   /// Generar una pregunta dual con dos jugadores específicos
-  static Future<GeneratedQuestion> generateRandomDualQuestion(
-    String player1Name,
-    String player2Name,
-  ) async {
+  static Future<GeneratedQuestion> generateRandomDualQuestion(String player1Name, String player2Name) async {
     await loadTemplates();
 
     if (_templates == null || _templates!.isEmpty) {
@@ -192,34 +165,24 @@ class QuestionGenerator {
     }
 
     final template = dualTemplates[_random.nextInt(dualTemplates.length)];
-    return _generateQuestionFromTemplate(
-      template,
-      playerName: player1Name,
-      dualPlayerName: player2Name,
-    );
+    return _generateQuestionFromTemplate(template, playerName: player1Name, dualPlayerName: player2Name);
   }
 
   /// Generar una pregunta de una categoría específica
-  static Future<GeneratedQuestion> generateQuestionByCategory(
-    String categoria, {
-    String? playerName,
-  }) async {
+  static Future<GeneratedQuestion> generateQuestionByCategory(String categoria, {String? playerName}) async {
     await loadTemplates();
 
     if (_templates == null || _templates!.isEmpty) {
       return generateRandomQuestion();
     }
 
-    final categoryTemplates = _templates!
-        .where((template) => template.categoria == categoria)
-        .toList();
+    final categoryTemplates = _templates!.where((template) => template.categoria == categoria).toList();
 
     if (categoryTemplates.isEmpty) {
       return generateRandomQuestion();
     }
 
-    final template =
-        categoryTemplates[_random.nextInt(categoryTemplates.length)];
+    final template = categoryTemplates[_random.nextInt(categoryTemplates.length)];
     return _generateQuestionFromTemplate(template, playerName: playerName);
   }
 
@@ -231,8 +194,7 @@ class QuestionGenerator {
       return [];
     }
 
-    return _templates!.map((template) => template.categoria).toSet().toList()
-      ..sort();
+    return _templates!.map((template) => template.categoria).toSet().toList()..sort();
   }
 
   /// Generar pregunta desde una plantilla específica
@@ -251,44 +213,31 @@ class QuestionGenerator {
         final drinkAmount = _generateDrinkAmount();
         question = question.replaceAll('{$variableName}', drinkAmount);
         usedVariables[variableName] = drinkAmount;
-      } else if (possibleValues.length == 1 &&
-          possibleValues[0] == 'PLAYER' &&
-          playerName != null) {
+      } else if (possibleValues.length == 1 && possibleValues[0] == 'PLAYER' && playerName != null) {
         // Para variables que solo contienen PLAYER, usar el nombre del jugador
         question = question.replaceAll('{$variableName}', playerName);
         usedVariables[variableName] = playerName;
-      } else if (possibleValues.length == 1 &&
-          possibleValues[0] == 'DUAL_PLAYER1' &&
-          playerName != null) {
+      } else if (possibleValues.length == 1 && possibleValues[0] == 'DUAL_PLAYER1' && playerName != null) {
         // Para DUAL_PLAYER1, usar el primer jugador
         question = question.replaceAll('{$variableName}', playerName);
         usedVariables[variableName] = playerName;
-      } else if (possibleValues.length == 1 &&
-          possibleValues[0] == 'DUAL_PLAYER2' &&
-          dualPlayerName != null) {
+      } else if (possibleValues.length == 1 && possibleValues[0] == 'DUAL_PLAYER2' && dualPlayerName != null) {
         // Para DUAL_PLAYER2, usar el segundo jugador
         question = question.replaceAll('{$variableName}', dualPlayerName);
         usedVariables[variableName] = dualPlayerName;
       } else {
         // Para otras variables, selección aleatoria normal
-        final selectedValue =
-            possibleValues[_random.nextInt(possibleValues.length)];
+        final selectedValue = possibleValues[_random.nextInt(possibleValues.length)];
         question = question.replaceAll('{$variableName}', selectedValue);
         usedVariables[variableName] = selectedValue;
       }
     });
 
-    return GeneratedQuestion(
-      question: question,
-      categoria: template.categoria,
-      usedVariables: usedVariables,
-    );
+    return GeneratedQuestion(question: question, categoria: template.categoria, usedVariables: usedVariables);
   }
 
   /// Generar múltiples preguntas únicas
-  static Future<List<GeneratedQuestion>> generateMultipleQuestions(
-    int count,
-  ) async {
+  static Future<List<GeneratedQuestion>> generateMultipleQuestions(int count) async {
     List<GeneratedQuestion> questions = [];
     Set<String> usedQuestions = {};
 

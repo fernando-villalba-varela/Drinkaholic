@@ -31,37 +31,32 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _viewModel = HomeViewModel();
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
-    );
+    _animationController = AnimationController(duration: const Duration(milliseconds: 800), vsync: this);
 
-    _scaleAnimation = Tween<double>(begin: 0.0, end: 1.5).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.5,
+    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
 
-    _opacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeIn),
-    );
+    _opacityAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeIn));
 
-    _iconMoveAnimation =
-        Tween<double>(
-          begin: 0.0,
-          end: -200.0, // Move upward for rocket launch
-        ).animate(
-          CurvedAnimation(
-            parent: _animationController,
-            curve: Curves.easeOutQuart,
-          ),
-        );
+    _iconMoveAnimation = Tween<double>(
+      begin: 0.0,
+      end: -200.0, // Move upward for rocket launch
+    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeOutQuart));
 
-    _iconScaleAnimation = Tween<double>(begin: 1.0, end: 2.5).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.elasticOut),
-    );
+    _iconScaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 2.5,
+    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.elasticOut));
 
-    _iconRotationAnimation = Tween<double>(begin: 0.0, end: 360.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
-    );
+    _iconRotationAnimation = Tween<double>(
+      begin: 0.0,
+      end: 360.0,
+    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
   }
 
   @override
@@ -116,21 +111,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   gradient: RadialGradient(
                     center: Alignment.topLeft,
                     radius: 1.5,
-                    colors: [
-                      Color(0xFF2D1B69),
-                      Color(0xFF11072C),
-                      Color(0xFF0D0221),
-                    ],
+                    colors: [Color(0xFF2D1B69), Color(0xFF11072C), Color(0xFF0D0221)],
                   ),
                 ),
               ),
               ...List.generate(
                 6,
-                (index) => FloatingParticle(
-                  screenWidth: screenWidth,
-                  screenHeight: screenHeight,
-                  index: index,
-                ),
+                (index) => FloatingParticle(screenWidth: screenWidth, screenHeight: screenHeight, index: index),
               ),
 
               SafeArea(
@@ -150,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               children: [
                                 // Outline stroke for readability
                                 Text(
-                                  'DRINKAHOLIC',
+                                  'LA PREVIA',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: min(screenWidth * 0.12, 88),
@@ -173,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   ).createShader(bounds),
                                   blendMode: BlendMode.srcIn,
                                   child: Text(
-                                    'DRINKAHOLIC',
+                                    'LA PREVIA',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: min(screenWidth * 0.12, 88),
@@ -191,11 +178,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                           blurRadius: 30,
                                           offset: const Offset(0, 0),
                                         ),
-                                        Shadow(
-                                          color: Colors.black54,
-                                          blurRadius: 8,
-                                          offset: const Offset(2, 2),
-                                        ),
+                                        Shadow(color: Colors.black54, blurRadius: 8, offset: const Offset(2, 2)),
                                       ],
                                     ),
                                   ),
@@ -205,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
                             SizedBox(height: 6.h),
                             Text(
-                              'A beber como los duendes',
+                              'Dios se apiade de nosotros',
                               style: TextStyle(
                                 fontSize: 14.sp,
                                 color: const Color(0xCCFFFFFF),
@@ -228,11 +211,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           children: [
                             Builder(
                               builder: (context) {
-                                final config = _viewModel
-                                    .getQuickGameButtonConfig(
-                                      context,
-                                      _startAnimatedNavigation,
-                                    );
+                                final config = _viewModel.getQuickGameButtonConfig(context, _startAnimatedNavigation);
                                 return ModernButton(
                                   onTap: config.onTap,
                                   text: config.text,
@@ -245,10 +224,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
                             Builder(
                               builder: (context) {
-                                final config = _viewModel.getLeagueButtonConfig(
-                                  context,
-                                  _startAnimatedNavigation,
-                                );
+                                final config = _viewModel.getLeagueButtonConfig(context, _startAnimatedNavigation);
                                 return ModernButton(
                                   onTap: config.onTap,
                                   text: config.text,
@@ -273,10 +249,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       child: Transform.scale(
                         scale: _scaleAnimation.value,
                         child: Container(
-                          decoration: BoxDecoration(
-                            gradient: _currentGradient,
-                            shape: BoxShape.circle,
-                          ),
+                          decoration: BoxDecoration(gradient: _currentGradient, shape: BoxShape.circle),
                           child: _scaleAnimation.value > 0.3
                               ? Stack(
                                   children: [
@@ -284,14 +257,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                       Center(
                                         child: AnimatedIconWidget(
                                           animatingIcon: _animatingIcon,
-                                          animationController:
-                                              _animationController,
+                                          animationController: _animationController,
                                           opacityAnimation: _opacityAnimation,
                                           iconMoveAnimation: _iconMoveAnimation,
-                                          iconScaleAnimation:
-                                              _iconScaleAnimation,
-                                          iconRotationAnimation:
-                                              _iconRotationAnimation,
+                                          iconScaleAnimation: _iconScaleAnimation,
+                                          iconRotationAnimation: _iconRotationAnimation,
                                         ),
                                       ),
                                     if (_scaleAnimation.value > 0.8)
@@ -299,20 +269,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                         opacity: _opacityAnimation,
                                         child: Center(
                                           child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
+                                            mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
                                               const SizedBox(height: 200),
                                               const CircularProgressIndicator(
-                                                valueColor:
-                                                    AlwaysStoppedAnimation<
-                                                      Color
-                                                    >(Colors.white),
+                                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                                                 strokeWidth: 3,
                                               ),
                                               const SizedBox(height: 24),
                                               Text(
-                                                'Iniciando $_animatingButtonText...',
+                                                '$_animatingButtonText...',
                                                 style: const TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 24,
@@ -341,34 +307,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   child: Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.red.shade600, Colors.red.shade800],
-                      ),
+                      gradient: LinearGradient(colors: [Colors.red.shade600, Colors.red.shade800]),
                       borderRadius: BorderRadius.circular(15),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0x4DF44336),
-                          blurRadius: 15,
-                          spreadRadius: 2,
-                        ),
-                      ],
+                      boxShadow: [BoxShadow(color: const Color(0x4DF44336), blurRadius: 15, spreadRadius: 2)],
                     ),
                     child: Row(
                       children: [
-                        const Icon(
-                          Icons.error_outline,
-                          color: Colors.white,
-                          size: 24,
-                        ),
+                        const Icon(Icons.error_outline, color: Colors.white, size: 24),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
                             _viewModel.errorMessage!,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                            ),
+                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 16),
                           ),
                         ),
                       ],

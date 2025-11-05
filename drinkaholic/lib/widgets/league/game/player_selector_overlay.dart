@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../models/player.dart';
+import '../../../ui/components/drinkaholic_button.dart';
 
 class PlayerSelectorOverlay extends StatefulWidget {
   final List<Player> players;
@@ -17,8 +18,7 @@ class PlayerSelectorOverlay extends StatefulWidget {
   State<PlayerSelectorOverlay> createState() => _PlayerSelectorOverlayState();
 }
 
-class _PlayerSelectorOverlayState extends State<PlayerSelectorOverlay>
-    with SingleTickerProviderStateMixin {
+class _PlayerSelectorOverlayState extends State<PlayerSelectorOverlay> with SingleTickerProviderStateMixin {
   final Set<int> _selectedPlayerIds = {};
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
@@ -27,18 +27,17 @@ class _PlayerSelectorOverlayState extends State<PlayerSelectorOverlay>
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
+    _animationController = AnimationController(duration: const Duration(milliseconds: 300), vsync: this);
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
-    );
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeOut));
 
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeOutBack),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeOutBack));
 
     _animationController.forward();
   }
@@ -90,9 +89,7 @@ class _PlayerSelectorOverlayState extends State<PlayerSelectorOverlay>
 
     // Calcular dimensiones adaptativas
     final maxWidth = isSmallScreen ? screenSize.width * 0.95 : 600.0;
-    final maxHeight = isLandscape
-        ? screenSize.height * 0.85
-        : (isSmallScreen ? screenSize.height * 0.75 : 500.0);
+    final maxHeight = isLandscape ? screenSize.height * 0.85 : (isSmallScreen ? screenSize.height * 0.75 : 500.0);
     final margin = isSmallScreen ? 12.0 : 24.0;
     final headerPadding = isSmallScreen ? 12.0 : 20.0;
     final iconSize = isSmallScreen ? 22.0 : 28.0;
@@ -102,7 +99,6 @@ class _PlayerSelectorOverlayState extends State<PlayerSelectorOverlay>
     final playerFontSize = isSmallScreen ? 15.0 : 18.0;
     final checkIconSize = isSmallScreen ? 24.0 : 28.0;
     final buttonPadding = isSmallScreen ? 12.0 : 16.0;
-    final buttonFontSize = isSmallScreen ? 14.0 : 16.0;
 
     return AnimatedBuilder(
       animation: _animationController,
@@ -113,9 +109,7 @@ class _PlayerSelectorOverlayState extends State<PlayerSelectorOverlay>
             Positioned.fill(
               child: GestureDetector(
                 onTap: _cancel,
-                child: Container(
-                  color: Colors.black.withOpacity(0.7 * _fadeAnimation.value),
-                ),
+                child: Container(color: Colors.black.withOpacity(0.7 * _fadeAnimation.value)),
               ),
             ),
             // Contenido
@@ -125,10 +119,7 @@ class _PlayerSelectorOverlayState extends State<PlayerSelectorOverlay>
                 child: Opacity(
                   opacity: _fadeAnimation.value,
                   child: Container(
-                    constraints: BoxConstraints(
-                      maxWidth: maxWidth,
-                      maxHeight: maxHeight,
-                    ),
+                    constraints: BoxConstraints(maxWidth: maxWidth, maxHeight: maxHeight),
                     margin: EdgeInsets.all(margin),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
@@ -137,13 +128,7 @@ class _PlayerSelectorOverlayState extends State<PlayerSelectorOverlay>
                         colors: [Color(0xFF1E1E2E), Color(0xFF2A2A3E)],
                       ),
                       borderRadius: BorderRadius.circular(24),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
-                          blurRadius: 20,
-                          spreadRadius: 5,
-                        ),
-                      ],
+                      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.3), blurRadius: 20, spreadRadius: 5)],
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -152,9 +137,7 @@ class _PlayerSelectorOverlayState extends State<PlayerSelectorOverlay>
                         Container(
                           padding: EdgeInsets.all(headerPadding),
                           decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [Color(0xFF00C9FF), Color(0xFF92FE9D)],
-                            ),
+                            gradient: LinearGradient(colors: [Color(0xFF00C9FF), Color(0xFF92FE9D)]),
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(24),
                               topRight: Radius.circular(24),
@@ -162,11 +145,7 @@ class _PlayerSelectorOverlayState extends State<PlayerSelectorOverlay>
                           ),
                           child: Row(
                             children: [
-                              Icon(
-                                Icons.people,
-                                color: Colors.white,
-                                size: iconSize,
-                              ),
+                              Icon(Icons.people, color: Colors.white, size: iconSize),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Text(
@@ -197,25 +176,17 @@ class _PlayerSelectorOverlayState extends State<PlayerSelectorOverlay>
                             itemCount: widget.players.length,
                             itemBuilder: (context, index) {
                               final player = widget.players[index];
-                              final isSelected = _selectedPlayerIds.contains(
-                                player.id,
-                              );
+                              final isSelected = _selectedPlayerIds.contains(player.id);
                               final img = _avatar(player);
 
                               return Card(
                                 elevation: 0,
-                                color: isSelected
-                                    ? const Color(0xFF00C9FF).withAlpha(0x4D)
-                                    : const Color(0xFF3A3A4E),
-                                margin: EdgeInsets.only(
-                                  bottom: isSmallScreen ? 8 : 12,
-                                ),
+                                color: isSelected ? const Color(0xFF00C9FF).withAlpha(0x4D) : const Color(0xFF3A3A4E),
+                                margin: EdgeInsets.only(bottom: isSmallScreen ? 8 : 12),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(16),
                                   side: BorderSide(
-                                    color: isSelected
-                                        ? const Color(0xFF00C9FF)
-                                        : Colors.transparent,
+                                    color: isSelected ? const Color(0xFF00C9FF) : Colors.transparent,
                                     width: 2,
                                   ),
                                 ),
@@ -234,46 +205,32 @@ class _PlayerSelectorOverlayState extends State<PlayerSelectorOverlay>
                                           backgroundImage: img,
                                           child: img == null
                                               ? Text(
-                                                  player.nombre.isNotEmpty
-                                                      ? player.nombre[0]
-                                                            .toUpperCase()
-                                                      : '?',
+                                                  player.nombre.isNotEmpty ? player.nombre[0].toUpperCase() : '?',
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.bold,
-                                                    fontSize:
-                                                        avatarRadius * 0.8,
+                                                    fontSize: avatarRadius * 0.8,
                                                   ),
                                                 )
                                               : null,
                                         ),
-                                        SizedBox(
-                                          width: isSmallScreen ? 12 : 16,
-                                        ),
+                                        SizedBox(width: isSmallScreen ? 12 : 16),
                                         Expanded(
                                           child: Text(
                                             player.nombre,
                                             style: TextStyle(
                                               color: Colors.white,
                                               fontSize: playerFontSize,
-                                              fontWeight: isSelected
-                                                  ? FontWeight.bold
-                                                  : FontWeight.w500,
+                                              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                                             ),
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
                                         if (isSelected)
-                                          Icon(
-                                            Icons.check_circle,
-                                            color: const Color(0xFF00C9FF),
-                                            size: checkIconSize,
-                                          )
+                                          Icon(Icons.check_circle, color: const Color(0xFF00C9FF), size: checkIconSize)
                                         else
                                           Icon(
                                             Icons.circle_outlined,
-                                            color: Colors.white.withOpacity(
-                                              0.3,
-                                            ),
+                                            color: Colors.white.withOpacity(0.3),
                                             size: checkIconSize,
                                           ),
                                       ],
@@ -290,60 +247,25 @@ class _PlayerSelectorOverlayState extends State<PlayerSelectorOverlay>
                           child: Row(
                             children: [
                               Expanded(
-                                child: OutlinedButton(
+                                child: DrinkaholicButton(
+                                  label: 'Cancelar',
                                   onPressed: _cancel,
-                                  style: OutlinedButton.styleFrom(
-                                    foregroundColor: Colors.white,
-                                    side: const BorderSide(
-                                      color: Colors.white54,
-                                    ),
-                                    padding: EdgeInsets.symmetric(
-                                      vertical: isSmallScreen ? 10 : 16,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'Cancelar',
-                                    style: TextStyle(
-                                      fontSize: buttonFontSize,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
+                                  variant: DrinkaholicButtonVariant.outline,
+                                  fullWidth: true,
+                                  height: isSmallScreen ? 40 : 48,
                                 ),
                               ),
                               const SizedBox(width: 12),
                               Expanded(
                                 flex: 2,
-                                child: ElevatedButton(
-                                  onPressed: _selectedPlayerIds.isEmpty
-                                      ? null
-                                      : _confirm,
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF00C9FF),
-                                    disabledBackgroundColor: const Color(
-                                      0xFF5A5A6E,
-                                    ),
-                                    foregroundColor: Colors.white,
-                                    padding: EdgeInsets.symmetric(
-                                      vertical: isSmallScreen ? 10 : 16,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    elevation: 4,
-                                  ),
-                                  child: Text(
-                                    _selectedPlayerIds.isEmpty
-                                        ? 'Selecciona jugadores'
-                                        : 'Confirmar (${_selectedPlayerIds.length})',
-                                    style: TextStyle(
-                                      fontSize: buttonFontSize,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
+                                child: DrinkaholicButton(
+                                  label: _selectedPlayerIds.isEmpty
+                                      ? 'Selecciona jugadores'
+                                      : 'Confirmar (${_selectedPlayerIds.length})',
+                                  onPressed: _selectedPlayerIds.isEmpty ? null : _confirm,
+                                  variant: DrinkaholicButtonVariant.primary,
+                                  fullWidth: true,
+                                  height: isSmallScreen ? 40 : 48,
                                 ),
                               ),
                             ],

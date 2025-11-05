@@ -60,19 +60,11 @@ class _PlayTabState extends State<PlayTab> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.sports_esports_outlined,
-              size: 64,
-              color: Colors.white54,
-            ),
+            Icon(Icons.sports_esports_outlined, size: 64, color: Colors.white54),
             SizedBox(height: 16),
             Text(
               'No hay jugadores',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: Colors.white),
             ),
             SizedBox(height: 8),
             Text(
@@ -103,9 +95,7 @@ class _PlayTabState extends State<PlayTab> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                   side: BorderSide(
-                    color: selected
-                        ? Theme.of(context).colorScheme.primary
-                        : const Color(0x40808080),
+                    color: selected ? Theme.of(context).colorScheme.primary : const Color(0x40808080),
                     width: 1.2,
                   ),
                 ),
@@ -113,22 +103,15 @@ class _PlayTabState extends State<PlayTab> {
                   borderRadius: BorderRadius.circular(16),
                   onTap: () => _toggle(p.playerId),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     child: Row(
                       children: [
                         CircleAvatar(
                           backgroundImage: img,
                           child: img == null
                               ? Text(
-                                  p.name.isNotEmpty
-                                      ? p.name[0].toUpperCase()
-                                      : '?',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  p.name.isNotEmpty ? p.name[0].toUpperCase() : '?',
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
                                 )
                               : null,
                         ),
@@ -138,16 +121,11 @@ class _PlayTabState extends State<PlayTab> {
                             p.name,
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
-                              color: selected
-                                  ? Theme.of(context).colorScheme.primary
-                                  : null,
+                              color: selected ? Theme.of(context).colorScheme.primary : null,
                             ),
                           ),
                         ),
-                        Checkbox.adaptive(
-                          value: selected,
-                          onChanged: (_) => _toggle(p.playerId),
-                        ),
+                        Checkbox.adaptive(value: selected, onChanged: (_) => _toggle(p.playerId)),
                       ],
                     ),
                   ),
@@ -176,13 +154,8 @@ class _PlayTabState extends State<PlayTab> {
                 foregroundColor: Colors.white,
                 disabledForegroundColor: Colors.white70,
                 padding: const EdgeInsets.symmetric(vertical: 14),
-                textStyle: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
+                textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                 elevation: 2,
               ),
               onPressed: (_selected.length >= 2 && players.length >= 2)
@@ -191,34 +164,29 @@ class _PlayTabState extends State<PlayTab> {
                       final tabController = DefaultTabController.of(context);
 
                       // Convertir los jugadores seleccionados de LeaguePlayerStats a Player
-                      final selectedPlayers = players
-                          .where((p) => _selected.contains(p.playerId))
-                          .map((leaguePlayer) {
-                            // Convertir avatarPath a File o mantener como asset
-                            File? imagen;
-                            String? avatar;
+                      final selectedPlayers = players.where((p) => _selected.contains(p.playerId)).map((leaguePlayer) {
+                        // Convertir avatarPath a File o mantener como asset
+                        File? imagen;
+                        String? avatar;
 
-                            if (leaguePlayer.avatarPath != null) {
-                              if (leaguePlayer.avatarPath!.startsWith(
-                                'assets/',
-                              )) {
-                                avatar = leaguePlayer.avatarPath;
-                              } else {
-                                final file = File(leaguePlayer.avatarPath!);
-                                if (file.existsSync()) {
-                                  imagen = file;
-                                }
-                              }
+                        if (leaguePlayer.avatarPath != null) {
+                          if (leaguePlayer.avatarPath!.startsWith('assets/')) {
+                            avatar = leaguePlayer.avatarPath;
+                          } else {
+                            final file = File(leaguePlayer.avatarPath!);
+                            if (file.existsSync()) {
+                              imagen = file;
                             }
+                          }
+                        }
 
-                            return Player(
-                              id: leaguePlayer.playerId,
-                              nombre: leaguePlayer.name,
-                              imagen: imagen,
-                              avatar: avatar,
-                            );
-                          })
-                          .toList();
+                        return Player(
+                          id: leaguePlayer.playerId,
+                          nombre: leaguePlayer.name,
+                          imagen: imagen,
+                          avatar: avatar,
+                        );
+                      }).toList();
 
                       // Navegar a LeagueGameScreen con los jugadores convertidos
                       // Generar número aleatorio entre 30 y 50 rondas
@@ -237,9 +205,7 @@ class _PlayTabState extends State<PlayTab> {
                               _isProcessingGameEnd = true;
 
                               // Procesar resultados y obtener mensajes de rachas
-                              final streakMessages = _saveGameResults(
-                                playerDrinks,
-                              );
+                              final streakMessages = _saveGameResults(playerDrinks);
 
                               // Navegar a GameResultsScreen con los mensajes de rachas
                               Navigator.push(
@@ -257,10 +223,9 @@ class _PlayTabState extends State<PlayTab> {
                                       Navigator.pop(context);
                                       // Cambiar a la pestaña del scoreboard usando el controlador capturado
                                       if (mounted) {
-                                        WidgetsBinding.instance
-                                            .addPostFrameCallback((_) {
-                                              tabController.animateTo(0);
-                                            });
+                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                          tabController.animateTo(0);
+                                        });
                                       }
                                       // Resetear el flag
                                       _isProcessingGameEnd = false;

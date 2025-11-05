@@ -50,8 +50,7 @@ class LeagueListViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  League? byId(String id) =>
-      _leagues.where((l) => l.id == id).cast<League?>().firstOrNull;
+  League? byId(String id) => _leagues.where((l) => l.id == id).cast<League?>().firstOrNull;
 
   // export simple
   String exportLeague(League l) => l.toJson().toString();
@@ -63,10 +62,7 @@ class LeagueListViewModel extends ChangeNotifier {
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: const Color(0xFF16363F),
-        title: const Text(
-          'Crear nueva liga',
-          style: TextStyle(color: Colors.white),
-        ),
+        title: const Text('Crear nueva liga', style: TextStyle(color: Colors.white)),
         content: TextField(
           controller: nameCtrl,
           style: const TextStyle(color: Colors.white),
@@ -74,9 +70,7 @@ class LeagueListViewModel extends ChangeNotifier {
           decoration: const InputDecoration(
             labelText: 'Nombre de la liga',
             labelStyle: TextStyle(color: Colors.tealAccent),
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.tealAccent),
-            ),
+            focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.tealAccent)),
           ),
           textInputAction: TextInputAction.done,
           onSubmitted: (_) => _submitCreateLeague(context, nameCtrl),
@@ -84,15 +78,10 @@ class LeagueListViewModel extends ChangeNotifier {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text(
-              'Cancelar',
-              style: TextStyle(color: Colors.white70),
-            ),
+            child: const Text('Cancelar', style: TextStyle(color: Colors.white70)),
           ),
           FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: Colors.tealAccent.shade700,
-            ),
+            style: FilledButton.styleFrom(backgroundColor: Colors.tealAccent.shade700),
             onPressed: () => _submitCreateLeague(context, nameCtrl),
             child: const Text('Aceptar'),
           ),
@@ -115,10 +104,7 @@ class LeagueListViewModel extends ChangeNotifier {
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: const Color(0xFF16363F),
-        title: const Text(
-          'Importar liga (JSON)',
-          style: TextStyle(color: Colors.white),
-        ),
+        title: const Text('Importar liga (JSON)', style: TextStyle(color: Colors.white)),
         content: TextField(
           controller: jsonCtrl,
           maxLines: 8,
@@ -132,15 +118,10 @@ class LeagueListViewModel extends ChangeNotifier {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text(
-              'Cancelar',
-              style: TextStyle(color: Colors.white70),
-            ),
+            child: const Text('Cancelar', style: TextStyle(color: Colors.white70)),
           ),
           FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: Colors.tealAccent.shade700,
-            ),
+            style: FilledButton.styleFrom(backgroundColor: Colors.tealAccent.shade700),
             onPressed: () {
               final raw = jsonCtrl.text.trim();
               if (raw.isNotEmpty) {

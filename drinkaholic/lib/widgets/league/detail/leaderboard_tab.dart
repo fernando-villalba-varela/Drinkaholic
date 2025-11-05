@@ -36,11 +36,7 @@ class LeaderboardTab extends StatelessWidget {
             SizedBox(height: 16),
             Text(
               'No hay jugadores',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: Colors.white),
             ),
             SizedBox(height: 8),
             Text(
@@ -59,12 +55,12 @@ class LeaderboardTab extends StatelessWidget {
         final p = players[i];
         final img = _avatar(p.avatarPath);
         final pos = i + 1;
+        final league = vm.league;
+        final isMvpStreak = league.currentMvpStreak == p.playerId && league.mvpStreakCount >= 2;
+        final isRatitaStreak = league.currentRatitaStreak == p.playerId && league.ratitaStreakCount >= 2;
 
         return ListTile(
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 12,
-            vertical: 4,
-          ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           leading: SizedBox(
             width: 84,
             child: Row(
@@ -72,10 +68,7 @@ class LeaderboardTab extends StatelessWidget {
               children: [
                 Text(
                   '#$pos',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    color: pos == 1 ? Colors.amber : Colors.black,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.w700, color: pos == 1 ? Colors.amber : Colors.black),
                 ),
                 const SizedBox(width: 8),
                 Stack(
@@ -86,9 +79,7 @@ class LeaderboardTab extends StatelessWidget {
                       child: img == null
                           ? Text(
                               p.name.isNotEmpty ? p.name[0].toUpperCase() : '?',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: const TextStyle(fontWeight: FontWeight.bold),
                             )
                           : null,
                     ),
@@ -102,13 +93,7 @@ class LeaderboardTab extends StatelessWidget {
                             '👑',
                             style: TextStyle(
                               fontSize: 24,
-                              shadows: const [
-                                Shadow(
-                                  color: Colors.black45,
-                                  blurRadius: 4,
-                                  offset: Offset(0, 2),
-                                ),
-                              ],
+                              shadows: const [Shadow(color: Colors.black45, blurRadius: 4, offset: Offset(0, 2))],
                             ),
                           ),
                         ),
@@ -123,13 +108,7 @@ class LeaderboardTab extends StatelessWidget {
                             '🐭',
                             style: TextStyle(
                               fontSize: 20,
-                              shadows: const [
-                                Shadow(
-                                  color: Colors.black45,
-                                  blurRadius: 4,
-                                  offset: Offset(0, 2),
-                                ),
-                              ],
+                              shadows: const [Shadow(color: Colors.black45, blurRadius: 4, offset: Offset(0, 2))],
                             ),
                           ),
                         ),
@@ -139,7 +118,21 @@ class LeaderboardTab extends StatelessWidget {
               ],
             ),
           ),
-          title: Text(p.name),
+          title: Row(
+            children: [
+              Expanded(child: Text(p.name)),
+              if (isMvpStreak)
+                Padding(
+                  padding: const EdgeInsets.only(left: 6),
+                  child: Text('🔥${league.mvpStreakCount}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+                ),
+              if (isRatitaStreak)
+                Padding(
+                  padding: const EdgeInsets.only(left: 6),
+                  child: Text('💩${league.ratitaStreakCount}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+                ),
+            ],
+          ),
           subtitle: Text(
             'MVDP: ${p.mvdpCount} | Tragos: ${p.totalDrinks} | Ratita: ${p.ratitaCount} | Partidas: ${p.gamesPlayed}',
           ),
@@ -148,16 +141,18 @@ class LeaderboardTab extends StatelessWidget {
             decoration: BoxDecoration(
               color: theme.colorScheme.primary.withAlpha(0x14),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: theme.colorScheme.primary.withAlpha(0x59),
-              ),
+              border: Border.all(color: theme.colorScheme.primary.withAlpha(0x59)),
             ),
-            child: Text(
-              '${p.points} pts',
-              style: const TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.w700,
-              ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '${p.points} pts',
+                  style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w700),
+                ),
+                // Quitamos las coronas y ratitas adicionales de los puntos
+                // Solo se muestran el fuego y caca en el nombre
+              ],
             ),
           ),
         );

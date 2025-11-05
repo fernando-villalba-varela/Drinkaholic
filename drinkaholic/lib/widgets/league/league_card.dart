@@ -68,17 +68,10 @@ class LeagueCard extends StatelessWidget {
                   ),
                 );
               },
-              splashColor: const Color(
-                0x40009688,
-              ), // tealAccent with 25% opacity
-              highlightColor: const Color(
-                0x14009688,
-              ), // tealAccent with 8% opacity
+              splashColor: const Color(0x40009688), // tealAccent with 25% opacity
+              highlightColor: const Color(0x14009688), // tealAccent with 8% opacity
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 18,
-                  vertical: 14,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
                 child: Row(
                   children: [
                     AvatarBadge(text: league.name),
@@ -100,11 +93,7 @@ class LeagueCard extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 6),
-                          Row(
-                            children: [
-                              ParticipantsPill(count: league.players.length),
-                            ],
-                          ),
+                          Row(children: [ParticipantsPill(count: league.players.length)]),
                         ],
                       ),
                     ),
@@ -148,11 +137,7 @@ class AvatarBadge extends StatelessWidget {
       alignment: Alignment.center,
       child: Text(
         text.isNotEmpty ? text[0].toUpperCase() : '?',
-        style: const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-          fontSize: 22,
-        ),
+        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 22),
       ),
     );
   }
@@ -179,14 +164,7 @@ class ParticipantsPill extends StatelessWidget {
         children: [
           const Icon(Icons.group, size: 14, color: Colors.tealAccent),
           const SizedBox(width: 4),
-          Text(
-            '$count participantes',
-            style: const TextStyle(
-              color: Colors.white70,
-              fontSize: 12,
-              letterSpacing: .2,
-            ),
-          ),
+          Text('$count participantes', style: const TextStyle(color: Colors.white70, fontSize: 12, letterSpacing: .2)),
         ],
       ),
     );

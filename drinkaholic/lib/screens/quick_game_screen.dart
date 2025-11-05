@@ -10,6 +10,7 @@ import '../models/constant_challenge_generator.dart';
 import '../models/event.dart';
 import '../models/event_generator.dart';
 import '../widgets/quick_game_widgets.dart'; // Añade este import arriba
+import '../widgets/common/animated_background.dart';
 
 class QuickGameScreen extends StatefulWidget {
   final List<Player> players;
@@ -20,29 +21,31 @@ class QuickGameScreen extends StatefulWidget {
   State<QuickGameScreen> createState() => _QuickGameScreenState();
 }
 
-class _QuickGameScreenState extends State<QuickGameScreen>
-    with TickerProviderStateMixin {
+class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderStateMixin {
   late AnimationController _cardAnimationController;
   late AnimationController _glowAnimationController;
   late AnimationController _tapAnimationController;
-  late AnimationController _backgroundAnimationController;
   late AnimationController _rippleAnimationController;
   late AnimationController _pulseAnimationController;
 
   late Animation<double> _glowAnimation;
   late Animation<double> _tapAnimation;
-  late Animation<double> _backgroundAnimation;
   late Animation<double> _rippleAnimation;
 
   final List<Offset> _ripplePositions = [];
   final List<double> _rippleOpacities = [];
 
+  // Mutable players list to allow mid-game edits
+  late List<Player> _players;
+
   int _currentPlayerIndex = -1; // Start with no player selected
   int? _dualPlayerIndex; // Second player for dual challenges
   String _currentChallenge = '';
   bool _gameStarted = false;
-  final Map<int, int> _playerWeights =
-      {}; // Track how many times each player has been selected
+  // Track how many times each player has been selected, keyed by playerId
+  final Map<int, int> _playerWeights = {};
+  // Track already used questions to avoid repeats within this game session
+  final Set<String> _usedQuestions = <String>{};
   int _currentRound = 1;
   List<ConstantChallenge> _constantChallenges = [];
   ConstantChallengeEnd? _currentChallengeEnd;
@@ -54,73 +57,42 @@ class _QuickGameScreenState extends State<QuickGameScreen>
     super.initState();
 
     // Force landscape orientation
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-    ]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
 
-    _cardAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 600),
-      vsync: this,
-    );
+    // Initialize local players list
+    _players = List<Player>.from(widget.players);
 
-    _glowAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
-      vsync: this,
-    );
+    _cardAnimationController = AnimationController(duration: const Duration(milliseconds: 600), vsync: this);
 
-    _tapAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 200),
-      vsync: this,
-    );
+    _glowAnimationController = AnimationController(duration: const Duration(milliseconds: 1500), vsync: this);
 
-    _backgroundAnimationController = AnimationController(
-      duration: const Duration(seconds: 20),
-      vsync: this,
-    );
+    _tapAnimationController = AnimationController(duration: const Duration(milliseconds: 200), vsync: this);
 
-    _rippleAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
-    );
+    _rippleAnimationController = AnimationController(duration: const Duration(milliseconds: 800), vsync: this);
 
-    _pulseAnimationController = AnimationController(
-      duration: const Duration(milliseconds: 1200),
-      vsync: this,
-    );
+    _pulseAnimationController = AnimationController(duration: const Duration(milliseconds: 1200), vsync: this);
 
-    _glowAnimation = Tween<double>(begin: 0.3, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _glowAnimationController,
-        curve: Curves.easeInOut,
-      ),
-    );
+    _glowAnimation = Tween<double>(
+      begin: 0.3,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _glowAnimationController, curve: Curves.easeInOut));
 
-    _tapAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
-      CurvedAnimation(parent: _tapAnimationController, curve: Curves.easeInOut),
-    );
+    _tapAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.95,
+    ).animate(CurvedAnimation(parent: _tapAnimationController, curve: Curves.easeInOut));
 
-    _backgroundAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _backgroundAnimationController,
-        curve: Curves.linear,
-      ),
-    );
-
-    _rippleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _rippleAnimationController,
-        curve: Curves.easeOut,
-      ),
-    );
+    _rippleAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _rippleAnimationController, curve: Curves.easeOut));
 
     _glowAnimationController.repeat(reverse: true);
-    _backgroundAnimationController.repeat();
     _pulseAnimationController.repeat(reverse: true);
 
-    // Initialize player weights (all start at 0)
-    for (int i = 0; i < widget.players.length; i++) {
-      _playerWeights[i] = 0;
+    // Initialize player weights (all start at 0) keyed by playerId
+    for (final p in _players) {
+      _playerWeights[p.id] = 0;
     }
 
     _initializeFirstChallenge();
@@ -129,14 +101,10 @@ class _QuickGameScreenState extends State<QuickGameScreen>
   @override
   void dispose() {
     // Restore portrait orientation when leaving
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     _cardAnimationController.dispose();
     _glowAnimationController.dispose();
     _tapAnimationController.dispose();
-    _backgroundAnimationController.dispose();
     _rippleAnimationController.dispose();
     _pulseAnimationController.dispose();
     super.dispose();
@@ -144,14 +112,19 @@ class _QuickGameScreenState extends State<QuickGameScreen>
 
   Future<void> _generateNewChallenge() async {
     // Generar pregunta (30% probabilidad de ser genérica con jugador específico)
-    if (Random().nextDouble() < 0.3 && widget.players.isNotEmpty) {
+    if (Random().nextDouble() < 0.3 && _players.isNotEmpty) {
       // Seleccionar un jugador aleatorio para la pregunta genérica
-      final selectedPlayerIndex = Random().nextInt(widget.players.length);
-      final selectedPlayer = widget.players[selectedPlayerIndex];
+      final selectedPlayerIndex = Random().nextInt(_players.length);
+      final selectedPlayer = _players[selectedPlayerIndex];
 
-      final question = await QuestionGenerator.generateRandomQuestionForPlayer(
-        selectedPlayer.nombre,
-      );
+      // Intentar generar una pregunta única evitando repetidas
+      var attempts = 0;
+      GeneratedQuestion question;
+      do {
+        question = await QuestionGenerator.generateRandomQuestionForPlayer(selectedPlayer.nombre);
+        attempts++;
+      } while (_usedQuestions.contains(question.question) && attempts < 30);
+      _usedQuestions.add(question.question);
 
       setState(() {
         _currentChallenge = question.question;
@@ -159,7 +132,14 @@ class _QuickGameScreenState extends State<QuickGameScreen>
       });
     } else {
       // Pregunta normal (sin jugador específico, se asignará después)
-      final question = await QuestionGenerator.generateRandomQuestion();
+      var attempts = 0;
+      GeneratedQuestion question;
+      do {
+        question = await QuestionGenerator.generateRandomQuestion();
+        attempts++;
+      } while (_usedQuestions.contains(question.question) && attempts < 30);
+      _usedQuestions.add(question.question);
+
       setState(() {
         _currentChallenge = question.question;
         _currentPlayerIndex = -1; // Marcar que no hay jugador asignado aún
@@ -172,9 +152,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
 
     // Solo selecciona jugador si el reto NO es para todos Y no es una pregunta genérica ya asignada Y no es un reto dual
     final gameState = _createGameState();
-    if (!gameState.isChallengeForAll &&
-        !_isGenericPlayerQuestion() &&
-        !gameState.isDualChallenge) {
+    if (!gameState.isChallengeForAll && !_isGenericPlayerQuestion() && !gameState.isDualChallenge) {
       _selectWeightedRandomPlayer();
     } else if (gameState.isChallengeForAll) {
       // Para desafíos que son para todos, mantener _currentPlayerIndex en -1
@@ -225,45 +203,49 @@ class _QuickGameScreenState extends State<QuickGameScreen>
     // Una pregunta genérica es aquella donde ya se asignó un jugador específico
     // y el _currentPlayerIndex es válido (no -1)
     return _currentPlayerIndex >= 0 &&
-        _currentPlayerIndex < widget.players.length &&
-        (_currentChallenge.contains(
-              '${widget.players[_currentPlayerIndex].nombre} bebe',
-            ) ||
-            _currentChallenge.contains(
-              '${widget.players[_currentPlayerIndex].nombre} reparte',
-            ));
+        _currentPlayerIndex < _players.length &&
+        (_currentChallenge.contains('${_players[_currentPlayerIndex].nombre} bebe') ||
+            _currentChallenge.contains('${_players[_currentPlayerIndex].nombre} reparte'));
   }
 
   void _selectWeightedRandomPlayer() {
     // Find the minimum weight (players who have been selected least)
-    int minWeight = _playerWeights.values.reduce((a, b) => a < b ? a : b);
+    final minWeight = _playerWeights.values.isEmpty ? 0 : _playerWeights.values.reduce((a, b) => a < b ? a : b);
 
-    // Create a list of players with minimum weight (most eligible)
-    List<int> eligiblePlayers = [];
-    _playerWeights.forEach((playerIndex, weight) {
-      if (weight == minWeight) {
-        eligiblePlayers.add(playerIndex);
-      }
-    });
-
-    // If all players have been selected equally, include players with minWeight + 1
-    if (eligiblePlayers.length < widget.players.length ~/ 2) {
-      _playerWeights.forEach((playerIndex, weight) {
-        if (weight == minWeight + 1 && !eligiblePlayers.contains(playerIndex)) {
-          eligiblePlayers.add(playerIndex);
-        }
-      });
+    // Build list of eligible indices based on playerId weights
+    final List<int> eligibleIndices = [];
+    for (int i = 0; i < _players.length; i++) {
+      final id = _players[i].id;
+      final w = _playerWeights[id] ?? 0;
+      if (w == minWeight) eligibleIndices.add(i);
     }
 
-    // Randomly select from eligible players
-    int selectedPlayer =
-        eligiblePlayers[Random().nextInt(eligiblePlayers.length)];
+    // If not enough, include players with minWeight + 1
+    if (eligibleIndices.length < (_players.length ~/ 2)) {
+      for (int i = 0; i < _players.length; i++) {
+        if (!eligibleIndices.contains(i)) {
+          final id = _players[i].id;
+          final w = _playerWeights[id] ?? 0;
+          if (w == minWeight + 1) eligibleIndices.add(i);
+        }
+      }
+    }
+
+    if (eligibleIndices.isEmpty) {
+      // fallback to any player
+      for (int i = 0; i < _players.length; i++) {
+        eligibleIndices.add(i);
+      }
+    }
+
+    // Randomly select from eligible indices
+    final selectedIndex = eligibleIndices[Random().nextInt(eligibleIndices.length)];
 
     setState(() {
-      _currentPlayerIndex = selectedPlayer;
-      // Increment the weight for the selected player
-      _playerWeights[selectedPlayer] =
-          (_playerWeights[selectedPlayer] ?? 0) + 1;
+      _currentPlayerIndex = selectedIndex;
+      // Increment the weight for the selected playerId
+      final pid = _players[selectedIndex].id;
+      _playerWeights[pid] = (_playerWeights[pid] ?? 0) + 1;
     });
   }
 
@@ -287,17 +269,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
   }
 
   Widget _buildAnimatedBackground() {
-    return Positioned.fill(
-      child: AnimatedBuilder(
-        animation: _backgroundAnimation,
-        builder: (context, child) {
-          return CustomPaint(
-            painter: FloatingShapesPainter(_backgroundAnimation.value),
-            child: Container(),
-          );
-        },
-      ),
-    );
+    return const AnimatedBackground();
   }
 
   Widget _buildRippleEffects() {
@@ -310,9 +282,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
           children: _ripplePositions.asMap().entries.map((entry) {
             final index = entry.key;
             final position = entry.value;
-            final opacity = _rippleOpacities.length > index
-                ? _rippleOpacities[index]
-                : 0.0;
+            final opacity = _rippleOpacities.length > index ? _rippleOpacities[index] : 0.0;
             final animationValue = _rippleAnimation.value;
             final size = 150.0 * animationValue;
 
@@ -324,12 +294,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
                 height: size,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.white.withOpacity(
-                      opacity * (1 - animationValue) * 0.6,
-                    ),
-                    width: 3,
-                  ),
+                  border: Border.all(color: Colors.white.withOpacity(opacity * (1 - animationValue) * 0.6), width: 3),
                 ),
               ),
             );
@@ -339,11 +304,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
     );
   }
 
-  Widget _buildFloatingParticle(
-    double screenWidth,
-    double screenHeight,
-    int index,
-  ) {
+  Widget _buildFloatingParticle(double screenWidth, double screenHeight, int index) {
     final random = (index * 1234) % 1000;
     final size = 4.0 + (random % 8);
     final left = (random * 0.7) % screenWidth;
@@ -370,13 +331,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.6),
                   shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.white.withOpacity(0.3),
-                      blurRadius: 4,
-                      spreadRadius: 1,
-                    ),
-                  ],
+                  boxShadow: [BoxShadow(color: Colors.white.withOpacity(0.3), blurRadius: 4, spreadRadius: 1)],
                 ),
               ),
             ),
@@ -418,23 +373,16 @@ class _QuickGameScreenState extends State<QuickGameScreen>
 
     // 5. Verificar si debemos generar un nuevo evento (prioridad alta)
     final gameState = _createGameState();
-    if (gameState.canHaveEvents &&
-        EventGenerator.shouldGenerateEvent(
-          _currentRound,
-          gameState.activeEvents,
-        )) {
+    if (gameState.canHaveEvents && EventGenerator.shouldGenerateEvent(_currentRound, gameState.activeEvents)) {
       await _generateNewEvent();
       return;
     }
 
     // 6. Verificar si debemos generar un nuevo reto constante (incluyendo duales)
     if (gameState.canHaveConstantChallenges &&
-        ConstantChallengeGenerator.shouldGenerateConstantChallenge(
-          _currentRound,
-          gameState.activeChallenges,
-        )) {
+        ConstantChallengeGenerator.shouldGenerateConstantChallenge(_currentRound, gameState.activeChallenges)) {
       // 20% probabilidad de reto constante dual si hay suficientes jugadores
-      if (widget.players.length >= 2 && math.Random().nextDouble() < 0.2) {
+      if (_players.length >= 2 && math.Random().nextDouble() < 0.2) {
         await _generateNewDualConstantChallenge();
       } else {
         await _generateNewConstantChallenge();
@@ -444,7 +392,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
 
     // 7. Si no hay eventos ni retos constantes, generar un reto normal (incluyendo duales)
     // 15% probabilidad de challenge dual si hay suficientes jugadores
-    if (widget.players.length >= 2 && math.Random().nextDouble() < 0.15) {
+    if (_players.length >= 2 && math.Random().nextDouble() < 0.15) {
       await _generateNewDualChallenge();
     } else {
       await _generateNewChallenge();
@@ -452,9 +400,7 @@ class _QuickGameScreenState extends State<QuickGameScreen>
 
     // 8. Solo selecciona jugador si el reto NO es para todos Y no es una pregunta genérica ya asignada Y no es un reto dual
     final gameState2 = _createGameState();
-    if (!gameState2.isChallengeForAll &&
-        !_isGenericPlayerQuestion() &&
-        !gameState2.isDualChallenge) {
+    if (!gameState2.isChallengeForAll && !_isGenericPlayerQuestion() && !gameState2.isDualChallenge) {
       _selectWeightedRandomPlayer();
     } else if (gameState2.isChallengeForAll) {
       setState(() {
@@ -466,36 +412,24 @@ class _QuickGameScreenState extends State<QuickGameScreen>
   }
 
   Future<void> _checkForConstantChallengeEnding() async {
-    final activeChallenges = _constantChallenges
-        .where((c) => c.isActiveAtRound(_currentRound))
-        .toList();
+    final activeChallenges = _constantChallenges.where((c) => c.isActiveAtRound(_currentRound)).toList();
 
     for (final challenge in activeChallenges) {
-      if (ConstantChallengeGenerator.shouldEndConstantChallenge(
-        challenge,
-        _currentRound,
-      )) {
-        final challengeEnd = ConstantChallengeGenerator.generateChallengeEnd(
-          challenge,
-          _currentRound,
-        );
+      if (ConstantChallengeGenerator.shouldEndConstantChallenge(challenge, _currentRound)) {
+        final challengeEnd = ConstantChallengeGenerator.generateChallengeEnd(challenge, _currentRound);
 
         setState(() {
           // Marcar el reto como terminado
           _constantChallenges = _constantChallenges.map((c) {
             if (c.id == challenge.id) {
-              return c.copyWith(
-                status: ConstantChallengeStatus.ended,
-                endRound: _currentRound,
-              );
+              return c.copyWith(status: ConstantChallengeStatus.ended, endRound: _currentRound);
             }
             return c;
           }).toList();
 
           _currentChallengeEnd = challengeEnd;
           _currentChallenge = challengeEnd.endDescription;
-          _currentPlayerIndex =
-              -1; // No hay jugador específico para este tipo de mensaje
+          _currentPlayerIndex = -1; // No hay jugador específico para este tipo de mensaje
         });
 
         return; // Solo terminamos un reto por ronda
@@ -504,13 +438,10 @@ class _QuickGameScreenState extends State<QuickGameScreen>
   }
 
   Future<void> _generateNewConstantChallenge() async {
-    final eligiblePlayer =
-        ConstantChallengeGenerator.selectPlayerForNewChallenge(
-          widget.players,
-          _constantChallenges
-              .where((c) => c.isActiveAtRound(_currentRound))
-              .toList(),
-        );
+    final eligiblePlayer = ConstantChallengeGenerator.selectPlayerForNewChallenge(
+      _players,
+      _constantChallenges.where((c) => c.isActiveAtRound(_currentRound)).toList(),
+    );
 
     if (eligiblePlayer == null) {
       // No hay jugadores elegibles, generar reto normal en su lugar
@@ -518,25 +449,20 @@ class _QuickGameScreenState extends State<QuickGameScreen>
       return;
     }
 
-    final constantChallenge =
-        await ConstantChallengeGenerator.generateRandomConstantChallenge(
-          eligiblePlayer,
-          _currentRound,
-        );
+    final constantChallenge = await ConstantChallengeGenerator.generateRandomConstantChallenge(
+      eligiblePlayer,
+      _currentRound,
+    );
 
     setState(() {
       _constantChallenges.add(constantChallenge);
       _currentChallenge = constantChallenge.description;
-      _currentPlayerIndex = widget.players.indexWhere(
-        (p) => p.id == eligiblePlayer.id,
-      );
+      _currentPlayerIndex = _players.indexWhere((p) => p.id == eligiblePlayer.id);
     });
   }
 
   Future<void> _checkForEventEnding() async {
-    final activeEvents = _events
-        .where((e) => e.isActiveAtRound(_currentRound))
-        .toList();
+    final activeEvents = _events.where((e) => e.isActiveAtRound(_currentRound)).toList();
 
     for (final event in activeEvents) {
       if (EventGenerator.shouldEndEvent(event, _currentRound)) {
@@ -546,18 +472,14 @@ class _QuickGameScreenState extends State<QuickGameScreen>
           // Marcar el evento como terminado
           _events = _events.map((e) {
             if (e.id == event.id) {
-              return e.copyWith(
-                status: EventStatus.ended,
-                endRound: _currentRound,
-              );
+              return e.copyWith(status: EventStatus.ended, endRound: _currentRound);
             }
             return e;
           }).toList();
 
           _currentEventEnd = eventEnd;
           _currentChallenge = eventEnd.endDescription;
-          _currentPlayerIndex =
-              -1; // Eventos son globales, no hay jugador específico
+          _currentPlayerIndex = -1; // Eventos son globales, no hay jugador específico
         });
 
         return; // Solo terminamos un evento por ronda
@@ -570,10 +492,8 @@ class _QuickGameScreenState extends State<QuickGameScreen>
 
     setState(() {
       _events.add(event);
-      _currentChallenge =
-          '${event.typeIcon} ${event.title}: ${event.description}';
-      _currentPlayerIndex =
-          -1; // Eventos son globales, no hay jugador específico
+      _currentChallenge = '${event.typeIcon} ${event.title}: ${event.description}';
+      _currentPlayerIndex = -1; // Eventos son globales, no hay jugador específico
     });
   }
 
@@ -589,24 +509,28 @@ class _QuickGameScreenState extends State<QuickGameScreen>
     final player1 = selectedPlayers[0];
     final player2 = selectedPlayers[1];
 
-    final question = await QuestionGenerator.generateRandomDualQuestion(
-      player1.nombre,
-      player2.nombre,
-    );
+    // Intentar generar una pregunta dual única evitando repetidas
+    var attempts = 0;
+    GeneratedQuestion question;
+    do {
+      question = await QuestionGenerator.generateRandomDualQuestion(player1.nombre, player2.nombre);
+      attempts++;
+    } while (_usedQuestions.contains(question.question) && attempts < 30);
+    _usedQuestions.add(question.question);
 
-    final player1Index = widget.players.indexOf(player1);
-    final player2Index = widget.players.indexOf(player2);
+    final player1Index = _players.indexOf(player1);
+    final player2Index = _players.indexOf(player2);
 
     setState(() {
       _currentChallenge = question.question;
       _currentPlayerIndex = player1Index;
       _dualPlayerIndex = player2Index;
 
-      // Incrementar pesos para ambos jugadores
-      _playerWeights[_currentPlayerIndex] =
-          (_playerWeights[_currentPlayerIndex] ?? 0) + 1;
-      _playerWeights[_dualPlayerIndex!] =
-          (_playerWeights[_dualPlayerIndex!] ?? 0) + 1;
+      // Incrementar pesos para ambos jugadores por playerId
+      final id1 = _players[_currentPlayerIndex].id;
+      final id2 = _players[_dualPlayerIndex!].id;
+      _playerWeights[id1] = (_playerWeights[id1] ?? 0) + 1;
+      _playerWeights[id2] = (_playerWeights[id2] ?? 0) + 1;
     });
   }
 
@@ -622,44 +546,40 @@ class _QuickGameScreenState extends State<QuickGameScreen>
     final player1 = selectedPlayers[0];
     final player2 = selectedPlayers[1];
 
-    final constantChallenge =
-        await ConstantChallengeGenerator.generateRandomDualConstantChallenge(
-          player1,
-          player2,
-          _currentRound,
-        );
+    final constantChallenge = await ConstantChallengeGenerator.generateRandomDualConstantChallenge(
+      player1,
+      player2,
+      _currentRound,
+    );
 
     setState(() {
       _constantChallenges.add(constantChallenge);
       _currentChallenge = constantChallenge.description;
-      _currentPlayerIndex = widget.players.indexOf(player1);
-      _dualPlayerIndex = widget.players.indexOf(player2);
+      _currentPlayerIndex = _players.indexOf(player1);
+      _dualPlayerIndex = _players.indexOf(player2);
     });
   }
 
   List<Player> _selectTwoRandomPlayers() {
-    if (widget.players.length < 2) return [];
+    if (_players.length < 2) return [];
 
     // Crear una lista de jugadores elegibles basada en pesos
     List<Player> eligiblePlayers = [];
 
     // Encontrar el peso mínimo
-    int minWeight = _playerWeights.values.isEmpty
-        ? 0
-        : _playerWeights.values.reduce((a, b) => a < b ? a : b);
+    int minWeight = _playerWeights.values.isEmpty ? 0 : _playerWeights.values.reduce((a, b) => a < b ? a : b);
 
-    // Añadir jugadores con peso mínimo
-    for (int i = 0; i < widget.players.length; i++) {
-      int weight = _playerWeights[i] ?? 0;
+    // Añadir jugadores con peso <= min+1
+    for (final p in _players) {
+      final weight = _playerWeights[p.id] ?? 0;
       if (weight <= minWeight + 1) {
-        // Permitir hasta 1 más que el mínimo
-        eligiblePlayers.add(widget.players[i]);
+        eligiblePlayers.add(p);
       }
     }
 
     // Si no hay suficientes jugadores elegibles, usar todos
     if (eligiblePlayers.length < 2) {
-      eligiblePlayers = List.from(widget.players);
+      eligiblePlayers = List.from(_players);
     }
 
     // Seleccionar dos jugadores diferentes aleatoriamente
@@ -745,16 +665,9 @@ class _QuickGameScreenState extends State<QuickGameScreen>
                             decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.2),
                               borderRadius: BorderRadius.circular(16),
-                              border: Border.all(
-                                color: Colors.white.withOpacity(0.3),
-                                width: 1,
-                              ),
+                              border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
                             ),
-                            child: Icon(
-                              Icons.group_outlined,
-                              color: Colors.white,
-                              size: iconSize,
-                            ),
+                            child: Icon(Icons.arrow_back, color: Colors.white, size: iconSize),
                           ),
                         ),
                         Expanded(
@@ -765,10 +678,8 @@ class _QuickGameScreenState extends State<QuickGameScreen>
                                 scale: _tapAnimation.value,
                                 child: GestureDetector(
                                   onTapDown: (details) {
-                                    final RenderBox renderBox =
-                                        context.findRenderObject() as RenderBox;
-                                    final localPosition = renderBox
-                                        .globalToLocal(details.globalPosition);
+                                    final RenderBox renderBox = context.findRenderObject() as RenderBox;
+                                    final localPosition = renderBox.globalToLocal(details.globalPosition);
                                     _addRippleEffect(localPosition);
                                   },
                                   onTap: _nextChallenge,
@@ -779,12 +690,9 @@ class _QuickGameScreenState extends State<QuickGameScreen>
                                         width: double.infinity,
                                         child: Center(
                                           child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
+                                            mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
-                                              buildCenterContent(
-                                                _createGameState(),
-                                              ),
+                                              buildCenterContent(_createGameState()),
                                               const SizedBox(height: 0),
                                               // Tap indicator (only show at the beginning)
                                               if (!_gameStarted)
@@ -792,69 +700,38 @@ class _QuickGameScreenState extends State<QuickGameScreen>
                                                   animation: _glowAnimation,
                                                   builder: (context, child) {
                                                     return Container(
-                                                      padding: EdgeInsets.all(
-                                                        7,
-                                                      ),
+                                                      padding: EdgeInsets.all(7),
                                                       decoration: BoxDecoration(
-                                                        color: Colors.white
-                                                            .withOpacity(0.1),
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              25,
-                                                            ),
+                                                        color: Colors.white.withOpacity(0.1),
+                                                        borderRadius: BorderRadius.circular(25),
                                                         border: Border.all(
-                                                          color: Colors.white
-                                                              .withOpacity(
-                                                                _glowAnimation
-                                                                        .value *
-                                                                    0.8,
-                                                              ),
+                                                          color: Colors.white.withOpacity(_glowAnimation.value * 0.8),
                                                           width: 2,
                                                         ),
                                                         boxShadow: [
                                                           BoxShadow(
-                                                            color: Colors.white
-                                                                .withOpacity(
-                                                                  _glowAnimation
-                                                                          .value *
-                                                                      0.3,
-                                                                ),
+                                                            color: Colors.white.withOpacity(_glowAnimation.value * 0.3),
                                                             blurRadius: 15,
                                                             spreadRadius: 2,
                                                           ),
                                                         ],
                                                       ),
                                                       child: Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.min,
+                                                        mainAxisSize: MainAxisSize.min,
                                                         children: [
                                                           Icon(
                                                             Icons.touch_app,
-                                                            color: Colors.white
-                                                                .withOpacity(
-                                                                  _glowAnimation
-                                                                      .value,
-                                                                ),
+                                                            color: Colors.white.withOpacity(_glowAnimation.value),
                                                             size: 25,
                                                           ),
-                                                          const SizedBox(
-                                                            width: 8,
-                                                          ),
+                                                          const SizedBox(width: 8),
                                                           Text(
                                                             'TOCA LA PANTALLA',
                                                             style: TextStyle(
-                                                              color: Colors
-                                                                  .white
-                                                                  .withOpacity(
-                                                                    _glowAnimation
-                                                                        .value,
-                                                                  ),
+                                                              color: Colors.white.withOpacity(_glowAnimation.value),
                                                               fontSize: 15,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              letterSpacing:
-                                                                  1.2,
+                                                              fontWeight: FontWeight.bold,
+                                                              letterSpacing: 1.2,
                                                             ),
                                                           ),
                                                         ],
@@ -912,6 +789,23 @@ class _QuickGameScreenState extends State<QuickGameScreen>
                     ),
                   ),
                 ),
+                // Edit players button (top-right)
+                Positioned(
+                  top: padding,
+                  right: padding,
+                  child: GestureDetector(
+                    onTap: _openPlayerManager,
+                    child: Container(
+                      padding: const EdgeInsets.all(7),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
+                      ),
+                      child: Icon(Icons.group, color: Colors.white, size: iconSize),
+                    ),
+                  ),
+                ),
               ],
             );
           },
@@ -919,19 +813,249 @@ class _QuickGameScreenState extends State<QuickGameScreen>
       ),
     );
   }
+
+  void _openPlayerManager() async {
+    final updated = await showModalBottomSheet<List<Player>>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        final TextEditingController controller = TextEditingController();
+        List<Player> temp = List<Player>.from(_players);
+        return DraggableScrollableSheet(
+          initialChildSize: 0.6,
+          minChildSize: 0.4,
+          maxChildSize: 0.9,
+          builder: (context, scrollController) {
+            return Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFF2A2A3E),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                border: Border.all(color: Colors.white24),
+              ),
+              child: StatefulBuilder(
+                builder: (context, setModalState) {
+                  return Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.group, color: Colors.white),
+                            const SizedBox(width: 8),
+                            const Expanded(
+                              child: Text(
+                                'Editar jugadores',
+                                style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.close, color: Colors.white70),
+                              onPressed: () => Navigator.pop(context),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: controller,
+                                style: const TextStyle(color: Colors.white),
+                                decoration: const InputDecoration(
+                                  hintText: 'Añadir jugador...',
+                                  hintStyle: TextStyle(color: Colors.white70),
+                                  border: OutlineInputBorder(borderSide: BorderSide(color: Colors.white24)),
+                                ),
+                                onSubmitted: (value) {
+                                  if (value.trim().isEmpty) return;
+                                  setModalState(() {
+                                    temp.add(Player(id: _nextPlayerId(temp), nombre: value.trim()));
+                                  });
+                                  controller.clear();
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            ElevatedButton(
+                              onPressed: () {
+                                final value = controller.text.trim();
+                                if (value.isEmpty) return;
+                                setModalState(() {
+                                  temp.add(Player(id: _nextPlayerId(temp), nombre: value));
+                                });
+                                controller.clear();
+                              },
+                              child: const Text('Añadir'),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Expanded(
+                        child: ListView.builder(
+                          controller: scrollController,
+                          itemCount: temp.length,
+                          itemBuilder: (context, index) {
+                            final p = temp[index];
+                            return ListTile(
+                              title: Text(p.nombre, style: const TextStyle(color: Colors.white)),
+                              onTap: () async {
+                                final tc = TextEditingController(text: p.nombre);
+                                final newName = await showDialog<String>(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: const Text('Renombrar jugador'),
+                                      content: TextField(
+                                        controller: tc,
+                                        autofocus: true,
+                                        decoration: const InputDecoration(hintText: 'Nombre'),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(context),
+                                          child: const Text('Cancelar'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(context, tc.text.trim()),
+                                          child: const Text('Guardar'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                                if (newName != null && newName.isNotEmpty) {
+                                  setModalState(() {
+                                    temp[index] = Player(id: p.id, nombre: newName, imagen: p.imagen, avatar: p.avatar);
+                                  });
+                                }
+                              },
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.edit_outlined, color: Colors.white70),
+                                    onPressed: () async {
+                                      final tc = TextEditingController(text: p.nombre);
+                                      final newName = await showDialog<String>(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            title: const Text('Renombrar jugador'),
+                                            content: TextField(
+                                              controller: tc,
+                                              autofocus: true,
+                                              decoration: const InputDecoration(hintText: 'Nombre'),
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () => Navigator.pop(context),
+                                                child: const Text('Cancelar'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () => Navigator.pop(context, tc.text.trim()),
+                                                child: const Text('Guardar'),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                      if (newName != null && newName.isNotEmpty) {
+                                        setModalState(() {
+                                          temp[index] = Player(
+                                            id: p.id,
+                                            nombre: newName,
+                                            imagen: p.imagen,
+                                            avatar: p.avatar,
+                                          );
+                                        });
+                                      }
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
+                                    onPressed: () {
+                                      setModalState(() {
+                                        temp.removeAt(index);
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () => Navigator.pop(context, temp),
+                            child: const Text('Listo'),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            );
+          },
+        );
+      },
+    );
+
+    if (updated != null) {
+      _applyPlayersUpdate(updated);
+    }
+  }
+
+  int _nextPlayerId(List<Player> list) {
+    final ids = list.map((e) => e.id);
+    final maxId = ids.isEmpty ? 0 : ids.reduce((a, b) => a > b ? a : b);
+    return maxId + 1;
+  }
+
+  void _applyPlayersUpdate(List<Player> newPlayers) {
+    setState(() {
+      // Preserve weights for existing ids
+      final oldWeights = Map<int, int>.from(_playerWeights);
+      _players = List<Player>.from(newPlayers);
+      _playerWeights.clear();
+      for (final p in _players) {
+        _playerWeights[p.id] = oldWeights[p.id] ?? 0;
+      }
+
+      // Re-map current indices to new list based on player id
+      int? newCurrent;
+      int? newDual;
+      if (_currentPlayerIndex >= 0 && _currentPlayerIndex < _players.length) {
+        final prevId = (_currentPlayerIndex >= 0 && _currentPlayerIndex < _players.length)
+            ? _players[_currentPlayerIndex].id
+            : null;
+        if (prevId != null) {
+          newCurrent = _players.indexWhere((p) => p.id == prevId);
+        }
+      }
+      if (_dualPlayerIndex != null && _dualPlayerIndex! >= 0 && _dualPlayerIndex! < _players.length) {
+        final prevId2 = _players[_dualPlayerIndex!].id;
+        newDual = _players.indexWhere((p) => p.id == prevId2);
+      }
+      _currentPlayerIndex = (newCurrent != null && newCurrent >= 0) ? newCurrent : -1;
+      _dualPlayerIndex = (newDual != null && newDual >= 0) ? newDual : null;
+    });
+  }
 }
 
-double getResponsiveSize(
-  BuildContext context, {
-  required double small,
-  required double medium,
-  required double large,
-}) {
+double getResponsiveSize(BuildContext context, {required double small, required double medium, required double large}) {
   final width = MediaQuery.of(context).size.width;
   // Breakpoints ajustados para Nothing Phone (2400x1080)
   const breakpointSmall = 1000.0; // Móviles pequeños
-  const breakpointMedium =
-      1700.0; // Móviles medianos/grandes como Nothing Phone
+  const breakpointMedium = 1700.0; // Móviles medianos/grandes como Nothing Phone
 
   if (width <= breakpointSmall) {
     return small * 1.2; // Incremento del 20% para mejor visibilidad
@@ -940,107 +1064,4 @@ double getResponsiveSize(
   } else {
     return large * 2;
   }
-}
-
-class FloatingShapesPainter extends CustomPainter {
-  final double animationValue;
-
-  FloatingShapesPainter(this.animationValue);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()..style = PaintingStyle.fill;
-
-    // Create multiple floating shapes with different speeds and sizes
-    final shapes = [
-      // Large circles
-      _FloatingShape(
-        Offset(
-          size.width * 0.1 + (sin(animationValue * 2 * pi) * 30),
-          size.height * 0.2 + (cos(animationValue * 2 * pi) * 20),
-        ),
-        30,
-        Colors.white.withOpacity(0.05),
-      ),
-      _FloatingShape(
-        Offset(
-          size.width * 0.8 + (sin(animationValue * 2 * pi + 1) * 40),
-          size.height * 0.7 + (cos(animationValue * 2 * pi + 1) * 30),
-        ),
-        25,
-        Colors.white.withOpacity(0.08),
-      ),
-      // Medium circles
-      _FloatingShape(
-        Offset(
-          size.width * 0.3 + (sin(animationValue * 2 * pi + 2) * 50),
-          size.height * 0.5 + (cos(animationValue * 2 * pi + 2) * 25),
-        ),
-        20,
-        Colors.white.withOpacity(0.04),
-      ),
-      _FloatingShape(
-        Offset(
-          size.width * 0.7 + (sin(animationValue * 2 * pi + 3) * 35),
-          size.height * 0.3 + (cos(animationValue * 2 * pi + 3) * 40),
-        ),
-        18,
-        Colors.cyan.withOpacity(0.06),
-      ),
-      // Small circles
-      _FloatingShape(
-        Offset(
-          size.width * 0.5 + (sin(animationValue * 2 * pi + 4) * 60),
-          size.height * 0.8 + (cos(animationValue * 2 * pi + 4) * 15),
-        ),
-        12,
-        Colors.white.withOpacity(0.03),
-      ),
-      _FloatingShape(
-        Offset(
-          size.width * 0.9 + (sin(animationValue * 2 * pi + 5) * 25),
-          size.height * 0.1 + (cos(animationValue * 2 * pi + 5) * 35),
-        ),
-        15,
-        Colors.green.withOpacity(0.05),
-      ),
-    ];
-
-    // Draw all shapes
-    for (final shape in shapes) {
-      paint.color = shape.color;
-      canvas.drawCircle(shape.position, shape.radius, paint);
-    }
-
-    // Add some triangular shapes for variety
-    final trianglePaint = Paint()
-      ..color = Colors.white.withOpacity(0.02)
-      ..style = PaintingStyle.fill;
-
-    final trianglePath = Path();
-    final triangleCenter = Offset(
-      size.width * 0.6 + (sin(animationValue * 2 * pi + 6) * 45),
-      size.height * 0.4 + (cos(animationValue * 2 * pi + 6) * 30),
-    );
-
-    trianglePath.moveTo(triangleCenter.dx, triangleCenter.dy - 15);
-    trianglePath.lineTo(triangleCenter.dx - 13, triangleCenter.dy + 10);
-    trianglePath.lineTo(triangleCenter.dx + 13, triangleCenter.dy + 10);
-    trianglePath.close();
-
-    canvas.drawPath(trianglePath, trianglePaint);
-  }
-
-  @override
-  bool shouldRepaint(FloatingShapesPainter oldDelegate) {
-    return oldDelegate.animationValue != animationValue;
-  }
-}
-
-class _FloatingShape {
-  final Offset position;
-  final double radius;
-  final Color color;
-
-  _FloatingShape(this.position, this.radius, this.color);
 }

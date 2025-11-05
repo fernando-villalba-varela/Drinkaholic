@@ -85,9 +85,20 @@
         "ACCENT": [
           "argentino",
           "mexicano", 
-          "español",
+          "gallego",
           "chileno",
-          "colombiano"
+          "colombiano",
+          "andaluz de pueblo",
+          "catalán",
+          "vasco",
+          "cubano",
+          "chino",
+          "inglés",
+          "francés",
+          "italiano",
+          "alemán",
+          "ruso",
+          "brasileño"
         ],
         "DRINKS": ["1", "2", "3", "4"]
       },
@@ -158,6 +169,20 @@
         "PLAYER2": ["DUAL_PLAYER2"],
         "MULTIPLIER": ["1", "2"],
         "DRINKS": ["2", "3", "4"]
+      },
+      "categoria": "Dual - Imitación",
+      "minRounds": 5,
+      "maxRounds": 8
+    },
+    {
+      "id": "dual_mirror_drinking_fixed_1",
+      "type": "rule",
+      "template": "{PLAYER1}, cada vez que {PLAYER2} beba por el juego, bebes 1 trago",
+      "endTemplate": "{PLAYER1} ya no necesita imitar los tragos de {PLAYER2}",
+      "punishment": "Si {PLAYER1} no bebe cuando debe, bebe 3 tragos adicionales",
+      "variables": {
+        "PLAYER1": ["DUAL_PLAYER1"],
+        "PLAYER2": ["DUAL_PLAYER2"]
       },
       "categoria": "Dual - Imitación",
       "minRounds": 5,
@@ -413,7 +438,10 @@
       "PLAYER1": ["DUAL_PLAYER1"],
       "PLAYER2": ["DUAL_PLAYER2"],
       "DRINKS": ["3", "4"]
-    }
+    },
+    "categoria": "Dual - Obligación insultante",
+    "minRounds": 3,
+    "maxRounds": 6
   },
   {
     "id": "restriction_ridiculo_1",
@@ -554,6 +582,72 @@
     "categoria": "Restricción - Forma de beber",
     "minRounds": 7,
     "maxRounds": 28
+  },
+  {
+    "id": "no_proper_names_player",
+    "type": "restriction",
+    "template": "{PLAYER} no puede decir nombres propios",
+    "endTemplate": "{PLAYER} ya puede decir nombres propios",
+    "punishment": "Si {PLAYER} dice un nombre propio, bebe {DRINKS} tragos",
+    "variables": {
+      "DRINKS": ["1", "2", "3", "4"]
+    },
+    "categoria": "Restricción verbal",
+    "minRounds": 4,
+    "maxRounds": 8
+  },
+  {
+    "id": "speak_third_person",
+    "type": "obligation",
+    "template": "{PLAYER} debe hablar de sí mismo en tercera persona",
+    "endTemplate": "{PLAYER} ya puede hablar normalmente",
+    "punishment": "Si {PLAYER} no lo hace, bebe {DRINKS} tragos",
+    "variables": {
+      "DRINKS": ["1", "2", "3", "4"]
+    },
+    "categoria": "Obligación verbal",
+    "minRounds": 4,
+    "maxRounds": 7
+  },
+  {
+    "id": "forbidden_word_no",
+    "type": "restriction",
+    "template": "{PLAYER} no puede decir la palabra 'no'",
+    "endTemplate": "{PLAYER} ya puede decir 'no'",
+    "punishment": "Si {PLAYER} dice 'no', bebe {DRINKS} tragos",
+    "variables": {
+      "DRINKS": ["2", "3", "4"]
+    },
+    "categoria": "Restricción verbal",
+    "minRounds": 5,
+    "maxRounds": 9
+  },
+  {
+    "id": "must_end_with_vowel",
+    "type": "obligation",
+    "template": "{PLAYER} debe terminar cada frase con una palabra que acabe en {VOWEL}",
+    "endTemplate": "{PLAYER} ya no necesita terminar sus frases con esa vocal",
+    "punishment": "Si {PLAYER} se olvida, bebe {DRINKS} tragos",
+    "variables": {
+      "VOWEL": ["a", "e", "i", "o", "u"],
+      "DRINKS": ["1", "2", "3", "4"]
+    },
+    "categoria": "Obligación verbal",
+    "minRounds": 4,
+    "maxRounds": 8
+  },
+  {
+    "id": "heavy_punishment_player",
+    "type": "rule",
+    "template": "Si {PLAYER} rompe cualquier regla o reto, bebe {DRINKS} tragos",
+    "endTemplate": "{PLAYER} ya no tiene castigo especial adicional",
+    "punishment": "Al romper una regla, {PLAYER} bebe {DRINKS} tragos",
+    "variables": {
+      "DRINKS": ["4", "5", "6"]
+    },
+    "categoria": "Regla especial - Castigo",
+    "minRounds": 2,
+    "maxRounds": 4
   }
   ]
 }

@@ -37,10 +37,7 @@ class AvatarService {
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: const Color(0xFF00C9FF).withOpacity(.95),
-        title: const Text(
-          'Elegir avatar',
-          style: TextStyle(color: Colors.white),
-        ),
+        title: const Text('Elegir avatar', style: TextStyle(color: Colors.white)),
         content: SizedBox(
           width: double.maxFinite,
           height: 300,
@@ -69,7 +66,6 @@ class AvatarService {
                       width: isCurrent || isUsed ? 3 : 1,
                     ),
                   ),
-                  
                 ),
               );
             },
@@ -78,10 +74,7 @@ class AvatarService {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text(
-              'Cancelar',
-              style: TextStyle(color: Colors.white70),
-            ),
+            child: const Text('Cancelar', style: TextStyle(color: Colors.white70)),
           ),
         ],
       ),
@@ -91,51 +84,33 @@ class AvatarService {
   Future<File?> takePhoto(BuildContext context) async {
     final status = await Permission.camera.request();
     if (!status.isGranted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Permiso de cámara denegado'),
-          backgroundColor: Colors.redAccent,
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Permiso de cámara denegado'), backgroundColor: Colors.redAccent));
       return null;
     }
-    final XFile? photo = await _picker.pickImage(
-      source: ImageSource.camera,
-      imageQuality: 60,
-    );
+    final XFile? photo = await _picker.pickImage(source: ImageSource.camera, imageQuality: 60);
     if (photo == null) return null;
     return File(photo.path);
   }
 
-  Future<bool> confirmDelete({
-    required BuildContext context,
-    required String title,
-  }) async {
+  Future<bool> confirmDelete({required BuildContext context, required String title}) async {
     final res = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: const Color(0xFF00C9FF).withOpacity(.95),
         title: Text(
           title,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text(
-              'Cancelar',
-              style: TextStyle(color: Colors.white70),
-            ),
+            child: const Text('Cancelar', style: TextStyle(color: Colors.white70)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text(
-              'Eliminar',
-              style: TextStyle(color: Colors.redAccent),
-            ),
+            child: const Text('Eliminar', style: TextStyle(color: Colors.redAccent)),
           ),
         ],
       ),

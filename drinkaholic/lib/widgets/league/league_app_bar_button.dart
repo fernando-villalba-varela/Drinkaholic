@@ -4,11 +4,7 @@ class LeagueAppBarButton extends StatelessWidget {
   final VoidCallback onTap;
   final IconData icon;
 
-  const LeagueAppBarButton({
-    super.key,
-    required this.onTap,
-    required this.icon,
-  });
+  const LeagueAppBarButton({super.key, required this.onTap, required this.icon});
 
   @override
   Widget build(BuildContext context) {

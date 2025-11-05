@@ -6,10 +6,5 @@ class Player {
   final File? imagen; // imagen es nullable
   final String? avatar; // avatar también es nullable
 
-  Player({
-    required this.id,
-    required this.nombre,
-    this.imagen,
-    this.avatar,
-  });
+  Player({required this.id, required this.nombre, this.imagen, this.avatar});
 }

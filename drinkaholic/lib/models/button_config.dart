@@ -6,10 +6,5 @@ class ButtonConfig {
   final Gradient gradient;
   final VoidCallback onTap;
 
-  const ButtonConfig({
-    required this.text,
-    required this.icon,
-    required this.gradient,
-    required this.onTap,
-  });
+  const ButtonConfig({required this.text, required this.icon, required this.gradient, required this.onTap});
 }

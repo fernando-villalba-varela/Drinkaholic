@@ -12,23 +12,16 @@ class HomeViewModel extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
   bool get hasError => _errorMessage != null;
 
-  static const LinearGradient quickGameGradient = LinearGradient(
-    colors: [Color(0xFF00C9FF), Color(0xFF92FE9D)],
-  );
+  static const LinearGradient quickGameGradient = LinearGradient(colors: [Color(0xFF00C9FF), Color(0xFF92FE9D)]);
 
-  static const LinearGradient leagueGradient = LinearGradient(
-    colors: [Color(0xFFFC466B), Color(0xFF3F5EFB)],
-  );
+  static const LinearGradient leagueGradient = LinearGradient(colors: [Color(0xFFFC466B), Color(0xFF3F5EFB)]);
 
   void navigateToQuickGame(BuildContext context) {
     try {
       _clearError();
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) =>
-              const ParticipantsScreen(title: 'Partida Rápida'),
-        ),
+        MaterialPageRoute(builder: (context) => const ParticipantsScreen(title: 'Partida Rápida')),
       );
     } catch (e) {
       _setError('Error al navegar a Partida Rápida: ${e.toString()}');
@@ -38,10 +31,7 @@ class HomeViewModel extends ChangeNotifier {
   void navigateToLeague(BuildContext context) {
     try {
       _clearError();
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const LeagueListScreen()),
-      );
+      Navigator.push(context, MaterialPageRoute(builder: (_) => const LeagueListScreen()));
     } catch (e) {
       _setError('Error al navegar a Liga: ${e.toString()}');
     }
@@ -56,12 +46,7 @@ class HomeViewModel extends ChangeNotifier {
       icon: Icons.flash_on,
       gradient: quickGameGradient,
       onTap: () {
-        onAnimatedTap(
-          quickGameGradient,
-          'PARTIDA RÁPIDA',
-          Icons.flash_on,
-          () => navigateToQuickGame(context),
-        );
+        onAnimatedTap(quickGameGradient, 'PARTIDA RÁPIDA', Icons.flash_on, () => navigateToQuickGame(context));
       },
     );
   }
@@ -75,12 +60,7 @@ class HomeViewModel extends ChangeNotifier {
       icon: Icons.emoji_events,
       gradient: leagueGradient,
       onTap: () {
-        onAnimatedTap(
-          leagueGradient,
-          'LIGA',
-          Icons.emoji_events,
-          () => navigateToLeague(context),
-        );
+        onAnimatedTap(leagueGradient, 'LIGA', Icons.emoji_events, () => navigateToLeague(context));
       },
     );
   }

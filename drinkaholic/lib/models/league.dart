@@ -9,11 +9,11 @@ class League {
   String code;
   final List<LeaguePlayerStats> players;
   final List<MatchResult> matches;
-  
+
   // Rachas consecutivas entre partidas
   int? currentMvpStreak; // playerId del actual MVP en racha
   int mvpStreakCount; // cuántas veces consecutivas ha ganado
-  int? currentRatitaStreak; // playerId de la actual Ratita en racha  
+  int? currentRatitaStreak; // playerId de la actual Ratita en racha
   int ratitaStreakCount; // cuántas veces consecutivas ha perdido
 
   League({
@@ -53,12 +53,8 @@ class League {
     id: j['id'],
     name: j['name'],
     code: j['code'],
-    players: (j['players'] as List)
-        .map((e) => LeaguePlayerStats.fromJson(e))
-        .toList(),
-    matches: (j['matches'] as List)
-        .map((e) => MatchResult.fromJson(e))
-        .toList(),
+    players: (j['players'] as List).map((e) => LeaguePlayerStats.fromJson(e)).toList(),
+    matches: (j['matches'] as List).map((e) => MatchResult.fromJson(e)).toList(),
     currentMvpStreak: j['currentMvpStreak'],
     mvpStreakCount: j['mvpStreakCount'] ?? 0,
     currentRatitaStreak: j['currentRatitaStreak'],

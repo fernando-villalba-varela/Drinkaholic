@@ -13,12 +13,7 @@ class LeagueEmptyState extends StatelessWidget {
           const SizedBox(height: 34),
           const Text(
             'Aún no eres un borracho',
-            style: TextStyle(
-              fontSize: 26,
-              fontWeight: FontWeight.bold,
-              letterSpacing: .5,
-              color: Colors.white,
-            ),
+            style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, letterSpacing: .5, color: Colors.white),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 14),

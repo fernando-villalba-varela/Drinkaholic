@@ -247,19 +247,8 @@
       "categoria": "Dual - Verdad"
     },
     {
-      "id": "dual_piedra_papel_tijera",
-      "template": "{PLAYER1} y {PLAYER2} juegan piedra, papel o tijera. El perdedor {ACTION} {AMOUNT} tragos",
-      "variables": {
-        "PLAYER1": ["DUAL_PLAYER1"],
-        "PLAYER2": ["DUAL_PLAYER2"],
-        "ACTION": ["bebe"],
-        "AMOUNT": ["2", "3", "4", "5"]
-      },
-      "categoria": "Dual - Juego"
-    },
-    {
       "id": "dual_adivinanza",
-      "template": "{PLAYER1} piensa un número del 1 al 10, {PLAYER2} debe adivinarlo. Si acierta, {PLAYER1} bebe {AMOUNT1} tragos. Si falla, {PLAYER2} bebe {AMOUNT2} tragos",
+      "template": "{PLAYER1} le dice a otro jugador un número del 1 al 10, {PLAYER2} debe adivinarlo. Si acierta, {PLAYER1} bebe {AMOUNT1} tragos. Si falla, {PLAYER2} bebe {AMOUNT2} tragos",
       "variables": {
         "PLAYER1": ["DUAL_PLAYER1"],
         "PLAYER2": ["DUAL_PLAYER2"],
@@ -887,6 +876,355 @@
       "Y": ["1", "2", "3", "4", "5"]
     },
     "categoria": "Sarcasmo - Bebe"
+  },
+  {
+    "id": "dual_quien_se_rie_primero",
+    "template": "Entre {PLAYER1} y {PLAYER2}, quien se ría primero bebe {AMOUNT} tragos",
+    "variables": {
+      "PLAYER1": ["DUAL_PLAYER1"],
+      "PLAYER2": ["DUAL_PLAYER2"],
+      "AMOUNT": ["2", "3", "4"]
+    },
+    "categoria": "Dual - Reacción"
+  },
+  {
+    "id": "dual_quien_mira_movil_primero",
+    "template": "Entre {PLAYER1} y {PLAYER2}, quien mire el móvil primero bebe {AMOUNT} tragos",
+    "variables": {
+      "PLAYER1": ["DUAL_PLAYER1"],
+      "PLAYER2": ["DUAL_PLAYER2"],
+      "AMOUNT": ["2", "3", "4", "5"]
+    },
+    "categoria": "Dual - Condición"
+  },
+  {
+    "id": "generico_trabalenguas_rapido",
+    "template": "{X} reparte {AMOUNT} tragos si dice sin fallar: '{PHRASE}'",
+    "variables": {
+      "X": ["PLAYER"],
+      "AMOUNT": ["2", "3", "4"],
+      "PHRASE": [
+        "Tres tristes tigres comen trigo en un trigal",
+        "Pablito clavó un clavito en la calva de un calvito",
+        "El perro de San Roque no tiene rabo"
+      ]
+    },
+    "categoria": "Genérico - Habilidad Verbal"
+  },
+  {
+    "id": "generico_equilibrio_20s",
+    "template": "{X} reparte {AMOUNT} tragos si mantiene el equilibrio sobre un pie durante 20 segundos",
+    "variables": {
+      "X": ["PLAYER"],
+      "AMOUNT": ["2", "3", "4"]
+    },
+    "categoria": "Genérico - Habilidad Física"
+  },
+  {
+    "id": "generico_plancha_30s",
+    "template": "{X} bebe {AMOUNT} tragos si no aguanta la plancha 30 segundos",
+    "variables": {
+      "X": ["PLAYER"],
+      "AMOUNT": ["2", "3", "4", "5"]
+    },
+    "categoria": "Genérico - Habilidad Física"
+  },
+  {
+    "id": "generico_mimo_adivinanza",
+    "template": "{X} reparte {AMOUNT} tragos si todos adivinan su mímica de {THEME}",
+    "variables": {
+      "X": ["PLAYER"],
+      "AMOUNT": ["2", "3", "4"],
+      "THEME": [
+        "un animal", "una profesión", "una película famosa", "un deporte"
+      ]
+    },
+    "categoria": "Genérico - Imitación Éxito"
+  },
+  {
+    "id": "generico_rap_10s",
+    "template": "{X} reparte {AMOUNT} tragos si rapea 10 segundos sobre el tema: {TOPIC}",
+    "variables": {
+      "X": ["PLAYER"],
+      "AMOUNT": ["2", "3", "4"],
+      "TOPIC": [
+        "la fiesta", "la amistad", "el amor", "la resaca", "los lunes"
+      ]
+    },
+    "categoria": "Genérico - Actuación Éxito"
+  },
+  {
+    "id": "generico_lista_rapida",
+    "template": "{X} reparte {AMOUNT} tragos si nombra {COUNT} {THING} en 15 segundos",
+    "variables": {
+      "X": ["PLAYER"],
+      "AMOUNT": ["2", "3", "4"],
+      "COUNT": ["5", "7"],
+      "THING": [
+        "países", "frutas", "cantantes", "marcas de coches", "películas"
+      ]
+    },
+    "categoria": "Genérico - Reto Éxito"
+  },
+  {
+    "id": "generico_memoria_cadena",
+    "template": "{X} bebe {AMOUNT} tragos si no recuerda las últimas {COUNT} acciones del juego",
+    "variables": {
+      "X": ["PLAYER"],
+      "AMOUNT": ["2", "3", "4", "5"],
+      "COUNT": ["3", "4"]
+    },
+    "categoria": "Genérico - Memoria Fallo"
+  },
+  {
+    "id": "dual_palabra_prohibida",
+    "template": "Entre {PLAYER1} y {PLAYER2}, quien diga la palabra '{WORD}' primero bebe {AMOUNT} tragos",
+    "variables": {
+      "PLAYER1": ["DUAL_PLAYER1"],
+      "PLAYER2": ["DUAL_PLAYER2"],
+      "WORD": ["vale", "literal", "bro", "nada"],
+      "AMOUNT": ["2", "3", "4", "5"]
+    },
+    "categoria": "Dual - Condición"
+  },
+  {
+    "id": "generico_bebe_por_fallo_memoria",
+    "template": "{X} bebe {AMOUNT} tragos si olvida el nombre de la última persona que habló",
+    "variables": {
+      "X": ["PLAYER"],
+      "AMOUNT": ["2", "3", "4", "5"]
+    },
+    "categoria": "Genérico - Memoria Fallo"
+  },
+  {
+    "id": "generico_susurro",
+    "template": "Cualquiera que hable más alto que un susurro bebe {Y}",
+    "variables": {
+      "Y": ["tragos"]
+    },
+    "categoria": "Restricción"
+  },
+  {
+    "id": "generico_movil_en_mesa",
+    "template": "Cualquiera que deje el móvil en la mesa bebe {Y}",
+    "variables": {
+      "Y": ["tragos"]
+    },
+    "categoria": "Tecnología"
+  },
+  {
+    "id": "generico_dificil_raro",
+    "template": "{X} bebe {AMOUNT} tragos si no puede decir 10 palabras que rimen con 'ar' en 30 segundos",
+    "variables": {
+      "X": ["PLAYER"],
+      "AMOUNT": ["5", "6"]
+    },
+    "categoria": "Genérico - Difícil"
+  },
+  {
+    "id": "mas_probable_que",
+    "template": "A la de 3 todos señalan al jugador que sea más probable que {THING}; ese jugador beberá {AMOUNT} tragos",
+    "variables": {
+      "THING": [
+        "se quede dormido en la fiesta",
+        "llegue tarde a todo",
+        "responda un mensaje de su ex esta noche",
+        "se case primero",
+        "olvide su propio cumpleaños",
+        "haga karaoke en público sin vergüenza",
+        "se pierda volviendo a casa",
+        "organice la próxima fiesta",
+        "rompa una regla del juego",
+        "mande un audio de 5 minutos",
+        "llore viendo una película",
+        "ligue esta noche",
+        "gane un concurso de baile",
+        "se vaya sin despedirse",
+        "haga el ridículo en público",
+        "haga un viaje improvisado",
+        "se haga famoso en redes",
+        "tenga más resacas este mes",
+        "se declare en público",
+        "sea millonario",
+        "adopte un perro",
+        "se tatúe por impulso",
+        "coma pizza a las 6 de la mañana",
+        "cante bajo la ducha hoy",
+        "pierda el móvil"
+      ],
+      "AMOUNT": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Más Probable"
+  },
+  {
+    "id": "mas_probable_que_v2",
+    "template": "A la de 3, señalen a quien sea más probable que {THING}. Esa persona beberá {AMOUNT} tragos",
+    "variables": {
+      "THING": [
+        "olvide las llaves de casa",
+        "se cambie de ciudad este año",
+        "suba un story vergonzoso",
+        "cambie de look radical mañana",
+        "se tatúe algo sin pensarlo",
+        "haga un maratón de series sin dormir",
+        "cocine para todo el grupo",
+        "se apunte a un triatlón",
+        "sea influencer",
+        "se rompa el móvil esta semana",
+        "olvide dónde aparcó",
+        "pierda la cartera",
+        "haga match con su ex",
+        "se haga un piercing",
+        "cante a gritos en el taxi",
+        "se duerma en el transporte público",
+        "robe protagonismo en una boda",
+        "adopte un gato",
+        "se haga vegano por un mes",
+        "llore de la risa hoy",
+        "cuente un secreto por accidente",
+        "cambie de trabajo este año",
+        "deje todo para última hora",
+        "se apunte a clases de baile",
+        "abra un canal de YouTube",
+        "pierda una apuesta hoy",
+        "se enamore en la primera cita",
+        "haga ghosting a alguien",
+        "vuelva con un ex",
+        "se olvide de pagar una ronda"
+      ],
+      "AMOUNT": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Más Probable"
+  },
+  {
+    "id": "mas_probable_que_v3",
+    "template": "A la cuenta de 3, apunten a quien crean que {THING}; quien reciba más dedos bebe {AMOUNT} tragos",
+    "variables": {
+      "THING": [
+        "organice una escapada de fin de semana",
+        "aprenda un idioma nuevo",
+        "empiece un podcast",
+        "se pierda en su propio barrio",
+        "haga un ridículo épico en el trabajo",
+        "olvide responder mensajes por días",
+        "sea famoso por un meme",
+        "se vuelva adicto al gimnasio",
+        "deje el teléfono en casa",
+        "se convierta en noctámbulo profesional",
+        "bese a alguien esta noche",
+        "rompa una dieta en 24 horas",
+        "coleccione plantas y las mate sin querer",
+        "se haga amigo del camarero",
+        "pida shots para todos",
+        "se compre algo que no necesita",
+        "se tire del karaoke sin que se lo pidan",
+        "haga un TikTok viral",
+        "sea el último en irse de la fiesta",
+        "llegue antes que todos a la fiesta",
+        "olvide una cita importante",
+        "cambie de peinado cada mes",
+        "se apasione por un hobby raro",
+        "cierre el bar",
+        "se tropiece en público",
+        "haga amigos con desconocidos",
+        "sea multado por estacionar mal",
+        "salga en las noticias por algo gracioso",
+        "se pinte el pelo de un color loco",
+        "meta la pata en una reunión"
+      ],
+      "AMOUNT": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Más Probable"
+  },
+  {
+    "id": "mas_probable_que_v4",
+    "template": "A la de 3, señalen a la persona más propensa a {THING}; el elegido bebe {AMOUNT} tragos",
+    "variables": {
+      "THING": [
+        "olvidar un aniversario",
+        "comprar vuelos sin avisar a nadie",
+        "aprender a tocar un instrumento",
+        "cambiarse el nombre en redes",
+        "correr una maratón",
+        "dormir 12 horas seguidas",
+        "leer un libro en un día",
+        "romper su propio récord de siestas",
+        "hacer una broma pesada",
+        "llamar a su ex por accidente",
+        "cocinar una receta imposible",
+        "irse de after sin planearlo",
+        "hacerse un baile de TikTok en público",
+        "perderse en un centro comercial",
+        "olvidar dónde dejó las gafas",
+        "decir sí a todo por un día",
+        "montar una empresa",
+        "quedarse sin batería otra vez",
+        "pedir comida a las 4 am",
+        "ganar un concurso al azar",
+        "hablar con extraños en la fila",
+        "viajar solo/a",
+        "gastar todo en caprichos",
+        "romper un vaso sin querer",
+        "convertirse en DJ de la fiesta",
+        "adoptar una planta y nombrarla",
+        "ser trending topic del grupo",
+        "irse de vacaciones improvisadas",
+        "aprender a hacer magia",
+        "probar un deporte extremo"
+      ],
+      "AMOUNT": ["1", "2", "3", "4", "5"]
+    },
+    "categoria": "Más Probable"
+  },
+  {
+    "id": "yo_nunca",
+    "template": "Yo nunca he {THING}; quien lo haya hecho bebe {AMOUNT} tragos",
+    "variables": {
+      "THING": [
+        "olvidado una fecha importante",
+        "pensado que le caigo mal a alguien",
+        "sido visto meando en público",
+        "cambiado de nombre en redes",
+        "corrido una maratón",
+        "dormido 12 horas seguidas",
+        "olvidado una noche entera",
+        "mandado fotos comprometedoras",
+        "vomitado encima de alguien",
+        "llamado a mi ex borracho",
+        "sido pillado manteniendo relaciones",
+        "mantenido relaciones en un lugar público",
+        "probado drogas duras",
+        "puesto los cuernos",
+        "bailado sexualmente con un desconocido",
+        "pensado cosas indecentes de un amigo/a",
+        "mentido sobre alguno de los presentes",
+        "robado en una tienda de ropa",
+        "hecho un striptease",
+        "hecho un trío",
+        "nadado desnudo",
+        "hecho trampas en un juego de mesa",
+        "hecho chuletas en un examen",
+        "desaparecio de una fiesta con un desconocido",
+        "fingido estar enfermo para no ir a algo",
+        "sido pillado con fotos comprometedoras en el móvil",
+        "estado más de dos días sin ducharme",
+        "ligado con un camarero/a",
+        "jugado a La Previa",
+        "hecho un deporte extremo",
+        "estado enamorado de un profesor/a",
+        "enviado un mensaje vergonzoso a la persona equivocada",
+        "mantenido relaciones con el amigo/a de un amigo/a",
+        "mentido sobre mi edad",
+        "sido arrestado",
+        "saltado de un acantilado al mar",
+        "ido a una cita a ciegas",
+        "tenido una aventura de una noche"
+      ],
+      "AMOUNT": ["2", "3", "4", "5", "6"]
+    },
+    "categoria": "Yo Nunca"
   }
   ]
 }
+
+

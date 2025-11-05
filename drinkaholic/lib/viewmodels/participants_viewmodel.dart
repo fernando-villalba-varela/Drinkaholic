@@ -77,20 +77,14 @@ class ParticipantsViewmodel extends ChangeNotifier {
         backgroundColor: const Color(0xFF00C9FF).withOpacity(0.95),
         title: Text(
           'Seleccionar avatar para ${_players[index].nombre}',
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
               leading: const Icon(Icons.collections, color: Colors.white),
-              title: const Text(
-                'Elegir avatar creado',
-                style: TextStyle(color: Colors.white),
-              ),
+              title: const Text('Elegir avatar creado', style: TextStyle(color: Colors.white)),
               onTap: () {
                 Navigator.of(context).pop();
                 chooseAvatar(index);
@@ -98,10 +92,7 @@ class ParticipantsViewmodel extends ChangeNotifier {
             ),
             ListTile(
               leading: const Icon(Icons.camera_alt, color: Colors.white),
-              title: const Text(
-                'Tomar foto',
-                style: TextStyle(color: Colors.white),
-              ),
+              title: const Text('Tomar foto', style: TextStyle(color: Colors.white)),
               onTap: () {
                 Navigator.of(context).pop();
                 pickImage(index);
@@ -111,10 +102,7 @@ class ParticipantsViewmodel extends ChangeNotifier {
         ),
         actions: [
           TextButton(
-            child: const Text(
-              'Cancelar',
-              style: TextStyle(color: Colors.white70),
-            ),
+            child: const Text('Cancelar', style: TextStyle(color: Colors.white70)),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ],
@@ -147,9 +135,7 @@ class ParticipantsViewmodel extends ChangeNotifier {
         if (context != null) {
           ScaffoldMessenger.of(context!).showSnackBar(
             const SnackBar(
-              content: Text(
-                'No hay avatars disponibles. Agrega imágenes a assets/avatars/',
-              ),
+              content: Text('No hay avatars disponibles. Agrega imágenes a assets/avatars/'),
               backgroundColor: Colors.orange,
             ),
           );
@@ -170,15 +156,10 @@ class ParticipantsViewmodel extends ChangeNotifier {
           context: context!,
           builder: (context) => AlertDialog(
             backgroundColor: const Color(0xFF00C9FF).withOpacity(0.95),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             title: Text(
               'Elegir avatar para ${_players[index].nombre}',
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             ),
             content: SizedBox(
               width: double.maxFinite,
@@ -193,8 +174,7 @@ class ParticipantsViewmodel extends ChangeNotifier {
                 itemBuilder: (context, avatarIndex) {
                   final avatarPath = avatarPaths[avatarIndex];
                   final isUsed = usedAvatars.contains(avatarPath);
-                  final isCurrentlySelected =
-                      _players[index].avatar == avatarPath;
+                  final isCurrentlySelected = _players[index].avatar == avatarPath;
 
                   return GestureDetector(
                     onTap: isUsed && !isCurrentlySelected
@@ -220,13 +200,7 @@ class ParticipantsViewmodel extends ChangeNotifier {
                           width: isCurrentlySelected || isUsed ? 3 : 1,
                         ),
                         boxShadow: isCurrentlySelected
-                            ? [
-                                BoxShadow(
-                                  color: Colors.white.withOpacity(0.5),
-                                  blurRadius: 10,
-                                  spreadRadius: 2,
-                                ),
-                              ]
+                            ? [BoxShadow(color: Colors.white.withOpacity(0.5), blurRadius: 10, spreadRadius: 2)]
                             : null,
                       ),
                       child: Stack(
@@ -234,14 +208,8 @@ class ParticipantsViewmodel extends ChangeNotifier {
                           ClipOval(
                             child: ColorFiltered(
                               colorFilter: isUsed && !isCurrentlySelected
-                                  ? ColorFilter.mode(
-                                      Colors.black.withOpacity(0.6),
-                                      BlendMode.darken,
-                                    )
-                                  : const ColorFilter.mode(
-                                      Colors.transparent,
-                                      BlendMode.multiply,
-                                    ),
+                                  ? ColorFilter.mode(Colors.black.withOpacity(0.6), BlendMode.darken)
+                                  : const ColorFilter.mode(Colors.transparent, BlendMode.multiply),
                               child: Image.asset(
                                 avatarPath,
                                 fit: BoxFit.cover,
@@ -251,22 +219,12 @@ class ParticipantsViewmodel extends ChangeNotifier {
                             ),
                           ),
                           if (isUsed && !isCurrentlySelected)
-                            const Center(
-                              child: Icon(
-                                Icons.block,
-                                color: Colors.redAccent,
-                                size: 32,
-                              ),
-                            ),
+                            const Center(child: Icon(Icons.block, color: Colors.redAccent, size: 32)),
                           if (isCurrentlySelected)
                             const Positioned(
                               top: 4,
                               right: 4,
-                              child: Icon(
-                                Icons.check_circle,
-                                color: Colors.greenAccent,
-                                size: 20,
-                              ),
+                              child: Icon(Icons.check_circle, color: Colors.greenAccent, size: 20),
                             ),
                         ],
                       ),
@@ -277,10 +235,7 @@ class ParticipantsViewmodel extends ChangeNotifier {
             ),
             actions: [
               TextButton(
-                child: const Text(
-                  'Cancelar',
-                  style: TextStyle(color: Colors.white70),
-                ),
+                child: const Text('Cancelar', style: TextStyle(color: Colors.white70)),
                 onPressed: () => Navigator.of(context).pop(),
               ),
             ],
@@ -294,9 +249,7 @@ class ParticipantsViewmodel extends ChangeNotifier {
       if (context != null) {
         ScaffoldMessenger.of(context!).showSnackBar(
           const SnackBar(
-            content: Text(
-              'Error al cargar avatars. Asegúrate de tener imágenes en assets/avatars/',
-            ),
+            content: Text('Error al cargar avatars. Asegúrate de tener imágenes en assets/avatars/'),
             backgroundColor: Colors.red,
           ),
         );
@@ -313,19 +266,12 @@ class ParticipantsViewmodel extends ChangeNotifier {
       print('Permiso de cámara: $status');
     }
     if (status.isGranted) {
-      final XFile? photo = await _picker.pickImage(
-        source: ImageSource.camera,
-        imageQuality: 60,
-      );
+      final XFile? photo = await _picker.pickImage(source: ImageSource.camera, imageQuality: 60);
       if (kDebugMode) {
         print('Foto tomada: ${photo?.path}');
       }
       if (photo != null && context != null) {
-        _players[index] = Player(
-          id: _players[index].id,
-          nombre: _players[index].nombre,
-          imagen: File(photo.path),
-        );
+        _players[index] = Player(id: _players[index].id, nombre: _players[index].nombre, imagen: File(photo.path));
         notifyListeners(); // Notifica a la UI el cambio
       }
     } else if (status.isDenied || status.isPermanentlyDenied) {
@@ -348,29 +294,17 @@ class ParticipantsViewmodel extends ChangeNotifier {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
           '¿Quieres eliminar la foto de ${_players[index].nombre}?',
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         actions: [
           TextButton(
-            child: const Text(
-              'Cancelar',
-              style: TextStyle(color: Colors.white70),
-            ),
+            child: const Text('Cancelar', style: TextStyle(color: Colors.white70)),
             onPressed: () => Navigator.of(context).pop(),
           ),
           TextButton(
-            child: const Text(
-              'Eliminar',
-              style: TextStyle(color: Colors.redAccent),
-            ),
+            child: const Text('Eliminar', style: TextStyle(color: Colors.redAccent)),
             onPressed: () {
-              _players[index] = Player(
-                id: _players[index].id,
-                nombre: _players[index].nombre,
-              );
+              _players[index] = Player(id: _players[index].id, nombre: _players[index].nombre);
               notifyListeners(); // Notifica a la UI el cambio
               Navigator.of(context).pop();
             },
@@ -388,28 +322,17 @@ class ParticipantsViewmodel extends ChangeNotifier {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
           '¿Quieres eliminar a ${_players[index].nombre}?',
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         actions: [
           TextButton(
-            child: const Text(
-              'Cancelar',
-              style: TextStyle(color: Colors.white70),
-            ),
+            child: const Text('Cancelar', style: TextStyle(color: Colors.white70)),
             onPressed: () => Navigator.of(context).pop(),
           ),
           TextButton(
-            child: const Text(
-              'Eliminar',
-              style: TextStyle(color: Colors.redAccent),
-            ),
+            child: const Text('Eliminar', style: TextStyle(color: Colors.redAccent)),
             onPressed: () {
-              removePlayer(
-                index,
-              ); // Usa removePlayer que llama a notifyListeners()
+              removePlayer(index); // Usa removePlayer que llama a notifyListeners()
               Navigator.of(context).pop();
             },
           ),

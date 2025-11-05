@@ -4,18 +4,12 @@ import '../models/game_state.dart';
 import 'dart:math';
 
 // Helper function para determinar tamaños responsivos
-double getResponsiveSize(
-  BuildContext context, {
-  required double small,
-  required double medium,
-  required double large,
-}) {
+double getResponsiveSize(BuildContext context, {required double small, required double medium, required double large}) {
   final width = MediaQuery.of(context).size.width;
 
   // Breakpoints ajustados para Nothing Phone (2400x1080)
   const breakpointSmall = 1000.0; // Móviles pequeños
-  const breakpointMedium =
-      1700.0; // Móviles medianos/grandes como Nothing Phone
+  const breakpointMedium = 1700.0; // Móviles medianos/grandes como Nothing Phone
 
   if (width <= breakpointSmall) {
     return small * 1.2; // Incremento del 20% para mejor visibilidad
@@ -83,22 +77,14 @@ Widget buildCenterContent(GameState gameState) {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.white.withOpacity(
-                            gameState.glowAnimation.value * 0.6,
-                          ),
+                          color: Colors.white.withOpacity(gameState.glowAnimation.value * 0.6),
                           blurRadius: 40,
                           spreadRadius: 5,
                         ),
                       ],
                     ),
                     child: isForAll
-                        ? Icon(
-                            Icons.people,
-                            size: 50,
-                            color: Colors.white.withOpacity(
-                              gameState.glowAnimation.value,
-                            ),
-                          )
+                        ? Icon(Icons.people, size: 50, color: Colors.white.withOpacity(gameState.glowAnimation.value))
                         : gameState.isDualChallenge
                         ? _buildDualPlayerAvatars(gameState)
                         : gameState.currentPlayer != null
@@ -106,9 +92,7 @@ Widget buildCenterContent(GameState gameState) {
                         : Icon(
                             Icons.person_pin,
                             size: iconSize,
-                            color: Colors.white.withOpacity(
-                              gameState.glowAnimation.value,
-                            ),
+                            color: Colors.white.withOpacity(gameState.glowAnimation.value),
                           ),
                   );
                 },
@@ -152,16 +136,10 @@ Widget buildCenterContent(GameState gameState) {
                         gradient: LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                          colors: [
-                            Colors.white.withOpacity(0.25),
-                            Colors.white.withOpacity(0.10),
-                          ],
+                          colors: [Colors.white.withOpacity(0.25), Colors.white.withOpacity(0.10)],
                         ),
                         borderRadius: BorderRadius.circular(25),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.4),
-                          width: 2,
-                        ),
+                        border: Border.all(color: Colors.white.withOpacity(0.4), width: 2),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.3),
@@ -193,11 +171,8 @@ Widget buildCenterContent(GameState gameState) {
                                 angle: iconValue * 2 * pi,
                                 child: Icon(
                                   _getDynamicIcon(gameState.currentChallenge!),
-                                  size:
-                                      iconSize + (sin(iconValue * 2 * pi) * 5),
-                                  color: Colors.white.withOpacity(
-                                    0.9 + (0.1 * iconValue),
-                                  ),
+                                  size: iconSize + (sin(iconValue * 2 * pi) * 5),
+                                  color: Colors.white.withOpacity(0.9 + (0.1 * iconValue)),
                                 ),
                               );
                             },
@@ -211,11 +186,7 @@ Widget buildCenterContent(GameState gameState) {
                               color: Colors.white,
                               height: 1.4,
                               shadows: [
-                                Shadow(
-                                  color: Colors.black.withOpacity(0.5),
-                                  offset: const Offset(2, 2),
-                                  blurRadius: 4,
-                                ),
+                                Shadow(color: Colors.black.withOpacity(0.5), offset: const Offset(2, 2), blurRadius: 4),
                                 Shadow(
                                   color: Colors.cyan.withOpacity(0.3),
                                   offset: const Offset(-1, -1),
@@ -223,10 +194,7 @@ Widget buildCenterContent(GameState gameState) {
                                 ),
                               ],
                             ),
-                            child: Text(
-                              gameState.currentChallenge!,
-                              textAlign: TextAlign.center,
-                            ),
+                            child: Text(gameState.currentChallenge!, textAlign: TextAlign.center),
                           ),
                         ],
                       ),
@@ -285,8 +253,7 @@ Widget _buildConstantChallengeContent(GameState gameState) {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: (isEndingChallenge ? Colors.green : Colors.orange)
-                          .withOpacity(0.5),
+                      color: (isEndingChallenge ? Colors.green : Colors.orange).withOpacity(0.5),
                       blurRadius: 15,
                       spreadRadius: 3,
                     ),
@@ -302,19 +269,12 @@ Widget _buildConstantChallengeContent(GameState gameState) {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
                 decoration: BoxDecoration(
-                  color: isEndingChallenge
-                      ? Colors.green.withOpacity(0.2)
-                      : Colors.orange.withOpacity(0.2),
+                  color: isEndingChallenge ? Colors.green.withOpacity(0.2) : Colors.orange.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: isEndingChallenge ? Colors.green : Colors.orange,
-                    width: 2,
-                  ),
+                  border: Border.all(color: isEndingChallenge ? Colors.green : Colors.orange, width: 2),
                 ),
                 child: Text(
-                  isEndingChallenge
-                      ? 'RETO FINALIZADO'
-                      : 'NUEVO RETO CONSTANTE',
+                  isEndingChallenge ? 'RETO FINALIZADO' : 'NUEVO RETO CONSTANTE',
                   style: TextStyle(
                     fontSize: fontSize,
                     fontWeight: FontWeight.bold,
@@ -358,28 +318,12 @@ Widget _buildConstantChallengeContent(GameState gameState) {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: isEndingChallenge
-                    ? [
-                        Colors.green.withOpacity(0.15),
-                        Colors.green.withOpacity(0.05),
-                      ]
-                    : [
-                        Colors.orange.withOpacity(0.15),
-                        Colors.orange.withOpacity(0.05),
-                      ],
+                    ? [Colors.green.withOpacity(0.15), Colors.green.withOpacity(0.05)]
+                    : [Colors.orange.withOpacity(0.15), Colors.orange.withOpacity(0.05)],
               ),
               borderRadius: BorderRadius.circular(25),
-              border: Border.all(
-                color: (isEndingChallenge ? Colors.green : Colors.orange)
-                    .withOpacity(0.4),
-                width: 2,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 20,
-                  offset: const Offset(0, 8),
-                ),
-              ],
+              border: Border.all(color: (isEndingChallenge ? Colors.green : Colors.orange).withOpacity(0.4), width: 2),
+              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 20, offset: const Offset(0, 8))],
             ),
             child: Column(
               children: [
@@ -446,22 +390,15 @@ List<Widget> _buildPunishmentInfo(GameState gameState, BuildContext context) {
 
   // Find the current constant challenge being created
   final currentPlayerIndex = gameState.currentPlayerIndex;
-  if (currentPlayerIndex < 0 ||
-      currentPlayerIndex >= gameState.players.length) {
+  if (currentPlayerIndex < 0 || currentPlayerIndex >= gameState.players.length) {
     return [];
   }
 
   final currentPlayer = gameState.players[currentPlayerIndex];
   final activeChallenges = gameState.constantChallenges
-      .where(
-        (c) =>
-            c.targetPlayer.id == currentPlayer.id &&
-            c.startRound == gameState.currentRound,
-      )
+      .where((c) => c.targetPlayer.id == currentPlayer.id && c.startRound == gameState.currentRound)
       .toList();
-  final activeChallenge = activeChallenges.isEmpty
-      ? null
-      : activeChallenges.last;
+  final activeChallenge = activeChallenges.isEmpty ? null : activeChallenges.last;
 
   if (activeChallenge?.punishment == null) {
     return [];
@@ -485,23 +422,14 @@ List<Widget> _buildPunishmentInfo(GameState gameState, BuildContext context) {
               const SizedBox(width: 8),
               Text(
                 'CASTIGO',
-                style: TextStyle(
-                  color: Colors.red,
-                  fontSize: fontSize,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1,
-                ),
+                style: TextStyle(color: Colors.red, fontSize: fontSize, fontWeight: FontWeight.bold, letterSpacing: 1),
               ),
             ],
           ),
           const SizedBox(height: 2),
           Text(
             activeChallenge!.punishment,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: fontSize,
-              fontWeight: FontWeight.w500,
-            ),
+            style: TextStyle(color: Colors.white, fontSize: fontSize, fontWeight: FontWeight.w500),
             textAlign: TextAlign.center,
           ),
         ],
@@ -559,24 +487,14 @@ Widget _buildEventContent(GameState gameState) {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: isEndingEvent
-                    ? [
-                        Colors.purple.withOpacity(0.3),
-                        Colors.indigo.withOpacity(0.1),
-                      ]
-                    : [
-                        Colors.cyan.withOpacity(0.3),
-                        Colors.blue.withOpacity(0.1),
-                      ],
+                    ? [Colors.purple.withOpacity(0.3), Colors.indigo.withOpacity(0.1)]
+                    : [Colors.cyan.withOpacity(0.3), Colors.blue.withOpacity(0.1)],
               ),
               borderRadius: BorderRadius.circular(25),
-              border: Border.all(
-                color: isEndingEvent ? Colors.purple : Colors.cyan,
-                width: 2,
-              ),
+              border: Border.all(color: isEndingEvent ? Colors.purple : Colors.cyan, width: 2),
               boxShadow: [
                 BoxShadow(
-                  color: (isEndingEvent ? Colors.purple : Colors.cyan)
-                      .withOpacity(0.3),
+                  color: (isEndingEvent ? Colors.purple : Colors.cyan).withOpacity(0.3),
                   blurRadius: 15,
                   spreadRadius: 2,
                 ),
@@ -613,16 +531,8 @@ Widget _buildEventContent(GameState gameState) {
               color: Colors.white,
               letterSpacing: 4,
               shadows: const [
-                Shadow(
-                  color: Colors.black38,
-                  offset: Offset(3, 3),
-                  blurRadius: 6,
-                ),
-                Shadow(
-                  color: Colors.cyan,
-                  offset: Offset(-1, -1),
-                  blurRadius: 3,
-                ),
+                Shadow(color: Colors.black38, offset: Offset(3, 3), blurRadius: 6),
+                Shadow(color: Colors.cyan, offset: Offset(-1, -1), blurRadius: 3),
               ],
             ),
             textAlign: TextAlign.center,
@@ -645,30 +555,15 @@ Widget _buildEventContent(GameState gameState) {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: isEndingEvent
-                          ? [
-                              Colors.purple.withOpacity(0.2),
-                              Colors.indigo.withOpacity(0.05),
-                            ]
-                          : [
-                              Colors.cyan.withOpacity(0.2),
-                              Colors.blue.withOpacity(0.05),
-                            ],
+                          ? [Colors.purple.withOpacity(0.2), Colors.indigo.withOpacity(0.05)]
+                          : [Colors.cyan.withOpacity(0.2), Colors.blue.withOpacity(0.05)],
                     ),
                     borderRadius: BorderRadius.circular(30),
-                    border: Border.all(
-                      color: (isEndingEvent ? Colors.purple : Colors.cyan)
-                          .withOpacity(0.5),
-                      width: 3,
-                    ),
+                    border: Border.all(color: (isEndingEvent ? Colors.purple : Colors.cyan).withOpacity(0.5), width: 3),
                     boxShadow: [
+                      BoxShadow(color: Colors.black.withOpacity(0.3), blurRadius: 25, offset: const Offset(0, 10)),
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        blurRadius: 25,
-                        offset: const Offset(0, 10),
-                      ),
-                      BoxShadow(
-                        color: (isEndingEvent ? Colors.purple : Colors.cyan)
-                            .withOpacity(0.2),
+                        color: (isEndingEvent ? Colors.purple : Colors.cyan).withOpacity(0.2),
                         blurRadius: 30,
                         spreadRadius: -2,
                       ),
@@ -685,24 +580,15 @@ Widget _buildEventContent(GameState gameState) {
                           color: Colors.white,
                           height: 1.3,
                           shadows: [
+                            Shadow(color: Colors.black.withOpacity(0.6), offset: const Offset(2, 2), blurRadius: 6),
                             Shadow(
-                              color: Colors.black.withOpacity(0.6),
-                              offset: const Offset(2, 2),
-                              blurRadius: 6,
-                            ),
-                            Shadow(
-                              color:
-                                  (isEndingEvent ? Colors.purple : Colors.cyan)
-                                      .withOpacity(0.4),
+                              color: (isEndingEvent ? Colors.purple : Colors.cyan).withOpacity(0.4),
                               offset: const Offset(-1, -1),
                               blurRadius: 3,
                             ),
                           ],
                         ),
-                        child: Text(
-                          gameState.currentChallenge!,
-                          textAlign: TextAlign.center,
-                        ),
+                        child: Text(gameState.currentChallenge!, textAlign: TextAlign.center),
                       ),
                     ],
                   ),
@@ -720,72 +606,52 @@ IconData _getDynamicIcon(String challenge) {
   final lowerChallenge = challenge.toLowerCase();
 
   // Drinking related
-  if (lowerChallenge.contains('bebe') ||
-      lowerChallenge.contains('trago') ||
-      lowerChallenge.contains('shot')) {
+  if (lowerChallenge.contains('bebe') || lowerChallenge.contains('trago') || lowerChallenge.contains('shot')) {
     return Icons.local_drink;
   }
 
   // Party/celebration related
-  if (lowerChallenge.contains('baila') ||
-      lowerChallenge.contains('canta') ||
-      lowerChallenge.contains('música')) {
+  if (lowerChallenge.contains('baila') || lowerChallenge.contains('canta') || lowerChallenge.contains('música')) {
     return Icons.music_note;
   }
 
   // Truth or questions
-  if (lowerChallenge.contains('pregunta') ||
-      lowerChallenge.contains('cuenta') ||
-      lowerChallenge.contains('confiesa')) {
+  if (lowerChallenge.contains('pregunta') || lowerChallenge.contains('cuenta') || lowerChallenge.contains('confiesa')) {
     return Icons.quiz;
   }
 
   // Social/group activities
-  if (lowerChallenge.contains('todos') ||
-      lowerChallenge.contains('grupo') ||
-      lowerChallenge.contains('equipo')) {
+  if (lowerChallenge.contains('todos') || lowerChallenge.contains('grupo') || lowerChallenge.contains('equipo')) {
     return Icons.group;
   }
 
   // Game/challenge related
-  if (lowerChallenge.contains('juego') ||
-      lowerChallenge.contains('reto') ||
-      lowerChallenge.contains('desafío')) {
+  if (lowerChallenge.contains('juego') || lowerChallenge.contains('reto') || lowerChallenge.contains('desafío')) {
     return Icons.sports_esports;
   }
 
   // Love/romantic related
-  if (lowerChallenge.contains('amor') ||
-      lowerChallenge.contains('besa') ||
-      lowerChallenge.contains('pareja')) {
+  if (lowerChallenge.contains('amor') || lowerChallenge.contains('besa') || lowerChallenge.contains('pareja')) {
     return Icons.favorite;
   }
 
   // Action/movement related
-  if (lowerChallenge.contains('salta') ||
-      lowerChallenge.contains('corre') ||
-      lowerChallenge.contains('mueve')) {
+  if (lowerChallenge.contains('salta') || lowerChallenge.contains('corre') || lowerChallenge.contains('mueve')) {
     return Icons.directions_run;
   }
 
   // Phone/social media related
-  if (lowerChallenge.contains('teléfono') ||
-      lowerChallenge.contains('mensaje') ||
-      lowerChallenge.contains('llamada')) {
+  if (lowerChallenge.contains('teléfono') || lowerChallenge.contains('mensaje') || lowerChallenge.contains('llamada')) {
     return Icons.phone;
   }
 
   // Time related
-  if (lowerChallenge.contains('minutos') ||
-      lowerChallenge.contains('tiempo') ||
-      lowerChallenge.contains('segundo')) {
+  if (lowerChallenge.contains('minutos') || lowerChallenge.contains('tiempo') || lowerChallenge.contains('segundo')) {
     return Icons.timer;
   }
 
   // Star/special challenges
-  if (lowerChallenge.contains('especial') ||
-      lowerChallenge.contains('estrella') ||
-      lowerChallenge.contains('premio')) {
+  if (lowerChallenge.contains('especial') || lowerChallenge.contains('estrella') || lowerChallenge.contains('premio')) {
     return Icons.star;
   }
 
@@ -804,48 +670,27 @@ Widget _buildSinglePlayerAvatar(GameState gameState) {
         large: 100, // Tamaño para pantallas grandes
       );
 
-      final borderWidth = getResponsiveSize(
-        context,
-        small: 2,
-        medium: 3,
-        large: 4,
-      );
+      final borderWidth = getResponsiveSize(context, small: 2, medium: 3, large: 4);
 
-      final iconSize = getResponsiveSize(
-        context,
-        small: 30,
-        medium: 40,
-        large: 50,
-      );
+      final iconSize = getResponsiveSize(context, small: 30, medium: 40, large: 50);
 
       return Container(
         width: avatarSize,
         height: avatarSize,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(
-            color: Colors.white.withOpacity(gameState.glowAnimation.value),
-            width: borderWidth,
-          ),
+          border: Border.all(color: Colors.white.withOpacity(gameState.glowAnimation.value), width: borderWidth),
         ),
         child: ClipOval(
           child: gameState.currentPlayer!.imagen != null
-              ? Image.file(
-                  gameState.currentPlayer!.imagen!,
-                  fit: BoxFit.contain,
-                ) // Cambiado de cover a contain
+              ? Image.file(gameState.currentPlayer!.imagen!, fit: BoxFit.contain) // Cambiado de cover a contain
               : gameState.currentPlayer!.avatar != null
-              ? Image.asset(
-                  gameState.currentPlayer!.avatar!,
-                  fit: BoxFit.contain,
-                ) // Cambiado de cover a contain
+              ? Image.asset(gameState.currentPlayer!.avatar!, fit: BoxFit.contain) // Cambiado de cover a contain
               : Container(
                   color: Colors.white.withOpacity(0.2),
                   child: Icon(
                     Icons.person,
-                    color: Colors.white.withOpacity(
-                      gameState.glowAnimation.value,
-                    ),
+                    color: Colors.white.withOpacity(gameState.glowAnimation.value),
                     size: iconSize,
                   ),
                 ),
@@ -859,33 +704,13 @@ Widget _buildSinglePlayerAvatar(GameState gameState) {
 Widget _buildDualPlayerAvatars(GameState gameState) {
   return LayoutBuilder(
     builder: (context, constraints) {
-      final containerWidth = getResponsiveSize(
-        context,
-        small: 100,
-        medium: 120,
-        large: 140,
-      );
+      final containerWidth = getResponsiveSize(context, small: 100, medium: 120, large: 140);
 
-      final avatarSize = getResponsiveSize(
-        context,
-        small: 50,
-        medium: 70,
-        large: 90,
-      );
+      final avatarSize = getResponsiveSize(context, small: 50, medium: 70, large: 90);
 
-      final vsSize = getResponsiveSize(
-        context,
-        small: 25,
-        medium: 30,
-        large: 35,
-      );
+      final vsSize = getResponsiveSize(context, small: 25, medium: 30, large: 35);
 
-      final vsFontSize = getResponsiveSize(
-        context,
-        small: 10,
-        medium: 12,
-        large: 14,
-      );
+      final vsFontSize = getResponsiveSize(context, small: 10, medium: 12, large: 14);
 
       return SizedBox(
         width: containerWidth,
@@ -901,12 +726,7 @@ Widget _buildDualPlayerAvatars(GameState gameState) {
                 height: avatarSize,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.white.withOpacity(
-                      gameState.glowAnimation.value,
-                    ),
-                    width: 3,
-                  ),
+                  border: Border.all(color: Colors.white.withOpacity(gameState.glowAnimation.value), width: 3),
                 ),
                 child: ClipOval(
                   child: _buildPlayerImage(
@@ -926,12 +746,7 @@ Widget _buildDualPlayerAvatars(GameState gameState) {
                 height: avatarSize,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.cyan.withOpacity(
-                      gameState.glowAnimation.value * 0.8,
-                    ),
-                    width: 3,
-                  ),
+                  border: Border.all(color: Colors.cyan.withOpacity(gameState.glowAnimation.value * 0.8), width: 3),
                 ),
                 child: ClipOval(
                   child: _buildPlayerImage(
@@ -952,22 +767,12 @@ Widget _buildDualPlayerAvatars(GameState gameState) {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: Colors.white.withOpacity(0.9),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
-                      blurRadius: 4,
-                      spreadRadius: 1,
-                    ),
-                  ],
+                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.3), blurRadius: 4, spreadRadius: 1)],
                 ),
                 child: Center(
                   child: Text(
                     'VS',
-                    style: TextStyle(
-                      fontSize: vsFontSize,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
+                    style: TextStyle(fontSize: vsFontSize, fontWeight: FontWeight.bold, color: Colors.black87),
                   ),
                 ),
               ),
@@ -980,11 +785,7 @@ Widget _buildDualPlayerAvatars(GameState gameState) {
 }
 
 // Helper method para construir la imagen del jugador
-Widget _buildPlayerImage(
-  Player player,
-  GameState gameState,
-  BuildContext context,
-) {
+Widget _buildPlayerImage(Player player, GameState gameState, BuildContext context) {
   final iconSize = getResponsiveSize(
     context, // Usar el context pasado como parámetro
     small: 30,
@@ -993,21 +794,11 @@ Widget _buildPlayerImage(
   );
 
   return player.imagen != null
-      ? Image.file(
-          player.imagen!,
-          fit: BoxFit.contain,
-        ) // Cambiado de cover a contain
+      ? Image.file(player.imagen!, fit: BoxFit.contain) // Cambiado de cover a contain
       : player.avatar != null
-      ? Image.asset(
-          player.avatar!,
-          fit: BoxFit.contain,
-        ) // Cambiado de cover a contain
+      ? Image.asset(player.avatar!, fit: BoxFit.contain) // Cambiado de cover a contain
       : Container(
           color: Colors.white.withOpacity(0.2),
-          child: Icon(
-            Icons.person,
-            color: Colors.white.withOpacity(gameState.glowAnimation.value),
-            size: iconSize,
-          ),
+          child: Icon(Icons.person, color: Colors.white.withOpacity(gameState.glowAnimation.value), size: iconSize),
         );
 }
