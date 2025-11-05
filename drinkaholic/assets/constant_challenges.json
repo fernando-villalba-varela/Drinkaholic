@@ -87,7 +87,18 @@
           "mexicano", 
           "gallego",
           "chileno",
-          "colombiano"
+          "colombiano",
+          "andaluz de pueblo",
+          "catalán",
+          "vasco",
+          "cubano",
+          "chino",
+          "inglés",
+          "francés",
+          "italiano",
+          "alemán",
+          "ruso",
+          "brasileño"
         ],
         "DRINKS": ["1", "2", "3", "4"]
       },

@@ -5,7 +5,7 @@
       "type": "multiplier",
       "title": "Tragos Dobles",
       "template": "EVENTO: ✖️ Todos los tragos valen x{MULTIPLIER} mientras dure este evento",
-      "endTemplate": "El evento de tragos dobles ha terminado. Todos los tragos vuelven a valer normal.",
+      "endTemplate": "El multiplicador de tragos ha terminado. Todos los tragos vuelven a valer normal.",
       "variables": {
         "MULTIPLIER": ["2", "3"]
       },
@@ -149,7 +149,7 @@
       "type": "multiplier",
       "title": "Triple Problema",
       "template": "EVENTO: ✖️ Todos los castigos y tragos valen x{MULTIPLIER} mientras dure este evento. Si protestan, beben {PUNISHMENT} tragos extra",
-      "endTemplate": "El triple problema ha terminado. Los castigos vuelven a ser normales.",
+      "endTemplate": "El multiplicador de tragos ha terminado. Los castigos vuelven a ser normales.",
       "variables": {
         "MULTIPLIER": ["3"],
         "PUNISHMENT": ["1", "2"]
@@ -168,7 +168,7 @@
       "template": "EVENTO: 🌐 Mientras dure este evento, todos deben hablar con acento {ACCENT}. Si hablan normal, beben {PUNISHMENT} tragos",
       "endTemplate": "El desafío de acento ha terminado. Ya pueden hablar con su acento normal.",
       "variables": {
-        "ACCENT": ["francés", "italiano", "argentino", "mexicano", "inglés"],
+        "ACCENT": ["francés", "italiano", "argentino", "mexicano", "inglés", "brasileño", "alemán", "japonés", "ruso", "australiano", "indio"],
         "PUNISHMENT": ["2", "3"]
       },
       "categoria": "fun",
@@ -267,7 +267,7 @@
       "type": "multiplier",
       "title": "Ráfaga Triple",
       "template": "EVENTO: ✖️ Durante este evento, todos los tragos valen x{MULTIPLIER}",
-      "endTemplate": "La ráfaga triple ha terminado.",
+      "endTemplate": "El multiplicador de tragos ha terminado.",
       "variables": {
         "MULTIPLIER": ["3"]
       },
