@@ -1175,6 +1175,56 @@
       "AMOUNT": ["1", "2", "3", "4", "5"]
     },
     "categoria": "Más Probable"
+  },
+  {
+    "id": "yo_nunca",
+    "template": "Yo nunca he {THING}; quien lo haya hecho bebe {AMOUNT} tragos",
+    "variables": {
+      "THING": [
+        "olvidado una fecha importante",
+        "pensado que le caigo mal a alguien",
+        "sido visto meando en público",
+        "cambiado de nombre en redes",
+        "corrido una maratón",
+        "dormido 12 horas seguidas",
+        "olvidado una noche entera",
+        "mandado fotos comprometedoras",
+        "vomitado encima de alguien",
+        "llamado a mi ex borracho",
+        "sido pillado manteniendo relaciones",
+        "mantenido relaciones en un lugar público",
+        "probado drogas duras",
+        "puesto los cuernos",
+        "bailado sexualmente con un desconocido",
+        "pensado cosas indecentes de un amigo/a",
+        "mentido sobre alguno de los presentes",
+        "robado en una tienda de ropa",
+        "hecho un striptease",
+        "hecho un trío",
+        "nadado desnudo",
+        "hecho trampas en un juego de mesa",
+        "hecho chuletas en un examen",
+        "desaparecio de una fiesta con un desconocido",
+        "fingido estar enfermo para no ir a algo",
+        "sido pillado con fotos comprometedoras en el móvil",
+        "estado más de dos días sin ducharme",
+        "ligado con un camarero/a",
+        "jugado a La Previa",
+        "hecho un deporte extremo",
+        "estado enamorado de un profesor/a",
+        "enviado un mensaje vergonzoso a la persona equivocada",
+        "mantenido relaciones con el amigo/a de un amigo/a",
+        "mentido sobre mi edad",
+        "sido arrestado",
+        "saltado de un acantilado al mar",
+        "ido a una cita a ciegas",
+        "tenido una aventura de una noche"
+      ],
+      "AMOUNT": ["2", "3", "4", "5", "6"]
+    },
+    "categoria": "Yo Nunca"
   }
   ]
 }
+
+
