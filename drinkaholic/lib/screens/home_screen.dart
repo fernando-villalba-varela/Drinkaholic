@@ -129,7 +129,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            // Epic title (logo removed)
+                            // Logo above title
+                            Image.asset(
+                              'assets/images/logo.png',
+                              width: min(screenWidth * 0.4, 180),
+                              height: min(screenWidth * 0.4, 180),
+                              fit: BoxFit.contain,
+                            ),
+                            
+                            SizedBox(height: 20.h),
 
                             // Title with epic styling connected to background
                             Stack(
@@ -188,13 +196,22 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
                             SizedBox(height: 6.h),
                             Text(
-                              'Dios se apiade de nosotros',
+                              'Powered by',
                               style: TextStyle(
                                 fontSize: 14.sp,
                                 color: const Color(0xCCFFFFFF),
                                 letterSpacing: 1.8,
                                 fontWeight: FontWeight.w300,
                               ),
+                            ),
+                            
+                            SizedBox(height: 16.h), // Increased from 8.h to 16.h
+                            
+                            // Promo image
+                            Image.asset(
+                              'assets/images/promo.png',
+                              width: min(screenWidth * 0.25, 100),
+                              fit: BoxFit.contain,
                             ),
                           ],
                         ),
