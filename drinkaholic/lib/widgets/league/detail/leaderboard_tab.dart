@@ -150,14 +150,8 @@ class LeaderboardTab extends StatelessWidget {
                   '${p.points} pts',
                   style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w700),
                 ),
-                if (isMvpStreak) ...[
-                  const SizedBox(width: 8),
-                  const Text('👑', style: TextStyle(fontSize: 16)),
-                ],
-                if (isRatitaStreak) ...[
-                  const SizedBox(width: 8),
-                  const Text('🐭', style: TextStyle(fontSize: 16)),
-                ],
+                // Quitamos las coronas y ratitas adicionales de los puntos
+                // Solo se muestran el fuego y caca en el nombre
               ],
             ),
           ),

@@ -45,7 +45,7 @@ class _GameResultsScreenState extends State<GameResultsScreen> with TickerProvid
     // Overlay para suavizar orientación a retrato y confeti inicial
     _orientationFadeController = AnimationController(duration: const Duration(milliseconds: 180), vsync: this);
     _orientationFade = CurvedAnimation(parent: _orientationFadeController, curve: Curves.easeInOut);
-    _confettiController = AnimationController(duration: const Duration(milliseconds: 1800), vsync: this);
+    _confettiController = AnimationController(duration: const Duration(milliseconds: 5000), vsync: this);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _orientationFadeController.forward();
@@ -58,12 +58,9 @@ class _GameResultsScreenState extends State<GameResultsScreen> with TickerProvid
           _showOrientationOverlay = false;
         });
       }
-      // Disparo de confeti al entrar en resultados
-      if (mounted) {
-        _confettiController.forward();
-        HapticFeedback.lightImpact();
-      }
-      _checkForTiebreakers();
+      
+      // SOLO disparar confeti si NO hay desempates
+      _checkForTiebreakersAndStartConfetti();
     });
 
     // Inicializar animación de parpadeo (para brillos)
@@ -96,6 +93,11 @@ class _GameResultsScreenState extends State<GameResultsScreen> with TickerProvid
         .map((entry) => entry.key)
         .toList();
 
+    // EXCLUIR al MVP resuelto de la lista de candidatos a Ratita
+    if (_mvpTieResolved && _resolvedMVP != null) {
+      ratitaPlayerIds.removeWhere((id) => id == _resolvedMVP!.id);
+    }
+
     // Verificar empate MVP
     if (mvpPlayerIds.length > 1 && !_mvpTieResolved) {
       List<Player> tiedMVPPlayers = widget.players.where((p) => mvpPlayerIds.contains(p.id)).toList();
@@ -114,9 +116,18 @@ class _GameResultsScreenState extends State<GameResultsScreen> with TickerProvid
               });
               Navigator.pop(context);
 
-              // Verificar empate Ratita después de resolver MVP
-              if (ratitaPlayerIds.length > 1 && !_ratitaTieResolved) {
-                _checkRatitaTiebreaker(ratitaPlayerIds, minDrinks);
+              // Recalcular candidatos a Ratita EXCLUYENDO al MVP ganador
+              List<int> updatedRatitaPlayerIds = widget.playerDrinks.entries
+                  .where((entry) => entry.value == minDrinks && entry.key != winner.id)
+                  .map((entry) => entry.key)
+                  .toList();
+
+              // Verificar empate Ratita después de resolver MVP (con lista actualizada)
+              if (updatedRatitaPlayerIds.length > 1 && !_ratitaTieResolved) {
+                _checkRatitaTiebreaker(updatedRatitaPlayerIds, minDrinks);
+              } else {
+                // NO hay más empates - disparar confeti
+                _startConfettiAnimation();
               }
             },
           ),
@@ -145,10 +156,54 @@ class _GameResultsScreenState extends State<GameResultsScreen> with TickerProvid
               _ratitaTieResolved = true;
             });
             Navigator.pop(context);
+            
+            // Después de resolver el último desempate - disparar confeti
+            _startConfettiAnimation();
           },
         ),
-      ),
-    );
+      ));
+  }
+
+  void _checkForTiebreakersAndStartConfetti() {
+    // MVDP = jugadores con MÁS tragos
+    int maxDrinks = widget.playerDrinks.values.reduce((a, b) => a > b ? a : b);
+    List<int> mvpPlayerIds = widget.playerDrinks.entries
+        .where((entry) => entry.value == maxDrinks)
+        .map((entry) => entry.key)
+        .toList();
+
+    // Ratita = jugadores con MENOS tragos
+    int minDrinks = widget.playerDrinks.values.reduce((a, b) => a < b ? a : b);
+    List<int> ratitaPlayerIds = widget.playerDrinks.entries
+        .where((entry) => entry.value == minDrinks)
+        .map((entry) => entry.key)
+        .toList();
+
+    // EXCLUIR al MVP resuelto de la lista de candidatos a Ratita
+    if (_mvpTieResolved && _resolvedMVP != null) {
+      ratitaPlayerIds.removeWhere((id) => id == _resolvedMVP!.id);
+    }
+
+    // Verificar si hay empates
+    bool hasMVPTie = mvpPlayerIds.length > 1;
+    bool hasRatitaTie = ratitaPlayerIds.length > 1;
+
+    if (!hasMVPTie && !hasRatitaTie) {
+      // NO hay empates - disparar confeti inmediatamente
+      _startConfettiAnimation();
+    } else {
+      // HAY empates - manejar desempates primero
+      _checkForTiebreakers();
+    }
+  }
+
+  void _startConfettiAnimation() {
+    if (mounted) {
+      _confettiController.forward().then((_) {
+        // Ya no usamos reset(), simplemente dejamos que termine y se desvanezca naturalmente
+      });
+      HapticFeedback.lightImpact();
+    }
   }
 
   @override
@@ -158,24 +213,35 @@ class _GameResultsScreenState extends State<GameResultsScreen> with TickerProvid
     int maxDrinks = widget.playerDrinks.values.reduce((a, b) => a > b ? a : b);
     int minDrinks = widget.playerDrinks.values.reduce((a, b) => a < b ? a : b);
 
-    // Usar resultados de desempate si están disponibles, sino calcular normalmente
-    Player mvp;
-    Player ratita;
-
-    if (_resolvedMVP != null) {
-      mvp = _resolvedMVP!;
+    // Obtener MVP
+    Player mvpPlayer;
+    int mvpDrinks;
+    if (_mvpTieResolved && _resolvedMVP != null) {
+      mvpPlayer = _resolvedMVP!;
+      mvpDrinks = widget.playerDrinks[mvpPlayer.id] ?? 0;
     } else {
-      // MVDP = quien MÁS bebió (más tragos)
-      int mvpPlayerId = widget.playerDrinks.entries.firstWhere((entry) => entry.value == maxDrinks).key;
-      mvp = widget.players.firstWhere((p) => p.id == mvpPlayerId, orElse: () => widget.players.first);
+      mvpPlayer = widget.players.firstWhere((p) => widget.playerDrinks[p.id] == maxDrinks);
+      mvpDrinks = maxDrinks;
     }
 
-    if (_resolvedRatita != null) {
-      ratita = _resolvedRatita!;
+    // Obtener Ratita (EXCLUYENDO al MVP si es el mismo caso de empate total)
+    Player ratitaPlayer;
+    int ratitaDrinks;
+    if (_ratitaTieResolved && _resolvedRatita != null) {
+      ratitaPlayer = _resolvedRatita!;
+      ratitaDrinks = widget.playerDrinks[ratitaPlayer.id] ?? 0;
     } else {
-      // Ratita = quien MENOS bebió (menos tragos)
-      int ratitaPlayerId = widget.playerDrinks.entries.firstWhere((entry) => entry.value == minDrinks).key;
-      ratita = widget.players.firstWhere((p) => p.id == ratitaPlayerId, orElse: () => widget.players.last);
+      // Filtrar candidatos a Ratita excluyendo al MVP si ya fue resuelto
+      List<Player> ratitaCandidates = widget.players.where((p) {
+        bool hasMinDrinks = widget.playerDrinks[p.id] == minDrinks;
+        bool isNotResolvedMVP = !(_mvpTieResolved && _resolvedMVP != null && p.id == _resolvedMVP!.id);
+        return hasMinDrinks && isNotResolvedMVP;
+      }).toList();
+      
+      ratitaPlayer = ratitaCandidates.isNotEmpty 
+          ? ratitaCandidates.first 
+          : widget.players.firstWhere((p) => widget.playerDrinks[p.id] == minDrinks);
+      ratitaDrinks = minDrinks;
     }
 
     // Ordenar jugadores por cantidad de tragos (de más a menos)
@@ -206,7 +272,7 @@ class _GameResultsScreenState extends State<GameResultsScreen> with TickerProvid
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Color(0xFF00C9FF), Color(0xFF92FE9D)],
+                  colors: [Color(0xFFFC466B), Color(0xFF3F5EFB)],
                 ),
               ),
             ),
@@ -218,7 +284,9 @@ class _GameResultsScreenState extends State<GameResultsScreen> with TickerProvid
                 Container(
                   padding: EdgeInsets.all(headerPadding),
                   decoration: const BoxDecoration(
-                    gradient: LinearGradient(colors: [Color(0xFF00C9FF), Color(0xFF92FE9D)]),
+                    gradient: LinearGradient(
+                      colors: [Color(0xFFE91E63), Color(0xFF9C27B0)],
+                    ),
                   ),
                   child: Row(
                     children: [
@@ -245,10 +313,10 @@ class _GameResultsScreenState extends State<GameResultsScreen> with TickerProvid
                           textAlign: TextAlign.center,
                         ),
                         SizedBox(height: isSmallScreen ? 16 : 24),
-                        // MVP Section - TOP
+                        // MVP Section - TOP - USAR mvpPlayer en lugar de mvp
                         _buildMVPCard(
-                          player: mvp,
-                          drinks: widget.playerDrinks[mvp.id] ?? 0,
+                          player: mvpPlayer,
+                          drinks: widget.playerDrinks[mvpPlayer.id] ?? 0,
                           isSmallScreen: isSmallScreen,
                         ),
                         SizedBox(height: isSmallScreen ? 16 : 24),
@@ -334,11 +402,11 @@ class _GameResultsScreenState extends State<GameResultsScreen> with TickerProvid
                                   ),
                                 );
                               }),
-                              // Ratita Section - BOTTOM
+                              // Ratita Section - BOTTOM - USAR ratitaPlayer en lugar de ratita
                               SizedBox(height: isSmallScreen ? 12 : 16),
                               _buildRatitaCard(
-                                player: ratita,
-                                drinks: widget.playerDrinks[ratita.id] ?? 0,
+                                player: ratitaPlayer,
+                                drinks: widget.playerDrinks[ratitaPlayer.id] ?? 0,
                                 isSmallScreen: isSmallScreen,
                               ),
                             ],
@@ -790,7 +858,18 @@ class _GameResultsScreenState extends State<GameResultsScreen> with TickerProvid
       animation: _confettiController,
       builder: (context, _) {
         final v = _confettiController.value;
-        if (v == 0.0) return const SizedBox.shrink();
+        // Solo ocultar cuando esté completamente en 0.0 O cuando haya terminado completamente
+        if (v == 0.0 || _confettiController.status == AnimationStatus.completed) {
+          // Si está completado, esperar un momento antes de ocultar para que termine el desvanecimiento
+          if (_confettiController.status == AnimationStatus.completed) {
+            Future.delayed(const Duration(milliseconds: 500), () {
+              if (mounted) {
+                _confettiController.reset();
+              }
+            });
+          }
+          return const SizedBox.shrink();
+        }
         return Positioned.fill(
           child: CustomPaint(
             painter: _ConfettiPainter(progress: v),
@@ -817,15 +896,28 @@ class _ConfettiPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final rnd = math.Random(42);
     final count = 80;
+    
+    // Desvanecimiento gradual en los últimos 2 segundos (0.6 a 1.0)
+    double globalOpacity = 1.0;
+    if (progress > 0.6) {
+      globalOpacity = 1.0 - ((progress - 0.6) / 0.4); // Se desvanece en los últimos 40%
+    }
+    
     for (int i = 0; i < count; i++) {
-      final t = (i / count + progress) % 1.0;
+      // Las partículas siempre caen hacia abajo
+      final t = (i / count + progress * 0.7) % 1.0;
       final x = rnd.nextDouble() * size.width;
       final startY = -50.0 - rnd.nextDouble() * 200.0;
-      final y = startY + t * (size.height + 200.0);
+      final y = startY + t * (size.height + 300.0);
       final w = 4.0 + rnd.nextDouble() * 6.0;
       final h = 6.0 + rnd.nextDouble() * 10.0;
       final angle = rnd.nextDouble() * 3.1415;
-      final paint = Paint()..color = colors[i % colors.length].withOpacity(1.0 - (t * 0.8));
+      
+      // Opacidad individual + opacidad global de desvanecimiento
+      final individualOpacity = 1.0 - (t * 0.2);
+      final finalOpacity = individualOpacity * globalOpacity;
+      
+      final paint = Paint()..color = colors[i % colors.length].withOpacity(finalOpacity);
       canvas.save();
       canvas.translate(x, y);
       canvas.rotate(angle);

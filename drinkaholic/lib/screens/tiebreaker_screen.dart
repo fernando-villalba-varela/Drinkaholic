@@ -419,20 +419,23 @@ class _TiebreakerScreenState extends State<TiebreakerScreen> with TickerProvider
                           ),
                     const SizedBox(height: 32),
 
-                    // Ruleta con jugadores
+                    // Ruleta con jugadores - CENTRADA
                     Expanded(
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center, // Centrar verticalmente
                         children: [
                           if (!_hasSpun && !_isSpinning) ...[
                             Text(
                               'Solo el Little Boy sabe tu destino...',
                               style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
+                              textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 32),
                           ] else if (_isSpinning) ...[
                             Text(
                               '¡Girando...!',
                               style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
+                              textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 32),
                           ] else ...[
@@ -443,67 +446,77 @@ class _TiebreakerScreenState extends State<TiebreakerScreen> with TickerProvider
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
                               ),
+                              textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 16),
-                            ScaleTransition(
-                              scale: _winnerScale,
-                              child: Container(
-                                padding: const EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  color: (isMVP ? const Color(0xFFFFD700) : const Color(0xFF8B4513)).withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
-                                    color: isMVP ? const Color(0xFFFFD700) : const Color(0xFF8B4513),
-                                    width: 2,
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    _buildPlayerAvatar(_winner!, size: 50),
-                                    const SizedBox(width: 16),
-                                    Text(
-                                      _winner!.nombre,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                            // Centrar el resultado del ganador
+                            Center(
+                              child: ScaleTransition(
+                                scale: _winnerScale,
+                                child: Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: (isMVP ? const Color(0xFFFFD700) : const Color(0xFF8B4513)).withOpacity(0.2),
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(
+                                      color: isMVP ? const Color(0xFFFFD700) : const Color(0xFF8B4513),
+                                      width: 2,
                                     ),
-                                  ],
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      _buildPlayerAvatar(_winner!, size: 50),
+                                      const SizedBox(width: 16),
+                                      Text(
+                                        _winner!.nombre,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
                             const SizedBox(height: 32),
                           ],
 
-                          // Ruleta circular con jugadores
-                          _buildSpinWheel(),
+                          // Ruleta circular con jugadores - CENTRADA
+                          Center(child: _buildSpinWheel()),
                         ],
                       ),
                     ),
 
-                    // Botón para confirmar resultado
-                    if (_hasSpun && _winner != null)
-                      DrinkaholicButton(
-                        label: 'Confirmar Resultado',
-                        icon: Icons.check_circle_outline,
-                        onPressed: () {
-                          final loser = widget.tiedPlayers.length > 1
-                              ? widget.tiedPlayers.firstWhere((p) => p.id != _winner!.id)
-                              : null;
-                          widget.onTiebreakerResolved(_winner!, loser);
-                        },
-                        variant: DrinkaholicButtonVariant.primary,
-                        fullWidth: false,
-                        height: 52,
-                      )
-                    else if (_isSpinning)
-                      Container(
-                        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
-                        child: const CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
+                    // Botón para confirmar resultado - CENTRADO
+                    Center(
+                      child: Column(
+                        children: [
+                          if (_hasSpun && _winner != null)
+                            DrinkaholicButton(
+                              label: 'Confirmar Resultado',
+                              icon: Icons.check_circle_outline,
+                              onPressed: () {
+                                final loser = widget.tiedPlayers.length > 1
+                                    ? widget.tiedPlayers.firstWhere((p) => p.id != _winner!.id)
+                                    : null;
+                                widget.onTiebreakerResolved(_winner!, loser);
+                              },
+                              variant: DrinkaholicButtonVariant.primary,
+                              fullWidth: false,
+                              height: 52,
+                            )
+                          else if (_isSpinning)
+                            Container(
+                              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+                              child: const CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
+                            ),
+                          const SizedBox(height: 16),
+                        ],
                       ),
-                    const SizedBox(height: 16),
+                    ),
                   ],
                 ),
               ),
