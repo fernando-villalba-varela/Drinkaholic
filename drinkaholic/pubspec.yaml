@@ -57,12 +57,14 @@ flutter_icons:
   ios: true
   image_path: "assets/images/drinkaholic_logo.png"
   # Configuración para iconos adaptativos en Android
-  adaptive_icon_background: "#FFFFFF"  # Fondo blanco para el icono adaptativo
+  adaptive_icon_background: "#1a0a2e"  # Fondo oscuro morado del logo
   adaptive_icon_foreground: "assets/images/drinkaholic_logo.png"  # Logo en primer plano
   # También generar iconos tradicionales
   min_sdk_android: 21
   # Eliminar canal alfa para iOS (requerido por App Store)
   remove_alpha_ios: true
+  # Remover padding para iconos adaptativos
+  adaptive_icon_padding: 0
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
