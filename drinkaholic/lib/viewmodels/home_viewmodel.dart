@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../screens/participants_screen.dart';
 import '../screens/league_list_screen.dart';
 import '../models/button_config.dart';
@@ -15,6 +16,8 @@ class HomeViewModel extends ChangeNotifier {
   static const LinearGradient quickGameGradient = LinearGradient(colors: [Color(0xFF00C9FF), Color(0xFF92FE9D)]);
 
   static const LinearGradient leagueGradient = LinearGradient(colors: [Color(0xFFFC466B), Color(0xFF3F5EFB)]);
+
+  static const LinearGradient buyAlcoholGradient = LinearGradient(colors: [Color(0xFFFDC830), Color(0xFFF37335)]);
 
   void navigateToQuickGame(BuildContext context) {
     try {
@@ -34,6 +37,13 @@ class HomeViewModel extends ChangeNotifier {
       Navigator.push(context, MaterialPageRoute(builder: (_) => const LeagueListScreen()));
     } catch (e) {
       _setError('Error al navegar a Liga: ${e.toString()}');
+    }
+  }
+
+  Future<void> _launchURL(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (!await launchUrl(uri)) {
+      _setError('No se pudo abrir el enlace: $url');
     }
   }
 
@@ -61,6 +71,17 @@ class HomeViewModel extends ChangeNotifier {
       gradient: leagueGradient,
       onTap: () {
         onAnimatedTap(leagueGradient, 'LIGA', Icons.emoji_events, () => navigateToLeague(context));
+      },
+    );
+  }
+
+  ButtonConfig getBuyAlcoholButtonConfig() {
+    return ButtonConfig(
+      text: 'COMPRA ALCOHOL AQUÍ',
+      icon: Icons.shopping_cart,
+      gradient: buyAlcoholGradient,
+      onTap: () {
+        _launchURL('https://shotest.es/2-productos');
       },
     );
   }

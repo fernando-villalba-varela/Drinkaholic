@@ -250,6 +250,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                 );
                               },
                             ),
+                            SizedBox(height: 18.h),
+
+                            Builder(
+                              builder: (context) {
+                                final config = _viewModel.getBuyAlcoholButtonConfig();
+                                return ModernButton(
+                                  onTap: config.onTap,
+                                  text: config.text,
+                                  icon: config.icon,
+                                  gradient: config.gradient,
+                                );
+                              },
+                            ),
                             SizedBox(height: 24.h),
                           ],
                         ),
