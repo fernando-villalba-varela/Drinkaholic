@@ -77,7 +77,7 @@ class HomeViewModel extends ChangeNotifier {
 
   ButtonConfig getBuyAlcoholButtonConfig() {
     return ButtonConfig(
-      text: 'COMPRA ALCOHOL AQUÍ',
+      text: 'RECARGA TUS ELIXIRES',
       icon: Icons.shopping_cart,
       gradient: buyAlcoholGradient,
       onTap: () {
