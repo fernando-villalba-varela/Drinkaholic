@@ -1,4 +1,5 @@
 import 'package:drinkaholic/models/player.dart';
+import 'package:drinkaholic/widgets/common/answer_info_button.dart';
 import 'package:flutter/material.dart';
 import '../models/game_state.dart';
 import 'dart:math';
@@ -87,10 +88,16 @@ Widget buildCenterContent(GameState gameState) {
                         ? Icon(Icons.people, size: 50, color: Colors.white.withOpacity(gameState.glowAnimation.value))
                         : gameState.isDualChallenge
                         ? _buildDualPlayerAvatars(gameState)
-                        : gameState.currentPlayer != null
-                        ? _buildSinglePlayerAvatar(gameState)
+                        : _isGenericPlayerQuestion(gameState)
+                        ? Icon(
+                            Icons.group,
+                            size: iconSize,
+                            color: Colors.white.withOpacity(gameState.glowAnimation.value),
+                          )
+                        : _getPlayerIndexFromQuestion(gameState) != null
+                        ? _buildSinglePlayerAvatarByIndex(gameState, _getPlayerIndexFromQuestion(gameState)!)
                         : Icon(
-                            Icons.person_pin,
+                            Icons.group,
                             size: iconSize,
                             color: Colors.white.withOpacity(gameState.glowAnimation.value),
                           ),
@@ -178,23 +185,31 @@ Widget buildCenterContent(GameState gameState) {
                             },
                           ),
                           SizedBox(height: isSmallScreen ? 10 : 20),
-                          AnimatedDefaultTextStyle(
-                            duration: const Duration(milliseconds: 400),
-                            style: TextStyle(
-                              fontSize: fontSize, //+ (sin(value * pi) * 2),
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              height: 1.4,
-                              shadows: [
-                                Shadow(color: Colors.black.withOpacity(0.5), offset: const Offset(2, 2), blurRadius: 4),
-                                Shadow(
-                                  color: Colors.cyan.withOpacity(0.3),
-                                  offset: const Offset(-1, -1),
-                                  blurRadius: 2,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Flexible(
+                                child: AnimatedDefaultTextStyle(
+                                  duration: const Duration(milliseconds: 400),
+                                  style: TextStyle(
+                                    fontSize: fontSize,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    height: 1.4,
+                                    shadows: [
+                                      Shadow(color: Colors.black.withOpacity(0.5), offset: const Offset(2, 2), blurRadius: 4),
+                                      Shadow(
+                                        color: Colors.cyan.withOpacity(0.3),
+                                        offset: const Offset(-1, -1),
+                                        blurRadius: 2,
+                                      ),
+                                    ],
+                                  ),
+                                  child: Text(gameState.currentChallenge!, textAlign: TextAlign.center),
                                 ),
-                              ],
-                            ),
-                            child: Text(gameState.currentChallenge!, textAlign: TextAlign.center),
+                              ),
+                              AnswerInfoButton(answer: gameState.currentAnswer),
+                            ],
                           ),
                         ],
                       ),
@@ -572,23 +587,31 @@ Widget _buildEventContent(GameState gameState) {
                   child: Column(
                     children: [
                       // Event description with cosmic styling (sin icono del mundo arriba)
-                      AnimatedDefaultTextStyle(
-                        duration: const Duration(milliseconds: 600),
-                        style: TextStyle(
-                          fontSize: fontSize, //+ (sin(value * pi) * 3),
-                          fontWeight: FontWeight.w800,
-                          color: Colors.white,
-                          height: 1.3,
-                          shadows: [
-                            Shadow(color: Colors.black.withOpacity(0.6), offset: const Offset(2, 2), blurRadius: 6),
-                            Shadow(
-                              color: (isEndingEvent ? Colors.purple : Colors.cyan).withOpacity(0.4),
-                              offset: const Offset(-1, -1),
-                              blurRadius: 3,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Flexible(
+                            child: AnimatedDefaultTextStyle(
+                              duration: const Duration(milliseconds: 600),
+                              style: TextStyle(
+                                fontSize: fontSize,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.white,
+                                height: 1.3,
+                                shadows: [
+                                  Shadow(color: Colors.black.withOpacity(0.6), offset: const Offset(2, 2), blurRadius: 6),
+                                  Shadow(
+                                    color: (isEndingEvent ? Colors.purple : Colors.cyan).withOpacity(0.4),
+                                    offset: const Offset(-1, -1),
+                                    blurRadius: 3,
+                                  ),
+                                ],
+                              ),
+                              child: Text(gameState.currentChallenge!, textAlign: TextAlign.center),
                             ),
-                          ],
-                        ),
-                        child: Text(gameState.currentChallenge!, textAlign: TextAlign.center),
+                          ),
+                          AnswerInfoButton(answer: gameState.currentAnswer),
+                        ],
                       ),
                     ],
                   ),
@@ -700,6 +723,52 @@ Widget _buildSinglePlayerAvatar(GameState gameState) {
   );
 }
 
+Widget _buildSinglePlayerAvatarByIndex(GameState gameState, int playerIndex) {
+  return LayoutBuilder(
+    builder: (context, constraints) {
+      final avatarSize = getResponsiveSize(
+        context,
+        small: 60,
+        medium: 80,
+        large: 100,
+      );
+
+      final borderWidth = getResponsiveSize(context, small: 2, medium: 3, large: 4);
+
+      final iconSize = getResponsiveSize(context, small: 30, medium: 40, large: 50);
+
+      if (playerIndex < 0 || playerIndex >= gameState.players.length) {
+        return Icon(Icons.group, size: avatarSize, color: Colors.white);
+      }
+
+      final player = gameState.players[playerIndex];
+
+      return Container(
+        width: avatarSize,
+        height: avatarSize,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.white.withOpacity(gameState.glowAnimation.value), width: borderWidth),
+        ),
+        child: ClipOval(
+          child: player.imagen != null
+              ? Image.file(player.imagen!, fit: BoxFit.contain)
+              : player.avatar != null
+              ? Image.asset(player.avatar!, fit: BoxFit.contain)
+              : Container(
+                  color: Colors.white.withOpacity(0.2),
+                  child: Icon(
+                    Icons.person,
+                    color: Colors.white.withOpacity(gameState.glowAnimation.value),
+                    size: iconSize,
+                  ),
+                ),
+        ),
+      );
+    },
+  );
+}
+
 /// Ajustar tamaños para avatares duales
 Widget _buildDualPlayerAvatars(GameState gameState) {
   return LayoutBuilder(
@@ -784,6 +853,38 @@ Widget _buildDualPlayerAvatars(GameState gameState) {
   );
 }
 
+// Helper function para detectar si es una pregunta genérica con jugador específico
+// Retorna true si es genérica (no menciona a ningún jugador específico)
+bool _isGenericPlayerQuestion(GameState gameState) {
+  final challenge = gameState.currentChallenge;
+  if (challenge == null || challenge.isEmpty) return true; // Si no hay pregunta, es genérica
+
+  // Buscar si la pregunta menciona a ALGÚN jugador específico por su nombre
+  for (final player in gameState.players) {
+    if (challenge.contains('${player.nombre} bebe') || challenge.contains('${player.nombre} reparte')) {
+      return false; // Encontró un jugador específico, NO es genérica
+    }
+  }
+  
+  return true; // No menciona a ningún jugador específico, SÍ es genérica
+}
+
+// Helper function para obtener el índice del jugador si está mencionado en la pregunta
+int? _getPlayerIndexFromQuestion(GameState gameState) {
+  final challenge = gameState.currentChallenge;
+  if (challenge == null || challenge.isEmpty) return null;
+
+  // Buscar cuál jugador es mencionado en la pregunta
+  for (int i = 0; i < gameState.players.length; i++) {
+    final player = gameState.players[i];
+    if (challenge.contains('${player.nombre} bebe') || challenge.contains('${player.nombre} reparte')) {
+      return i;
+    }
+  }
+  
+  return null;
+}
+
 // Helper method para construir la imagen del jugador
 Widget _buildPlayerImage(Player player, GameState gameState, BuildContext context) {
   final iconSize = getResponsiveSize(
@@ -795,10 +896,10 @@ Widget _buildPlayerImage(Player player, GameState gameState, BuildContext contex
 
   return player.imagen != null
       ? Image.file(player.imagen!, fit: BoxFit.contain) // Cambiado de cover a contain
-      : player.avatar != null
-      ? Image.asset(player.avatar!, fit: BoxFit.contain) // Cambiado de cover a contain
-      : Container(
-          color: Colors.white.withOpacity(0.2),
-          child: Icon(Icons.person, color: Colors.white.withOpacity(gameState.glowAnimation.value), size: iconSize),
-        );
+      : gameState.currentPlayer!.avatar != null
+          ? Image.asset(gameState.currentPlayer!.avatar!, fit: BoxFit.contain)
+          : Container(
+              color: Colors.white.withOpacity(0.2),
+              child: Icon(Icons.person, color: Colors.white.withOpacity(gameState.glowAnimation.value), size: iconSize),
+            );
 }

@@ -41,6 +41,7 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
   int _currentPlayerIndex = -1; // Start with no player selected
   int? _dualPlayerIndex; // Second player for dual challenges
   String _currentChallenge = '';
+  String? _currentAnswer; // Respuesta a la pregunta actual si existe
   bool _gameStarted = false;
   // Track how many times each player has been selected, keyed by playerId
   final Map<int, int> _playerWeights = {};
@@ -128,6 +129,7 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
 
       setState(() {
         _currentChallenge = question.question;
+        _currentAnswer = question.answer;
         _currentPlayerIndex = selectedPlayerIndex;
       });
     } else {
@@ -142,6 +144,7 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
 
       setState(() {
         _currentChallenge = question.question;
+        _currentAnswer = question.answer;
         _currentPlayerIndex = -1; // Marcar que no hay jugador asignado aún
       });
     }
@@ -182,6 +185,7 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
       players: widget.players,
       currentPlayerIndex: _currentPlayerIndex,
       currentChallenge: _currentChallenge,
+      currentAnswer: _currentAnswer,
       glowAnimation: _glowAnimation,
       playerWeights: _playerWeights,
       gameStarted: _gameStarted,
@@ -353,6 +357,7 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
       _currentChallengeEnd = null; // Limpiar cualquier fin de reto constante
       _currentEventEnd = null; // Limpiar cualquier fin de evento
       _dualPlayerIndex = null; // Limpiar jugador dual previo
+      _currentAnswer = null; // Limpiar respuesta anterior
     });
 
     // 1. Verificar si debemos terminar algún evento
@@ -457,6 +462,7 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
     setState(() {
       _constantChallenges.add(constantChallenge);
       _currentChallenge = constantChallenge.description;
+      _currentAnswer = null; // Los retos constantes no tienen respuesta oculta
       _currentPlayerIndex = _players.indexWhere((p) => p.id == eligiblePlayer.id);
     });
   }
@@ -493,6 +499,7 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
     setState(() {
       _events.add(event);
       _currentChallenge = '${event.typeIcon} ${event.title}: ${event.description}';
+      _currentAnswer = null; // Los eventos no tienen respuesta oculta
       _currentPlayerIndex = -1; // Eventos son globales, no hay jugador específico
     });
   }
@@ -523,6 +530,7 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
 
     setState(() {
       _currentChallenge = question.question;
+      _currentAnswer = question.answer;
       _currentPlayerIndex = player1Index;
       _dualPlayerIndex = player2Index;
 

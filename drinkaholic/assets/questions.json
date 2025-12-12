@@ -998,7 +998,7 @@
   },
   {
     "id": "generico_susurro",
-    "template": "Cualquiera que hable más alto que un susurro bebe {Y}",
+    "template": "Bebeis todos {Y} tragos por ser una panda de payasos",
     "variables": {
       "Y": ["tragos"]
     },

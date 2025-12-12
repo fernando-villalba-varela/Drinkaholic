@@ -6,12 +6,14 @@ class PlayerSelectorOverlay extends StatefulWidget {
   final List<Player> players;
   final Function(List<int>) onPlayersSelected;
   final VoidCallback onCancel;
+  final bool isMoreLikelyQuestion; // True si es pregunta "más probable que"
 
   const PlayerSelectorOverlay({
     super.key,
     required this.players,
     required this.onPlayersSelected,
     required this.onCancel,
+    this.isMoreLikelyQuestion = false,
   });
 
   @override
@@ -149,7 +151,9 @@ class _PlayerSelectorOverlayState extends State<PlayerSelectorOverlay> with Sing
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Text(
-                                  '¿Quiénes cumplen la condición?',
+                                  widget.isMoreLikelyQuestion
+                                      ? 'Habéis señalado a'
+                                      : '¿Quiénes cumplen la condición?',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: titleFontSize,

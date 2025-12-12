@@ -170,6 +170,9 @@ class TiebreakerScreen extends StatefulWidget {
   final int tiedScore;
   final TiebreakerType type;
   final Function(Player winner, Player? loser) onTiebreakerResolved;
+  final bool isQuestionTiebreaker; // True si es desempate de pregunta, False si es final
+  final String? currentQuestion; // La pregunta actual para mostrar abajo
+  final int drinksAmount; // Cantidad de tragos a beber
 
   const TiebreakerScreen({
     super.key,
@@ -177,6 +180,9 @@ class TiebreakerScreen extends StatefulWidget {
     required this.tiedScore,
     required this.type,
     required this.onTiebreakerResolved,
+    this.isQuestionTiebreaker = false,
+    this.currentQuestion,
+    this.drinksAmount = 1,
   });
 
   @override
@@ -188,6 +194,8 @@ class _TiebreakerScreenState extends State<TiebreakerScreen> with TickerProvider
   late Animation<double> _spinAnimation;
   late AnimationController _winnerScaleController;
   late Animation<double> _winnerScale;
+  late AnimationController _colorChangeController;
+  late Animation<double> _colorAnimation;
   bool _isSpinning = false;
   bool _hasSpun = false;
   Player? _winner;
@@ -232,6 +240,14 @@ class _TiebreakerScreenState extends State<TiebreakerScreen> with TickerProvider
       CurvedAnimation(parent: _winnerScaleController, curve: Curves.elasticOut),
     );
 
+    // Animación para cambio de color blanco-verde
+    _colorChangeController = AnimationController(duration: const Duration(milliseconds: 1500), vsync: this)
+      ..repeat(reverse: true);
+    
+    _colorAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _colorChangeController, curve: Curves.easeInOut),
+    );
+
     // Cargar imágenes de los jugadores
     _loadPlayerImages();
   }
@@ -270,6 +286,7 @@ class _TiebreakerScreenState extends State<TiebreakerScreen> with TickerProvider
   void dispose() {
     _spinController.dispose();
     _winnerScaleController.dispose();
+    _colorChangeController.dispose();
     super.dispose();
   }
 
@@ -332,10 +349,125 @@ class _TiebreakerScreenState extends State<TiebreakerScreen> with TickerProvider
     _winnerScaleController.forward(from: 0.0);
   }
 
+  int _extractDrinksFromQuestion() {
+    return widget.drinksAmount;
+  }
+
+  String _extractQuestionPart() {
+    if (widget.currentQuestion == null || widget.currentQuestion!.isEmpty) {
+      return '';
+    }
+    
+    final question = widget.currentQuestion!.trim();
+    
+    // Patrones a eliminar del inicio de la pregunta
+    final patterns = [
+      // Patrones de "más probable que"
+      RegExp(r'^a\s+la\s+de\s+\d+\s+(?:todos\s+)?señalan?\s+al?\s+jugador(?:a)?\s+que\s+sea\s+m[aá]s\s+probable\s+que\s+',
+          caseSensitive: false),
+      RegExp(r'^a\s+la\s+de\s+\d+,?\s+(?:todos\s+)?señalen?\s+a\s+quien\s+se(?:a|rá)\s+m[aá]s\s+probable\s+que\s+',
+          caseSensitive: false),
+      RegExp(r'^a\s+(?:la\s+)?cuenta?\s+de\s+\d+,?\s+(?:todos\s+)?apunten?\s+(?:a\s+)?quien(?:es)?\s+(?:crean|sea)\s+que\s+',
+          caseSensitive: false),
+      RegExp(r'^a\s+la\s+de\s+\d+,?\s+(?:todos\s+)?señalen?\s+a\s+(?:la\s+)?persona?\s+m[aá]s\s+propensa?\s+a\s+',
+          caseSensitive: false),
+      // Otros patrones genéricos
+      RegExp(r'^(?:a\s+la\s+de\s+\d+\s+)?(?:todos\s+)?(?:cualquiera|el\s+que|quien|aquello\s+que)\s+',
+          caseSensitive: false),
+    ];
+    
+    String result = question;
+    
+    // Aplicar cada patrón y quedarse con el primero que coincida
+    for (final pattern in patterns) {
+      final match = pattern.firstMatch(result);
+      if (match != null) {
+        result = result.substring(match.end).trim();
+        break;
+      }
+    }
+    
+    // Limpiar puntuación final y separadores comunes
+    // Eliminar "; ese jugador beber", ", ese jugador beber", etc.
+    result = result.replaceAll(RegExp(r';\s*(?:ese\s+)?jugador(?:a)?\s+beb[eé].*$', caseSensitive: false), '');
+    result = result.replaceAll(RegExp(r',\s*(?:ese\s+)?jugador(?:a)?\s+beb[eé].*$', caseSensitive: false), '');
+    result = result.replaceAll(RegExp(r'[;,]\s*(?:ese|esa)\s+(?:jugador(?:a)?|persona)\s+beb[eé]r?a?.*$', caseSensitive: false), '');
+    result = result.replaceAll(RegExp(r';\s*quien.*$', caseSensitive: false), '');
+    
+    // Si el resultado termina con "tragos" u otros patrones, eliminarlo
+    result = result.replaceAll(RegExp(r'\s+(?:tragos?|trago).*$', caseSensitive: false), '').trim();
+    
+    // Aplicar transformaciones gramaticales para que tenga sentido
+    result = _transformGrammatically(result);
+    
+    return result;
+  }
+
+  String _transformGrammatically(String text) {
+    // Transformar verbos en subjuntivo a formas más naturales para la frase "El duende sabe que..."
+    
+    // Convertir verbos en subjuntivo presente a futuro o presente indicativo
+    final transformations = <RegExp, String>{
+      // "llegue" → "llegarás" (subjuntivo → futuro informal)
+      RegExp(r'\bllegue\b', caseSensitive: false): 'llegarás',
+      RegExp(r'\bse\s+quede\b', caseSensitive: false): 'te quedarás',
+      RegExp(r'\bresponda\b', caseSensitive: false): 'responderás',
+      RegExp(r'\bse\s+case\b', caseSensitive: false): 'te casarás',
+      RegExp(r'\bolvide\b', caseSensitive: false): 'olvidarás',
+      RegExp(r'\bhaga\b', caseSensitive: false): 'harás',
+      RegExp(r'\bse\s+pierda\b', caseSensitive: false): 'te perderás',
+      RegExp(r'\borganice\b', caseSensitive: false): 'organizarás',
+      RegExp(r'\brompa\b', caseSensitive: false): 'romperás',
+      RegExp(r'\bmande\b', caseSensitive: false): 'mandarás',
+      RegExp(r'\bllore\b', caseSensitive: false): 'llorarás',
+      RegExp(r'\bligue\b', caseSensitive: false): 'ligarás',
+      RegExp(r'\bgane\b', caseSensitive: false): 'ganarás',
+      RegExp(r'\bse\s+vaya\b', caseSensitive: false): 'te irás',
+      RegExp(r'\bse\s+haga\b', caseSensitive: false): 'te harás',
+      RegExp(r'\btenga\b', caseSensitive: false): 'tendrás',
+      RegExp(r'\badopte\b', caseSensitive: false): 'adoptarás',
+      RegExp(r'\bse\s+tatúe\b', caseSensitive: false): 'te tatúarás',
+      RegExp(r'\bcoma\b', caseSensitive: false): 'comerás',
+      RegExp(r'\bcante\b', caseSensitive: false): 'cantarás',
+      RegExp(r'\bpierda\b', caseSensitive: false): 'perderás',
+      RegExp(r'\bse\s+cambie\b', caseSensitive: false): 'te cambiarás',
+      RegExp(r'\bsuba\b', caseSensitive: false): 'subirás',
+      RegExp(r'\bhaga\s+un\s+maratón\b', caseSensitive: false): 'harás un maratón',
+      RegExp(r'\bcocine\b', caseSensitive: false): 'cocinarás',
+      RegExp(r'\bse\s+apunte\b', caseSensitive: false): 'te apuntarás',
+      RegExp(r'\bsea\b', caseSensitive: false): 'serás',
+      RegExp(r'\bse\s+rompa\b', caseSensitive: false): 'se te romperá',
+      RegExp(r'\bolvide\s+dónde\b', caseSensitive: false): 'olvidarás dónde',
+      RegExp(r'\bpierda\s+la\s+cartera\b', caseSensitive: false): 'perderás la cartera',
+      RegExp(r'\bhaga\s+match\b', caseSensitive: false): 'harás match',
+      RegExp(r'\bse\s+haga\s+un\s+piercing\b', caseSensitive: false): 'te harás un piercing',
+      RegExp(r'\bcante\s+a\s+gritos\b', caseSensitive: false): 'cantarás a gritos',
+      RegExp(r'\bse\s+duerma\b', caseSensitive: false): 'te dormirás',
+      RegExp(r'\brobe\b', caseSensitive: false): 'robarás',
+      RegExp(r'\badopte\s+un\s+gato\b', caseSensitive: false): 'adoptarás un gato',
+      RegExp(r'\bse\s+haga\s+vegano\b', caseSensitive: false): 'te harás vegano',
+      RegExp(r'\bllore\s+de\s+la\s+risa\b', caseSensitive: false): 'llorarás de la risa',
+      RegExp(r'\bcuente\b', caseSensitive: false): 'contarás',
+      RegExp(r'\bcambie\b', caseSensitive: false): 'cambiarás',
+      RegExp(r'\bdeje\b', caseSensitive: false): 'dejarás',
+      RegExp(r'\babra\b', caseSensitive: false): 'abrirás',
+      RegExp(r'\bse\s+enamore\b', caseSensitive: false): 'te enamorarás',
+      RegExp(r'\bhaga\s+ghosting\b', caseSensitive: false): 'harás ghosting',
+      RegExp(r'\bvuelva\b', caseSensitive: false): 'volverás',
+      RegExp(r'\bse\s+olvide\b', caseSensitive: false): 'se te olvidará',
+    };
+    
+    String result = text;
+    transformations.forEach((pattern, replacement) {
+      result = result.replaceAll(pattern, replacement);
+    });
+    
+    return result;
+  }
+
   @override
   Widget build(BuildContext context) {
     final isMVP = widget.type == TiebreakerType.mvp;
-    final title = isMVP ? 'Desempate MVDP' : 'Desempate Ratita';
 
     return Scaffold(
       body: Container(
@@ -356,67 +488,96 @@ class _TiebreakerScreenState extends State<TiebreakerScreen> with TickerProvider
                 padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
                 child: Column(
                   children: [
-                    // Header
-                    Text(
-                      title,
-                      style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
-                    ),
+                    // Header - Personalizado si es desempate de pregunta
+                    if (widget.isQuestionTiebreaker)
+                      AnimatedBuilder(
+                        animation: _colorAnimation,
+                        builder: (context, child) {
+                          final color = Color.lerp(
+                            Colors.white,
+                            const Color(0xFF00FF00),
+                            _colorAnimation.value,
+                          )!;
+                          return Text(
+                            '⚖️ El duende va a hablar',
+                            style: TextStyle(
+                              color: color,
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.5,
+                            ),
+                            textAlign: TextAlign.center,
+                          );
+                        },
+                      )
+                    else
+                      Text(
+                        isMVP ? 'Desempate MVDP' : 'Desempate Ratita',
+                        style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
+                      ),
                     const SizedBox(height: 12),
-                    // Subtitle con texto especial brillante
-                    isMVP
-                        ? RichText(
-                            textAlign: TextAlign.center,
-                            text: TextSpan(
-                              style: const TextStyle(color: Colors.white70, fontSize: 16),
-                              children: [
-                                TextSpan(
-                                  text:
-                                      'Hay varios jugones empatados con ${widget.tiedScore} tragos\n (Solo puede haber un ',
-                                ),
-                                TextSpan(
-                                  text: 'puto amo',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                    shadows: [
-                                      Shadow(
-                                        color: Color(0xFFFFFF99), // Amarillo claro brillante
-                                        blurRadius: 4,
-                                        offset: Offset(0, 0),
-                                      ),
-                                      Shadow(color: Color(0xFFFFFF99), blurRadius: 8, offset: Offset(0, 0)),
-                                    ],
+                    // Subtitle - Personalizado si es desempate de pregunta
+                    if (widget.isQuestionTiebreaker)
+                      Text(
+                        'Hay empate en quien cumple la condición\n¡El duende te ayudará a elegir!',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: Colors.white70, fontSize: 16),
+                      )
+                    else
+                      (isMVP
+                          ? RichText(
+                              textAlign: TextAlign.center,
+                              text: TextSpan(
+                                style: const TextStyle(color: Colors.white70, fontSize: 16),
+                                children: [
+                                  TextSpan(
+                                    text:
+                                        'Hay varios jugones empatados con ${widget.tiedScore} tragos\n (Solo puede haber un ',
                                   ),
-                                ),
-                                const TextSpan(text: ')'),
-                              ],
-                            ),
-                          )
-                        : RichText(
-                            textAlign: TextAlign.center,
-                            text: TextSpan(
-                              style: const TextStyle(color: Colors.white70, fontSize: 16),
-                              children: [
-                                TextSpan(text: 'Manda huevos que hayais bebido ${widget.tiedScore} tragos\n ('),
-                                TextSpan(
-                                  text: 'sois escoria',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                    shadows: [
-                                      Shadow(
-                                        color: Color(0xFF8B4513), // Marrón caca brillante
-                                        blurRadius: 4,
-                                        offset: Offset(0, 0),
-                                      ),
-                                      Shadow(color: Color(0xFF8B4513), blurRadius: 8, offset: Offset(0, 0)),
-                                    ],
+                                  TextSpan(
+                                    text: 'puto amo',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                      shadows: [
+                                        Shadow(
+                                          color: Color(0xFFFFFF99), // Amarillo claro brillante
+                                          blurRadius: 4,
+                                          offset: Offset(0, 0),
+                                        ),
+                                        Shadow(color: Color(0xFFFFFF99), blurRadius: 8, offset: Offset(0, 0)),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                const TextSpan(text: ')'),
-                              ],
-                            ),
-                          ),
+                                  const TextSpan(text: ')'),
+                                ],
+                              ),
+                            )
+                          : RichText(
+                              textAlign: TextAlign.center,
+                              text: TextSpan(
+                                style: const TextStyle(color: Colors.white70, fontSize: 16),
+                                children: [
+                                  TextSpan(text: 'Manda huevos que hayais bebido ${widget.tiedScore} tragos\n ('),
+                                  TextSpan(
+                                    text: 'sois escoria',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                      shadows: [
+                                        Shadow(
+                                          color: Color(0xFF8B4513), // Marrón caca brillante
+                                          blurRadius: 4,
+                                          offset: Offset(0, 0),
+                                        ),
+                                        Shadow(color: Color(0xFF8B4513), blurRadius: 8, offset: Offset(0, 0)),
+                                      ],
+                                    ),
+                                  ),
+                                  const TextSpan(text: ')'),
+                                ],
+                              ),
+                            )),
                     const SizedBox(height: 32),
 
                     // Ruleta con jugadores - CENTRADA
@@ -439,15 +600,40 @@ class _TiebreakerScreenState extends State<TiebreakerScreen> with TickerProvider
                             ),
                             const SizedBox(height: 32),
                           ] else ...[
-                            Text(
-                              isMVP ? '¡Se te ha caido esto! -> 👑' : '¡Ratitaa🐭🐭 (JAJA)!',
-                              style: TextStyle(
-                                color: isMVP ? const Color(0xFFFFD700) : const Color(0xFF8B4513),
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
+                            if (widget.isQuestionTiebreaker) ...[
+                              // Desempate de pregunta: mostrar mensaje con estilo de duende (verde con rayos)
+                              ShaderMask(
+                                shaderCallback: (bounds) => LinearGradient(
+                                  colors: [
+                                    const Color(0xFF00FF00),
+                                    const Color(0xFF00CC00),
+                                    const Color(0xFF00FF00),
+                                  ],
+                                  stops: const [0.0, 0.5, 1.0],
+                                ).createShader(bounds),
+                                child: Text(
+                                  '🧙 El duende elige a... 🧙',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 26,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.2,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
                               ),
-                              textAlign: TextAlign.center,
-                            ),
+                            ] else ...[
+                              // Desempate final: mostrar mensaje normal
+                              Text(
+                                isMVP ? '¡Se te ha caido esto! -> 👑' : '¡Ratitaa🐭🐭 (JAJA)!',
+                                style: TextStyle(
+                                  color: isMVP ? const Color(0xFFFFD700) : const Color(0xFF8B4513),
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
                             const SizedBox(height: 16),
                             // Centrar el resultado del ganador
                             Center(
@@ -456,10 +642,15 @@ class _TiebreakerScreenState extends State<TiebreakerScreen> with TickerProvider
                                 child: Container(
                                   padding: const EdgeInsets.all(16),
                                   decoration: BoxDecoration(
-                                    color: (isMVP ? const Color(0xFFFFD700) : const Color(0xFF8B4513)).withOpacity(0.2),
+                                    color: (widget.isQuestionTiebreaker
+                                            ? Colors.purple
+                                            : (isMVP ? const Color(0xFFFFD700) : const Color(0xFF8B4513)))
+                                        .withOpacity(0.2),
                                     borderRadius: BorderRadius.circular(16),
                                     border: Border.all(
-                                      color: isMVP ? const Color(0xFFFFD700) : const Color(0xFF8B4513),
+                                      color: widget.isQuestionTiebreaker
+                                          ? Colors.purple
+                                          : (isMVP ? const Color(0xFFFFD700) : const Color(0xFF8B4513)),
                                       width: 2,
                                     ),
                                   ),
@@ -486,6 +677,24 @@ class _TiebreakerScreenState extends State<TiebreakerScreen> with TickerProvider
 
                           // Ruleta circular con jugadores - CENTRADA
                           Center(child: _buildSpinWheel()),
+                          
+                          // Mostrar el texto de tragos si es desempate de pregunta y hay ganador
+                          if (widget.isQuestionTiebreaker && _hasSpun && _winner != null) ...[
+                            const SizedBox(height: 24),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: Text(
+                                'El duende sabe que ${_extractQuestionPart()}... ¡Así que bebete los ${_extractDrinksFromQuestion()} tragos!',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ),
@@ -496,7 +705,7 @@ class _TiebreakerScreenState extends State<TiebreakerScreen> with TickerProvider
                         children: [
                           if (_hasSpun && _winner != null)
                             DrinkaholicButton(
-                              label: 'Confirmar Resultado',
+                              label: widget.isQuestionTiebreaker ? 'Confirmar' : 'Confirmar Resultado',
                               icon: Icons.check_circle_outline,
                               onPressed: () {
                                 final loser = widget.tiedPlayers.length > 1

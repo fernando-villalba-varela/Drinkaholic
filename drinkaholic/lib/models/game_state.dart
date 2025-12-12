@@ -8,6 +8,7 @@ class GameState {
   final List<Player> players;
   final int currentPlayerIndex;
   final String? currentChallenge;
+  final String? currentAnswer; // Respuesta a la pregunta actual si existe
   final Animation<double> glowAnimation;
   final Map<int, int> playerWeights;
   final bool gameStarted;
@@ -28,6 +29,7 @@ class GameState {
     required this.glowAnimation,
     required this.playerWeights,
     required this.gameStarted,
+    this.currentAnswer,
     this.currentGift,
     this.currentRound = 1,
     this.constantChallenges = const [],
@@ -44,6 +46,7 @@ class GameState {
     List<Player>? players,
     int? currentPlayerIndex,
     String? currentChallenge,
+    String? currentAnswer,
     Animation<double>? glowAnimation,
     Map<int, int>? playerWeights,
     bool? gameStarted,
@@ -61,6 +64,7 @@ class GameState {
       players: players ?? this.players,
       currentPlayerIndex: currentPlayerIndex ?? this.currentPlayerIndex,
       currentChallenge: currentChallenge ?? this.currentChallenge,
+      currentAnswer: currentAnswer ?? this.currentAnswer,
       glowAnimation: glowAnimation ?? this.glowAnimation,
       playerWeights: playerWeights ?? this.playerWeights,
       gameStarted: gameStarted ?? this.gameStarted,

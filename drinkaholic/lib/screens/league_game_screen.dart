@@ -14,6 +14,7 @@ import '../widgets/common/animated_background.dart';
 import '../widgets/league/game/game_card_widget.dart';
 import '../widgets/league/game/player_selector_overlay.dart';
 import '../widgets/league/game/letter_counter_overlay.dart';
+import '../screens/tiebreaker_screen.dart';
 
 class LeagueGameScreen extends StatefulWidget {
   final List<Player> players;
@@ -46,6 +47,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
   int _currentPlayerIndex = -1;
   int? _dualPlayerIndex;
   String _currentChallenge = '';
+  String? _currentAnswer; // Respuesta a la pregunta actual si existe
   bool _gameStarted = false;
   final Map<int, int> _playerWeights = {};
   final Map<int, int> _playerDrinks = {}; // Contador de tragos por jugador
@@ -147,6 +149,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
 
       setState(() {
         _currentChallenge = question.question;
+        _currentAnswer = question.answer;
         _currentPlayerIndex = selectedPlayerIndex;
       });
     } else {
@@ -160,6 +163,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
 
       setState(() {
         _currentChallenge = question.question;
+        _currentAnswer = question.answer;
         _currentPlayerIndex = -1;
       });
     }
@@ -195,6 +199,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
       players: widget.players,
       currentPlayerIndex: _currentPlayerIndex,
       currentChallenge: _currentChallenge,
+      currentAnswer: _currentAnswer,
       glowAnimation: _glowAnimation,
       playerWeights: _playerWeights,
       gameStarted: _gameStarted,
@@ -230,6 +235,15 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
     return lowerChallenge.startsWith('cualquiera que') ||
         lowerChallenge.startsWith('cualquiera con') ||
         lowerChallenge.contains('bebe 3 tragos por cada vocal');
+  }
+
+  // Detectar si la pregunta es "más probable que"
+  bool _isMoreLikelyQuestion() {
+    if (_currentChallenge.isEmpty) return false;
+    final lowerChallenge = _currentChallenge.toLowerCase();
+    return lowerChallenge.contains('más probable') || 
+        lowerChallenge.contains('señalen a') ||
+        lowerChallenge.contains('apunten a');
   }
 
   // Detectar si la pregunta tiene multiplicador (por cada letra)
@@ -332,7 +346,35 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
     }
 
     // Solo contar si es "Cualquiera que/con..." (preguntas condicionales)
-    return _isConditionalQuestion();
+    return _isConditionalQuestion() || _isMoreLikelyQuestion();
+  }
+
+  bool _isDirectDrinkForCurrentPlayer() {
+    if (_currentChallenge.isEmpty) return false;
+    if (_currentPlayerIndex < 0 || _currentPlayerIndex >= widget.players.length) return false;
+    if (_isConditionalQuestion() || _isMoreLikelyQuestion()) return false;
+    if (_dualPlayerIndex != null) return false; // Evitar duelos
+
+    final lowerChallenge = _currentChallenge.toLowerCase();
+    final playerName = widget.players[_currentPlayerIndex].nombre.toLowerCase();
+
+    // Debe mencionar al jugador y tener "bebe", sin ser reparto
+    if (!lowerChallenge.contains(playerName)) return false;
+    if (!lowerChallenge.contains('bebe')) return false;
+    if (lowerChallenge.contains('reparte')) return false;
+
+    return true;
+  }
+
+  void _applyDirectDrinksForCurrentPlayer() {
+    if (!_isDirectDrinkForCurrentPlayer()) return;
+
+    final playerId = widget.players[_currentPlayerIndex].id;
+    final drinksAmount = _extractDrinksFromChallenge();
+
+    setState(() {
+      _playerDrinks[playerId] = (_playerDrinks[playerId] ?? 0) + drinksAmount;
+    });
   }
 
   void _selectWeightedRandomPlayer() {
@@ -422,6 +464,74 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
     }
   }
 
+  // Detectar si hay empate entre jugadores señalados
+  bool _hasEmpateBetweenPlayers(List<int> selectedPlayerIds) {
+    if (selectedPlayerIds.length <= 1) return false;
+    // Si hay 2 o más jugadores seleccionados, es un empate
+    return true;
+  }
+
+  // Manejar empate usando la ruleta
+  void _handleTiebreakerForMoreLikelyQuestion(List<int> selectedPlayerIds) {
+    if (!_hasEmpateBetweenPlayers(selectedPlayerIds)) {
+      // No hay empate, proceder normal
+      _applyMoreLikelyQuestionDrinks(selectedPlayerIds);
+      return;
+    }
+
+    // Hay empate, usar ruleta
+    final tiedPlayers = widget.players.where((p) => selectedPlayerIds.contains(p.id)).toList();
+    final drinksAmount = _extractDrinksFromChallenge();
+    
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => TiebreakerScreen(
+          tiedPlayers: tiedPlayers,
+          tiedScore: 0,
+          type: TiebreakerType.mvp,
+          isQuestionTiebreaker: true, // Desempate de pregunta, no final
+          currentQuestion: _currentChallenge,
+          drinksAmount: drinksAmount,
+          onTiebreakerResolved: (winnerPlayer, loserPlayer) {
+            Navigator.of(context).pop();
+            
+            // El ganador de la ruleta recibe los tragos
+            setState(() {
+              _showingPlayerSelector = false;
+              if (_shouldCountDrinks()) {
+                final drinksAmount = _extractDrinksFromChallenge();
+                _playerDrinks[winnerPlayer.id] = (_playerDrinks[winnerPlayer.id] ?? 0) + drinksAmount;
+              }
+            });
+
+            // Avanzar al siguiente reto después de 500ms
+            Future.delayed(const Duration(milliseconds: 500), () {
+              _nextChallenge();
+            });
+          },
+        ),
+      ),
+    );
+  }
+
+  // Aplicar tragos normalmente sin empate
+  void _applyMoreLikelyQuestionDrinks(List<int> selectedPlayerIds) {
+    setState(() {
+      _showingPlayerSelector = false;
+      if (_shouldCountDrinks()) {
+        final drinksAmount = _extractDrinksFromChallenge();
+        for (final playerId in selectedPlayerIds) {
+          _playerDrinks[playerId] = (_playerDrinks[playerId] ?? 0) + drinksAmount;
+        }
+      }
+    });
+    
+    // Avanzar al siguiente reto después de seleccionar
+    Future.delayed(const Duration(milliseconds: 300), () {
+      _nextChallenge();
+    });
+  }
+
   Widget _buildRippleEffects() {
     if (_ripplePositions.isEmpty) return const SizedBox.shrink();
 
@@ -500,6 +610,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
       _currentChallengeEnd = null;
       _currentEventEnd = null;
       _dualPlayerIndex = null;
+      _currentAnswer = null; // Limpiar respuesta anterior
     });
 
     // Verificar si alcanzamos el límite de rondas
@@ -596,6 +707,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
     setState(() {
       _constantChallenges.add(constantChallenge);
       _currentChallenge = constantChallenge.description;
+      _currentAnswer = null; // Los retos constantes no tienen respuesta oculta
       _currentPlayerIndex = widget.players.indexWhere((p) => p.id == eligiblePlayer.id);
     });
   }
@@ -631,6 +743,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
     setState(() {
       _events.add(event);
       _currentChallenge = '${event.typeIcon} ${event.title}: ${event.description}';
+      _currentAnswer = null; // Los eventos no tienen respuesta oculta
       _currentPlayerIndex = -1;
     });
   }
@@ -659,6 +772,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
 
     setState(() {
       _currentChallenge = question.question;
+      _currentAnswer = question.answer;
       _currentPlayerIndex = player1Index;
       _dualPlayerIndex = player2Index;
 
@@ -756,6 +870,8 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
                     builder: (context, constraints) {
                       final hasActiveSelector =
                           _isConditionalQuestion() && !_showingPlayerSelector && !_showingLetterCounter;
+                      final isMoreLikelyAndNotSelected = _isMoreLikelyQuestion() && !_showingPlayerSelector;
+                      
                       return GestureDetector(
                         onTapDown: hasActiveSelector
                             ? null
@@ -764,7 +880,18 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
                                 final localPosition = renderBox.globalToLocal(details.globalPosition);
                                 _addRippleEffect(localPosition);
                               },
-                        onTap: hasActiveSelector ? _handleDoubleTapForNobody : _nextChallenge,
+                        onTap: hasActiveSelector 
+                            ? _handleDoubleTapForNobody 
+                            : (isMoreLikelyAndNotSelected
+                                ? () {
+                                    setState(() {
+                                      _showingPlayerSelector = true;
+                                    });
+                                  }
+                                : () {
+                                    _applyDirectDrinksForCurrentPlayer();
+                                    _nextChallenge();
+                                  }),
                         behavior: HitTestBehavior.opaque,
                         child: AnimatedBuilder(
                           animation: _tapAnimation,
@@ -877,18 +1004,15 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
             if (_showingPlayerSelector)
               PlayerSelectorOverlay(
                 players: widget.players,
+                isMoreLikelyQuestion: _isMoreLikelyQuestion(),
                 onPlayersSelected: (selectedPlayerIds) {
-                  setState(() {
-                    _showingPlayerSelector = false;
-                    // Añadir tragos SOLO si es una pregunta que cuenta (no duelos, repartos, retos)
-                    if (_shouldCountDrinks()) {
-                      final drinksAmount = _extractDrinksFromChallenge();
-                      for (final playerId in selectedPlayerIds) {
-                        // Usar directamente playerId como clave
-                        _playerDrinks[playerId] = (_playerDrinks[playerId] ?? 0) + drinksAmount;
-                      }
-                    }
-                  });
+                  // Si es "más probable que" y hay empate, usar ruleta
+                  if (_isMoreLikelyQuestion()) {
+                    _handleTiebreakerForMoreLikelyQuestion(selectedPlayerIds);
+                  } else {
+                    // Para otras preguntas condicionales, proceder normalmente
+                    _applyMoreLikelyQuestionDrinks(selectedPlayerIds);
+                  }
                 },
                 onCancel: () {
                   setState(() {

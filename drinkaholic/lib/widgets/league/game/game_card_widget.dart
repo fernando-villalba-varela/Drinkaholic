@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../models/game_state.dart';
 import '../../../models/player.dart';
 import '../../quick_game_widgets.dart' show buildCenterContent;
+import '../../common/answer_info_button.dart';
 
 double getResponsiveSize(BuildContext context, {required double small, required double medium, required double large}) {
   final width = MediaQuery.of(context).size.width;
@@ -365,16 +366,24 @@ class GameCard extends StatelessWidget {
                           children: [
                             Icon(Icons.local_drink, size: iconSize, color: Colors.white.withOpacity(0.9)),
                             SizedBox(height: 15),
-                            Text(
-                              gameState.currentChallenge!,
-                              style: TextStyle(
-                                fontSize: fontSize,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.white,
-                                height: 1.4,
-                                shadows: const [Shadow(color: Colors.black38, offset: Offset(2, 2), blurRadius: 4)],
-                              ),
-                              textAlign: TextAlign.center,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    gameState.currentChallenge!,
+                                    style: TextStyle(
+                                      fontSize: fontSize,
+                                      fontWeight: FontWeight.w800,
+                                      color: Colors.white,
+                                      height: 1.4,
+                                      shadows: const [Shadow(color: Colors.black38, offset: Offset(2, 2), blurRadius: 4)],
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                AnswerInfoButton(answer: gameState.currentAnswer),
+                              ],
                             ),
                           ],
                         ),

@@ -27,13 +27,32 @@ class GeneratedQuestion {
   final String question;
   final String categoria;
   final Map<String, String> usedVariables;
+  final String? answer; // Respuesta extraída de paréntesis si existe
 
-  GeneratedQuestion({required this.question, required this.categoria, required this.usedVariables});
+  GeneratedQuestion({
+    required this.question,
+    required this.categoria,
+    required this.usedVariables,
+    this.answer,
+  });
 
   // Getters
   String get getQuestion => question;
   String get getCategoria => categoria;
   Map<String, String> get getUsedVariables => usedVariables;
+  String? get getAnswer => answer;
+
+  /// Extrae la respuesta del paréntesis si existe
+  static String? extractAnswer(String question) {
+    final regex = RegExp(r'\((.*?)\)');
+    final match = regex.firstMatch(question);
+    return match?.group(1);
+  }
+
+  /// Limpia la pregunta removiendo la respuesta entre paréntesis
+  static String cleanQuestion(String question) {
+    return question.replaceAll(RegExp(r'\s*\(.*?\)\s*$'), '').trim();
+  }
 }
 
 class QuestionGenerator {
@@ -233,7 +252,17 @@ class QuestionGenerator {
       }
     });
 
-    return GeneratedQuestion(question: question, categoria: template.categoria, usedVariables: usedVariables);
+    // Extraer respuesta si existe
+    final answer = GeneratedQuestion.extractAnswer(question);
+    // Limpiar la pregunta removiendo la respuesta
+    final cleanedQuestion = GeneratedQuestion.cleanQuestion(question);
+
+    return GeneratedQuestion(
+      question: cleanedQuestion,
+      categoria: template.categoria,
+      usedVariables: usedVariables,
+      answer: answer,
+    );
   }
 
   /// Generar múltiples preguntas únicas
