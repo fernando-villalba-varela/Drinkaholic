@@ -111,37 +111,36 @@ class ParticipantsViewmodel extends ChangeNotifier {
   }
 
   Future<void> chooseAvatar(int index) async {
+    List<String> avatarPaths = [];
     try {
-      // Load available avatar assets
-      final manifestContent = await rootBundle.loadString('AssetManifest.json');
-      final Map<String, dynamic> manifestMap = Map<String, dynamic>.from(
-        const JsonDecoder().convert(manifestContent) as Map<String, dynamic>,
-      );
-
-      final avatarPaths = manifestMap.keys
-          .where(
-            (String key) =>
-                key.startsWith('assets/avatars/') &&
-                (key.endsWith('.png') ||
-                    key.endsWith('.jpg') ||
-                    key.endsWith('.jpeg') ||
-                    key.endsWith('.gif') ||
-                    key.endsWith('.webp')) &&
-                !key.endsWith('.md'),
-          )
-          .toList();
-
-      if (avatarPaths.isEmpty) {
-        if (context != null) {
-          ScaffoldMessenger.of(context!).showSnackBar(
-            const SnackBar(
-              content: Text('No hay avatars disponibles. Agrega imágenes a assets/avatars/'),
-              backgroundColor: Colors.orange,
-            ),
-          );
-        }
-        return;
+      // Load avatars from our custom manifest
+      final manifestContent = await rootBundle.loadString('assets/avatar_manifest.json');
+      final Map<String, dynamic> manifestMap = json.decode(manifestContent);
+      
+      if (manifestMap.containsKey('avatars')) {
+        avatarPaths = List<String>.from(manifestMap['avatars']);
       }
+      
+      // Sort for consistent order
+      avatarPaths.sort();
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error loading avatar_manifest.json: $e');
+      }
+      // Continue to fallback if empty
+    }
+
+    if (avatarPaths.isEmpty) {
+      if (context != null) {
+        ScaffoldMessenger.of(context!).showSnackBar(
+          const SnackBar(
+            content: Text('No se encontraron avatars. Verifica la carpeta assets/avatars/'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+      return;
+    }
 
       // Get list of already used avatars (excluding current player)
       final usedAvatars = _players
@@ -242,20 +241,7 @@ class ParticipantsViewmodel extends ChangeNotifier {
           ),
         );
       }
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error loading avatars: $e');
-      }
-      if (context != null) {
-        ScaffoldMessenger.of(context!).showSnackBar(
-          const SnackBar(
-            content: Text('Error al cargar avatars. Asegúrate de tener imágenes en assets/avatars/'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
     }
-  }
 
   Future<void> pickImage(int index) async {
     if (kDebugMode) {

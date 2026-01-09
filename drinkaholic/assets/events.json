@@ -7,7 +7,10 @@
       "template": "EVENTO: ✖️ Todos los tragos valen x{MULTIPLIER} mientras dure este evento",
       "endTemplate": "El multiplicador de tragos ha terminado. Todos los tragos vuelven a valer normal.",
       "variables": {
-        "MULTIPLIER": ["2", "3"]
+        "MULTIPLIER": [
+          "2",
+          "3"
+        ]
       },
       "categoria": "multiplier",
       "minRounds": 3,
@@ -23,7 +26,10 @@
       "template": "EVENTO: 🌐 Nadie puede usar el teléfono mientras dure este evento. Si alguien lo usa, bebe {PUNISHMENT} tragos",
       "endTemplate": "La zona sin teléfonos ha terminado. Ya pueden usar sus dispositivos libremente.",
       "variables": {
-        "PUNISHMENT": ["2", "3"]
+        "PUNISHMENT": [
+          "2",
+          "3"
+        ]
       },
       "categoria": "restriction",
       "minRounds": 4,
@@ -37,7 +43,10 @@
       "template": "EVENTO: 🌐 Mientras dure este evento, si alguien se equivoca en un reto, TODOS beben {DRINKS} tragos",
       "endTemplate": "El castigo grupal ha terminado. Los errores vuelven a ser individuales.",
       "variables": {
-        "DRINKS": ["1", "2"]
+        "DRINKS": [
+          "1",
+          "2"
+        ]
       },
       "categoria": "group",
       "minRounds": 3,
@@ -51,8 +60,14 @@
       "template": "EVENTO: ⭐ Mientras dure este evento, tienen solo {SECONDS} segundos para responder o cumplir cada reto. Si no lo hacen a tiempo, beben {PUNISHMENT} tragos",
       "endTemplate": "El modo rápido ha terminado. Ya no hay límite de tiempo.",
       "variables": {
-        "SECONDS": ["10", "15"],
-        "PUNISHMENT": ["2", "3"]
+        "SECONDS": [
+          "10",
+          "15"
+        ],
+        "PUNISHMENT": [
+          "2",
+          "3"
+        ]
       },
       "categoria": "time_limit",
       "minRounds": 3,
@@ -61,12 +76,15 @@
     },
     {
       "id": "compliment_mode",
-      "type": "global_rule", 
+      "type": "global_rule",
       "title": "Modo Cumplidos",
       "template": "EVENTO: 🌐 Antes de cada trago mientras dure este evento, deben hacer un cumplido a otro jugador. Si no lo hacen, beben {PUNISHMENT} tragos extra",
       "endTemplate": "El modo cumplidos ha terminado. Ya pueden beber sin cumplidos obligatorios.",
       "variables": {
-        "PUNISHMENT": ["1", "2"]
+        "PUNISHMENT": [
+          "1",
+          "2"
+        ]
       },
       "categoria": "social",
       "minRounds": 4,
@@ -80,7 +98,10 @@
       "template": "EVENTO: 🌐 Mientras dure este evento, solo se puede comunicar por gestos. Quien hable bebe {PUNISHMENT} tragos",
       "endTemplate": "El modo silencioso ha terminado. Ya pueden hablar normalmente.",
       "variables": {
-        "PUNISHMENT": ["2", "3"]
+        "PUNISHMENT": [
+          "2",
+          "3"
+        ]
       },
       "categoria": "restriction",
       "minRounds": 2,
@@ -94,8 +115,15 @@
       "template": "EVENTO: ⭐ Cada vez que alguien beba mientras dure este evento, debe bailar por {SECONDS} segundos. Si no baila, bebe {PUNISHMENT} tragos extra",
       "endTemplate": "La pausa de baile ha terminado. Ya pueden beber sin bailar.",
       "variables": {
-        "SECONDS": ["10", "15", "20"],
-        "PUNISHMENT": ["1", "2"]
+        "SECONDS": [
+          "10",
+          "15",
+          "20"
+        ],
+        "PUNISHMENT": [
+          "1",
+          "2"
+        ]
       },
       "categoria": "fun",
       "minRounds": 3,
@@ -109,7 +137,10 @@
       "template": "EVENTO: 🌐 Mientras dure este evento, todas las preguntas deben responderse con total honestidad. Mentir = {PUNISHMENT} tragos",
       "endTemplate": "La hora de la verdad ha terminado. Ya pueden ser creativos con sus respuestas.",
       "variables": {
-        "PUNISHMENT": ["3", "4"]
+        "PUNISHMENT": [
+          "3",
+          "4"
+        ]
       },
       "categoria": "truth",
       "minRounds": 4,
@@ -123,7 +154,10 @@
       "template": "EVENTO: 🌐 Mientras dure este evento, solo pueden usar la mano izquierda para beber. Usar la derecha = {PUNISHMENT} tragos",
       "endTemplate": "El evento de mano izquierda ha terminado. Ya pueden usar ambas manos.",
       "variables": {
-        "PUNISHMENT": ["2", "3"]
+        "PUNISHMENT": [
+          "2",
+          "3"
+        ]
       },
       "categoria": "restriction",
       "minRounds": 4,
@@ -137,7 +171,10 @@
       "template": "EVENTO: ⭐ Mientras dure este evento, deben recordar y repetir todos los retos anteriores antes de hacer el suyo. Si se olvidan, beben {PUNISHMENT} tragos",
       "endTemplate": "La cadena de memoria ha terminado. Ya no necesitan recordar retos anteriores.",
       "variables": {
-        "PUNISHMENT": ["2", "3"]
+        "PUNISHMENT": [
+          "2",
+          "3"
+        ]
       },
       "categoria": "memory",
       "minRounds": 2,
@@ -151,8 +188,13 @@
       "template": "EVENTO: ✖️ Todos los castigos y tragos valen x{MULTIPLIER} mientras dure este evento. Si protestan, beben {PUNISHMENT} tragos extra",
       "endTemplate": "El multiplicador de tragos ha terminado. Los castigos vuelven a ser normales.",
       "variables": {
-        "MULTIPLIER": ["3"],
-        "PUNISHMENT": ["1", "2"]
+        "MULTIPLIER": [
+          "3"
+        ],
+        "PUNISHMENT": [
+          "1",
+          "2"
+        ]
       },
       "categoria": "multiplier",
       "minRounds": 3,
@@ -168,8 +210,23 @@
       "template": "EVENTO: 🌐 Mientras dure este evento, todos deben hablar con acento {ACCENT}. Si hablan normal, beben {PUNISHMENT} tragos",
       "endTemplate": "El desafío de acento ha terminado. Ya pueden hablar con su acento normal.",
       "variables": {
-        "ACCENT": ["francés", "italiano", "argentino", "mexicano", "inglés", "brasileño", "alemán", "japonés", "ruso", "australiano", "indio"],
-        "PUNISHMENT": ["2", "3"]
+        "ACCENT": [
+          "francés",
+          "italiano",
+          "argentino",
+          "mexicano",
+          "inglés",
+          "brasileño",
+          "alemán",
+          "japonés",
+          "ruso",
+          "australiano",
+          "indio"
+        ],
+        "PUNISHMENT": [
+          "2",
+          "3"
+        ]
       },
       "categoria": "fun",
       "minRounds": 3,
@@ -183,8 +240,17 @@
       "template": "EVENTO: ⭐ Mientras dure este evento, todas las respuestas deben rimar con la palabra '{WORD}'. Si no riman, beben {PUNISHMENT} tragos",
       "endTemplate": "El tiempo de rimas ha terminado. Ya no necesitan rimar sus respuestas.",
       "variables": {
-        "WORD": ["amor", "fiesta", "juego", "risa", "baile"],
-        "PUNISHMENT": ["2", "3"]
+        "WORD": [
+          "amor",
+          "fiesta",
+          "juego",
+          "risa",
+          "baile"
+        ],
+        "PUNISHMENT": [
+          "2",
+          "3"
+        ]
       },
       "categoria": "creative",
       "minRounds": 3,
@@ -198,7 +264,10 @@
       "template": "EVENTO: 🌐 Mientras dure este evento, está prohibido señalar con el dedo. Si alguien señala, bebe {PUNISHMENT} tragos",
       "endTemplate": "Ya pueden volver a señalar normalmente.",
       "variables": {
-        "PUNISHMENT": ["2", "3"]
+        "PUNISHMENT": [
+          "2",
+          "3"
+        ]
       },
       "categoria": "restriction",
       "minRounds": 4,
@@ -212,7 +281,11 @@
       "template": "EVENTO: 🌐 Mientras dure este evento, está prohibido decir nombres propios. Si alguien lo hace, bebe {PUNISHMENT} tragos",
       "endTemplate": "El evento sin nombres propios ha terminado.",
       "variables": {
-        "PUNISHMENT": ["2", "3", "4"]
+        "PUNISHMENT": [
+          "2",
+          "3",
+          "4"
+        ]
       },
       "categoria": "restriction",
       "minRounds": 3,
@@ -226,7 +299,10 @@
       "template": "EVENTO: 🌐 Mientras dure este evento, solo se puede susurrar. Hablar alto = {PUNISHMENT} tragos",
       "endTemplate": "El evento de susurros ha terminado.",
       "variables": {
-        "PUNISHMENT": ["2", "3"]
+        "PUNISHMENT": [
+          "2",
+          "3"
+        ]
       },
       "categoria": "restriction",
       "minRounds": 2,
@@ -240,7 +316,11 @@
       "template": "EVENTO: 🌐 Cuando alguien grite '¡Freeze!', todos deben quedarse quietos 5 segundos. Quien se mueva bebe {PUNISHMENT} tragos",
       "endTemplate": "El juego de congelados ha terminado.",
       "variables": {
-        "PUNISHMENT": ["2", "3", "4"]
+        "PUNISHMENT": [
+          "2",
+          "3",
+          "4"
+        ]
       },
       "categoria": "fun",
       "minRounds": 3,
@@ -254,8 +334,15 @@
       "template": "EVENTO: ⭐ Solo {SECONDS} segundos para cumplir o responder. Fallar = {PUNISHMENT} tragos",
       "endTemplate": "El modo ultra rápido ha terminado.",
       "variables": {
-        "SECONDS": ["8", "12"],
-        "PUNISHMENT": ["2", "3", "4"]
+        "SECONDS": [
+          "8",
+          "12"
+        ],
+        "PUNISHMENT": [
+          "2",
+          "3",
+          "4"
+        ]
       },
       "categoria": "time_limit",
       "minRounds": 2,
@@ -269,12 +356,16 @@
       "template": "EVENTO: ✖️ Durante este evento, todos los tragos valen x{MULTIPLIER}",
       "endTemplate": "El multiplicador de tragos ha terminado.",
       "variables": {
-        "MULTIPLIER": ["3"]
+        "MULTIPLIER": [
+          "3"
+        ]
       },
       "categoria": "multiplier",
       "minRounds": 2,
       "maxRounds": 3,
-      "metadata": {"multiplier": 3}
+      "metadata": {
+        "multiplier": 3
+      }
     },
     {
       "id": "heavy_penalties",
@@ -283,7 +374,11 @@
       "template": "EVENTO: 🌐 Mientras dure este evento, cada error se penaliza con {PUNISHMENT} tragos",
       "endTemplate": "Los castigos vuelven a la normalidad.",
       "variables": {
-        "PUNISHMENT": ["4", "5", "6"]
+        "PUNISHMENT": [
+          "4",
+          "5",
+          "6"
+        ]
       },
       "categoria": "group",
       "minRounds": 2,
@@ -297,11 +392,435 @@
       "template": "EVENTO: 🌐 Mientras dure este evento, deben beber con la mano contraria. Usar la habitual = {PUNISHMENT} tragos",
       "endTemplate": "La mano vuelve a ser libre.",
       "variables": {
-        "PUNISHMENT": ["2", "3"]
+        "PUNISHMENT": [
+          "2",
+          "3"
+        ]
       },
       "categoria": "restriction",
       "minRounds": 3,
       "maxRounds": 5,
+      "metadata": {}
+    },
+    {
+      "id": "viking_mode",
+      "type": "global_rule",
+      "title": "Modo Vikingo",
+      "template": "EVENTO: 🛡️ ¡SKOL! Todos deben gritar '¡SKOL!' antes de beber cualquier trago. Si olvidan gritar, beben {PUNISHMENT} tragos extra.",
+      "endTemplate": "El modo vikingo ha terminado. Pueden beber en silencio de nuevo.",
+      "variables": {
+        "PUNISHMENT": [
+          "2",
+          "3"
+        ]
+      },
+      "categoria": "fun",
+      "minRounds": 3,
+      "maxRounds": 6,
+      "metadata": {}
+    },
+    {
+      "id": "t_rex_mode",
+      "type": "restriction",
+      "title": "Modo T-Rex",
+      "template": "EVENTO: 🦖 Brazos de T-Rex: Deben beber con los codos pegados al cuerpo. Si despegan los codos, beben {PUNISHMENT} tragos.",
+      "endTemplate": "El modo T-Rex ha terminado. Estiren esos brazos.",
+      "variables": {
+        "PUNISHMENT": [
+          "2",
+          "3"
+        ]
+      },
+      "categoria": "restriction",
+      "minRounds": 3,
+      "maxRounds": 5,
+      "metadata": {}
+    },
+    {
+      "id": "pinky_up",
+      "type": "global_rule",
+      "title": "Elegancia Pura",
+      "template": "EVENTO: 🍷 Elegancia obligatoria: Todos deben beber con el dedo meñique levantado. Si no lo hacen, beben {PUNISHMENT} tragos por falta de clase.",
+      "endTemplate": "La elegancia obligatoria ha terminado.",
+      "variables": {
+        "PUNISHMENT": [
+          "1",
+          "2"
+        ]
+      },
+      "categoria": "fun",
+      "minRounds": 3,
+      "maxRounds": 6,
+      "metadata": {}
+    },
+    {
+      "id": "no_teeth",
+      "type": "global_rule",
+      "title": "Sin Dientes",
+      "template": "EVENTO: 🦷 Prohibido enseñar los dientes: Si alguien se ríe o habla mostrando los dientes, bebe {PUNISHMENT} tragos.",
+      "endTemplate": "Pueden volver a enseñar los dientes.",
+      "variables": {
+        "PUNISHMENT": [
+          "2",
+          "3"
+        ]
+      },
+      "categoria": "restriction",
+      "minRounds": 2,
+      "maxRounds": 4,
+      "metadata": {}
+    },
+    {
+      "id": "forbidden_word_si",
+      "type": "global_rule",
+      "title": "Palabra Prohibida: Sí",
+      "template": "EVENTO: 🚫 No pueden decir la palabra 'Sí' (ni sus variantes como 'sep', 'yes'). El que la diga bebe {PUNISHMENT} tragos.",
+      "endTemplate": "Ya pueden volver a decir Sí.",
+      "variables": {
+        "PUNISHMENT": [
+          "2",
+          "3"
+        ]
+      },
+      "categoria": "restriction",
+      "minRounds": 4,
+      "maxRounds": 8,
+      "metadata": {}
+    },
+    {
+      "id": "forbidden_word_no",
+      "type": "global_rule",
+      "title": "Palabra Prohibida: No",
+      "template": "EVENTO: 🚫 No pueden decir la palabra 'No' (ni variantes como 'nop', 'negativo'). El que la diga bebe {PUNISHMENT} tragos.",
+      "endTemplate": "Ya pueden volver a decir No.",
+      "variables": {
+        "PUNISHMENT": [
+          "2",
+          "3"
+        ]
+      },
+      "categoria": "restriction",
+      "minRounds": 4,
+      "maxRounds": 8,
+      "metadata": {}
+    },
+    {
+      "id": "nicknames_only",
+      "type": "global_rule",
+      "title": "Solo Apodos",
+      "template": "EVENTO: 🏷️ Prohibido usar nombres reales. Deben inventarse apodos o usar los que ya tienen. Usar un nombre real = {PUNISHMENT} tragos.",
+      "endTemplate": "Ya pueden volver a usar sus nombres reales.",
+      "variables": {
+        "PUNISHMENT": [
+          "2",
+          "3"
+        ]
+      },
+      "categoria": "social",
+      "minRounds": 5,
+      "maxRounds": 10,
+      "metadata": {}
+    },
+    {
+      "id": "questions_only",
+      "type": "global_rule",
+      "title": "Solo Preguntas",
+      "template": "EVENTO: ❓ Todo lo que digan debe ser en forma de pregunta. ¿Entendido? Quien afirme algo bebe {PUNISHMENT} tragos.",
+      "endTemplate": "El modo solo preguntas ha terminado. ¿O no?",
+      "variables": {
+        "PUNISHMENT": [
+          "2",
+          "3"
+        ]
+      },
+      "categoria": "restriction",
+      "minRounds": 2,
+      "maxRounds": 4,
+      "metadata": {}
+    },
+    {
+      "id": "royal_protocol",
+      "type": "global_rule",
+      "title": "Protocolo Real",
+      "template": "EVENTO: 👑 Deben referirse a los demás como 'Mi Lord' o 'Mi Lady'. Si olvidan el protocolo, beben {PUNISHMENT} tragos.",
+      "endTemplate": "El protocolo real ha terminado, plebeyos.",
+      "variables": {
+        "PUNISHMENT": [
+          "2",
+          "3"
+        ]
+      },
+      "categoria": "social",
+      "minRounds": 4,
+      "maxRounds": 7,
+      "metadata": {}
+    },
+    {
+      "id": "invisible_green_man",
+      "type": "global_rule",
+      "title": "El Hombrecillo Verde",
+      "template": "EVENTO: 👽 Tienes un hombrecillo verde imaginario en el borde de tu vaso. Debes quitarlo antes de beber y volver a ponerlo después. Si lo aplastas (olvidas el gesto), bebes {PUNISHMENT} tragos.",
+      "endTemplate": "El hombrecillo verde se ha ido.",
+      "variables": {
+        "PUNISHMENT": [
+          "2",
+          "3"
+        ]
+      },
+      "categoria": "fun",
+      "minRounds": 4,
+      "maxRounds": 8,
+      "metadata": {}
+    },
+    {
+      "id": "self_narration",
+      "type": "global_rule",
+      "title": "Narrador Omnisciente",
+      "template": "EVENTO: 🎙️ Deben narrar su propia acción de beber. Ejemplo: 'Y ahora, [Nombre] procede a beber su trago'. Si no narran, beben {PUNISHMENT} tragos extra.",
+      "endTemplate": "Fin de la narración.",
+      "variables": {
+        "PUNISHMENT": [
+          "1",
+          "2"
+        ]
+      },
+      "categoria": "fun",
+      "minRounds": 3,
+      "maxRounds": 6,
+      "metadata": {}
+    },
+    {
+      "id": "double_tap",
+      "type": "global_rule",
+      "title": "Doble Toque",
+      "template": "EVENTO: 👆 Deben tocar dos veces la mesa o su vaso antes de beber. Si olvidan el doble toque, beben {PUNISHMENT} tragos extra.",
+      "endTemplate": "Ya no hace falta hacer doble toque.",
+      "variables": {
+        "PUNISHMENT": [
+          "1",
+          "2"
+        ]
+      },
+      "categoria": "fun",
+      "minRounds": 3,
+      "maxRounds": 6,
+      "metadata": {}
+    },
+    {
+      "id": "hydration_hero",
+      "type": "global_rule",
+      "title": "Héroe de la Hidratación",
+      "template": "EVENTO: 💧 Por cada trago de alcohol, deben beber un trago de agua. Es por su bien. Si no lo hacen, beben {PUNISHMENT} tragos de alcohol extra.",
+      "endTemplate": "Fin de la hidratación obligatoria.",
+      "variables": {
+        "PUNISHMENT": [
+          "2",
+          "3"
+        ]
+      },
+      "categoria": "group",
+      "minRounds": 3,
+      "maxRounds": 5,
+      "metadata": {}
+    },
+    {
+      "id": "silent_laugh",
+      "type": "global_rule",
+      "title": "Risa Silenciosa",
+      "template": "EVENTO: 🤐 Si se ríen, debe ser sin emitir sonido alguno. Si se escucha su risa, beben {PUNISHMENT} tragos.",
+      "endTemplate": "Ya pueden reírse a carcajadas.",
+      "variables": {
+        "PUNISHMENT": [
+          "2",
+          "3"
+        ]
+      },
+      "categoria": "restriction",
+      "minRounds": 3,
+      "maxRounds": 6,
+      "metadata": {}
+    },
+    {
+      "id": "no_first_person",
+      "type": "global_rule",
+      "title": "Sin Primera Persona",
+      "template": "EVENTO: 🚫 Prohibido decir 'Yo', 'Mí', 'Me', 'Conmigo'. Deben hablar de ustedes mismos en tercera persona. Fallar = {PUNISHMENT} tragos.",
+      "endTemplate": "Ya pueden volver a ser egocéntricos.",
+      "variables": {
+        "PUNISHMENT": [
+          "2",
+          "3"
+        ]
+      },
+      "categoria": "restriction",
+      "minRounds": 3,
+      "maxRounds": 6,
+      "metadata": {}
+    },
+    {
+      "id": "animal_instincts",
+      "type": "global_rule",
+      "title": "Instinto Animal",
+      "template": "EVENTO: 🐾 Antes de cada trago, deben hacer el sonido de un animal (diferente cada vez si es posible). Si olvidan, beben {PUNISHMENT} tragos extra.",
+      "endTemplate": "El zoológico ha cerrado.",
+      "variables": {
+        "PUNISHMENT": [
+          "2"
+        ]
+      },
+      "categoria": "fun",
+      "minRounds": 3,
+      "maxRounds": 6,
+      "metadata": {}
+    },
+    {
+      "id": "robot_mode",
+      "type": "global_rule",
+      "title": "Modo Robot",
+      "template": "EVENTO: 🤖 Todos deben moverse y hablar como robots. Beep boop. Quien actúe como humano bebe {PUNISHMENT} tragos.",
+      "endTemplate": "Sistemas humanos restaurados.",
+      "variables": {
+        "PUNISHMENT": [
+          "2",
+          "3"
+        ]
+      },
+      "categoria": "fun",
+      "minRounds": 3,
+      "maxRounds": 5,
+      "metadata": {}
+    },
+    {
+      "id": "slow_motion",
+      "type": "global_rule",
+      "title": "Cámara Lenta",
+      "template": "EVENTO: 🐌 La acción de beber debe hacerse en cámara lenta exagerada. Si beben a velocidad normal, beben {PUNISHMENT} tragos extra.",
+      "endTemplate": "Velocidad normal restaurada.",
+      "variables": {
+        "PUNISHMENT": [
+          "2"
+        ]
+      },
+      "categoria": "fun",
+      "minRounds": 2,
+      "maxRounds": 4,
+      "metadata": {}
+    },
+    {
+      "id": "opera_singer",
+      "type": "global_rule",
+      "title": "Cantante de Ópera",
+      "template": "EVENTO: 🎵 Todo lo que digan deben cantarlo (estilo ópera o musical). Hablar normal está prohibido. Fallar = {PUNISHMENT} tragos.",
+      "endTemplate": "El musical ha terminado.",
+      "variables": {
+        "PUNISHMENT": [
+          "2",
+          "3"
+        ]
+      },
+      "categoria": "fun",
+      "minRounds": 3,
+      "maxRounds": 5,
+      "metadata": {}
+    },
+    {
+      "id": "confession_booth",
+      "type": "global_rule",
+      "title": "El Confesionario",
+      "template": "EVENTO: 🙏 Antes de hablar, deben comenzar la frase con 'Perdóname padre...'. Si olvidan confesarse, beben {PUNISHMENT} tragos.",
+      "endTemplate": "Están absueltos del evento.",
+      "variables": {
+        "PUNISHMENT": [
+          "2",
+          "3"
+        ]
+      },
+      "categoria": "fun",
+      "minRounds": 3,
+      "maxRounds": 6,
+      "metadata": {}
+    },
+    {
+      "id": "paranoid_mode",
+      "type": "global_rule",
+      "title": "Modo Paranoico",
+      "template": "EVENTO: 👀 Deben mirar a sus espaldas (o a los lados) como si alguien les persiguiera antes de beber. Si no muestran paranoia, beben {PUNISHMENT} tragos.",
+      "endTemplate": "Ya están a salvo.",
+      "variables": {
+        "PUNISHMENT": [
+          "2",
+          "3"
+        ]
+      },
+      "categoria": "fun",
+      "minRounds": 3,
+      "maxRounds": 6,
+      "metadata": {}
+    },
+    {
+      "id": "salesman_mode",
+      "type": "global_rule",
+      "title": "El Vendedor",
+      "template": "EVENTO: 💼 Antes de beber, deben 'vender' su bebida al grupo con una frase publicitaria corta. Sin venta no hay trago (bueno, beben {PUNISHMENT} de castigo).",
+      "endTemplate": "La teletienda ha cerrado.",
+      "variables": {
+        "PUNISHMENT": [
+          "2"
+        ]
+      },
+      "categoria": "fun",
+      "minRounds": 3,
+      "maxRounds": 6,
+      "metadata": {}
+    },
+    {
+      "id": "politician_mode",
+      "type": "global_rule",
+      "title": "El Político",
+      "template": "EVENTO: 🗳️ Deben terminar cada frase con '...y por eso deben votarme'. Si olvidan su eslogan, beben {PUNISHMENT} tragos.",
+      "endTemplate": "Las elecciones han terminado.",
+      "variables": {
+        "PUNISHMENT": [
+          "2",
+          "3"
+        ]
+      },
+      "categoria": "fun",
+      "minRounds": 3,
+      "maxRounds": 6,
+      "metadata": {}
+    },
+    {
+      "id": "yoga_master",
+      "type": "global_rule",
+      "title": "Maestro de Yoga",
+      "template": "EVENTO: 🧘 Deben beber mientras hacen una pose simple de yoga (o estiramiento). Si beben sentados normal, beben {PUNISHMENT} tragos extra.",
+      "endTemplate": "Namasté. El evento ha terminado.",
+      "variables": {
+        "PUNISHMENT": [
+          "2",
+          "3"
+        ]
+      },
+      "categoria": "fun",
+      "minRounds": 3,
+      "maxRounds": 5,
+      "metadata": {}
+    },
+    {
+      "id": "history_buff",
+      "type": "global_rule",
+      "title": "El Historiador",
+      "template": "EVENTO: 📜 Antes de beber, deben decir un dato histórico (real o inventado, pero que suene creíble). Si no, beben {PUNISHMENT} tragos extra.",
+      "endTemplate": "La clase de historia ha terminado.",
+      "variables": {
+        "PUNISHMENT": [
+          "2"
+        ]
+      },
+      "categoria": "fun",
+      "minRounds": 3,
+      "maxRounds": 6,
       "metadata": {}
     }
   ]

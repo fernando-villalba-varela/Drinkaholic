@@ -5,9 +5,22 @@
       "template": "Cualquiera que lleve {X} bebe {Y}",
       "variables": {
         "X": [
-          "pantalones", "vaqueros", "pantalones cortos", "una camiseta", "una sudadera",
-          "zapatillas", "botas", "un sombrero", "gafas", "un reloj", "joyas",
-          "calcetines", "una chaqueta", "un jersey", "sandalias", "un vestido"
+          "pantalones",
+          "vaqueros",
+          "pantalones cortos",
+          "una camiseta",
+          "una sudadera",
+          "zapatillas",
+          "botas",
+          "un sombrero",
+          "gafas",
+          "un reloj",
+          "joyas",
+          "calcetines",
+          "una chaqueta",
+          "un jersey",
+          "sandalias",
+          "un vestido"
         ],
         "Y": [
           "tragos"
@@ -20,12 +33,29 @@
       "template": "Cualquiera que lleve {Y} {X} bebe 3 tragos",
       "variables": {
         "X": [
-          "negro", "blanco", "azul", "rojo", "verde", "amarillo", "rosa",
-          "morado", "naranja", "marrón", "gris", "marino"
+          "negro",
+          "blanco",
+          "azul",
+          "rojo",
+          "verde",
+          "amarillo",
+          "rosa",
+          "morado",
+          "naranja",
+          "marrón",
+          "gris",
+          "marino"
         ],
         "Y": [
-          "camiseta", "pantalones", "zapatos", "calcetines", "chaqueta",
-          "sombrero", "jersey", "vestido", "pantalones cortos"
+          "camiseta",
+          "pantalones",
+          "zapatos",
+          "calcetines",
+          "chaqueta",
+          "sombrero",
+          "jersey",
+          "vestido",
+          "pantalones cortos"
         ]
       },
       "categoria": "Ropa"
@@ -35,9 +65,20 @@
       "template": "Cualquiera con {X} bebe {Y}",
       "variables": {
         "X": [
-          "ojos marrones", "ojos azules", "ojos verdes", "pelo rubio", "pelo oscuro",
-          "pelo rizado", "pelo liso", "barba", "gafas", "pelo largo",
-          "pelo corto", "uñas pintadas", "pendientes", "tatuajes"
+          "ojos marrones",
+          "ojos azules",
+          "ojos verdes",
+          "pelo rubio",
+          "pelo oscuro",
+          "pelo rizado",
+          "pelo liso",
+          "barba",
+          "gafas",
+          "pelo largo",
+          "pelo corto",
+          "uñas pintadas",
+          "pendientes",
+          "tatuajes"
         ],
         "Y": [
           "tragos"
@@ -50,8 +91,13 @@
       "template": "Cualquiera que {X} bebe {Y}",
       "variables": {
         "X": [
-          "sea mayor de 25", "sea menor de 25", "sea mayor de 30", "sea menor de 20",
-          "haya nacido en los 90", "haya nacido en los 2000", "cumpla años este mes",
+          "sea mayor de 25",
+          "sea menor de 25",
+          "sea mayor de 30",
+          "sea menor de 20",
+          "haya nacido en los 90",
+          "haya nacido en los 2000",
+          "cumpla años este mes",
           "haya cumplido años este año"
         ],
         "Y": [
@@ -65,8 +111,13 @@
       "template": "Cualquiera que {X} bebe {Y}",
       "variables": {
         "X": [
-          "esté soltero", "esté en una relación", "esté casado", "haya tenido una cita este mes",
-          "tenga un ex con el que aún hable", "use apps de citas", "esté buscando el amor",
+          "esté soltero",
+          "esté en una relación",
+          "esté casado",
+          "haya tenido una cita este mes",
+          "tenga un ex con el que aún hable",
+          "use apps de citas",
+          "esté buscando el amor",
           "haya estado en una relación de más de 2 años"
         ],
         "Y": [
@@ -80,9 +131,14 @@
       "template": "Cualquiera que {X} bebe {Y}",
       "variables": {
         "X": [
-          "tenga un iPhone", "tenga un Android", "haya publicado en redes hoy",
-          "tenga TikTok instalado", "use Instagram a diario", "tenga más de 500 seguidores",
-          "haya mirado su móvil en los últimos 10 minutos", "tenga un smartwatch"
+          "tenga un iPhone",
+          "tenga un Android",
+          "haya publicado en redes hoy",
+          "tenga TikTok instalado",
+          "use Instagram a diario",
+          "tenga más de 500 seguidores",
+          "haya mirado su móvil en los últimos 10 minutos",
+          "tenga un smartwatch"
         ],
         "Y": [
           "tragos"
@@ -95,9 +151,16 @@
       "template": "Cualquiera que {X} bebe {Y}",
       "variables": {
         "X": [
-          "ame la pizza", "sea vegetariano", "sea vegano", "beba café a diario",
-          "prefiera el té al café", "ame la comida picante", "odie las verduras",
-          "sea goloso", "beba bebidas energéticas", "ame el chocolate"
+          "ame la pizza",
+          "sea vegetariano",
+          "sea vegano",
+          "beba café a diario",
+          "prefiera el té al café",
+          "ame la comida picante",
+          "odie las verduras",
+          "sea goloso",
+          "beba bebidas energéticas",
+          "ame el chocolate"
         ],
         "Y": [
           "tragos"
@@ -110,9 +173,16 @@
       "template": "Cualquiera que {X} bebe {Y}",
       "variables": {
         "X": [
-          "juegue videojuegos", "haga ejercicio regularmente", "lea libros", "vea Netflix a diario",
-          "toque un instrumento musical", "hable más de un idioma", "haya viajado a otro país",
-          "sepa cocinar bien", "conduzca un coche", "practique algún deporte"
+          "juegue videojuegos",
+          "haga ejercicio regularmente",
+          "lea libros",
+          "vea Netflix a diario",
+          "toque un instrumento musical",
+          "hable más de un idioma",
+          "haya viajado a otro país",
+          "sepa cocinar bien",
+          "conduzca un coche",
+          "practique algún deporte"
         ],
         "Y": [
           "tragos"
@@ -125,9 +195,15 @@
       "template": "Cualquiera que {X} bebe {Y}",
       "variables": {
         "X": [
-          "trabaje desde casa", "trabaje los fines de semana", "sea estudiante", "tenga jefe",
-          "trabaje en una oficina", "trabaje con ordenadores", "tenga compañeros de trabajo",
-          "vaya al trabajo en transporte público", "trabaje por turnos"
+          "trabaje desde casa",
+          "trabaje los fines de semana",
+          "sea estudiante",
+          "tenga jefe",
+          "trabaje en una oficina",
+          "trabaje con ordenadores",
+          "tenga compañeros de trabajo",
+          "vaya al trabajo en transporte público",
+          "trabaje por turnos"
         ],
         "Y": [
           "tragos"
@@ -140,10 +216,14 @@
       "template": "Cualquiera que {X} bebe {Y}",
       "variables": {
         "X": [
-          "se haya levantado antes de las 8 hoy", "se haya acostado después de medianoche anoche",
-          "haya olvidado algo importante esta semana", "haya perdido las llaves recientemente",
-          "haya cantado en la ducha esta semana", "haya hablado solo hoy",
-          "haya procrastinado algo importante", "haya mirado el tiempo hoy"
+          "se haya levantado antes de las 8 hoy",
+          "se haya acostado después de medianoche anoche",
+          "haya olvidado algo importante esta semana",
+          "haya perdido las llaves recientemente",
+          "haya cantado en la ducha esta semana",
+          "haya hablado solo hoy",
+          "haya procrastinado algo importante",
+          "haya mirado el tiempo hoy"
         ],
         "Y": [
           "tragos"
@@ -156,10 +236,14 @@
       "template": "Cualquiera que {X} bebe {Y}",
       "variables": {
         "X": [
-          "haya enviado un mensaje al chat equivocado", "haya tropezado en público esta semana",
-          "haya olvidado el nombre de alguien hoy", "haya mentido sobre su edad",
-          "haya fingido estar enfermo para no ir a trabajar", "haya espiado a su ex en redes",
-          "haya llorado viendo una película este mes", "haya bailado solo en casa"
+          "haya enviado un mensaje al chat equivocado",
+          "haya tropezado en público esta semana",
+          "haya olvidado el nombre de alguien hoy",
+          "haya mentido sobre su edad",
+          "haya fingido estar enfermo para no ir a trabajar",
+          "haya espiado a su ex en redes",
+          "haya llorado viendo una película este mes",
+          "haya bailado solo en casa"
         ],
         "Y": [
           "tragos"
@@ -172,7 +256,11 @@
       "template": "Cualquiera con la vocal {X} en su nombre bebe 3 tragos por cada vocal {X}",
       "variables": {
         "X": [
-          "A", "E", "I", "O", "U"
+          "A",
+          "E",
+          "I",
+          "O",
+          "U"
         ]
       },
       "categoria": "Nombres"
@@ -185,7 +273,11 @@
           "PLAYER"
         ],
         "Y": [
-          "1", "2", "3", "4", "5"
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
         ]
       },
       "categoria": "Genérico - Bebe"
@@ -194,13 +286,32 @@
       "id": "dual_comparacion_fisica",
       "template": "El que sea más {TRAIT} entre {PLAYER1} y {PLAYER2} {ACTION} {AMOUNT} tragos",
       "variables": {
-        "PLAYER1": ["DUAL_PLAYER1"],
-        "PLAYER2": ["DUAL_PLAYER2"],
-        "TRAIT": [
-          "alto", "bajo", "fuerte", "joven", "mayor", "delgado", "moreno", "rubio"
+        "PLAYER1": [
+          "DUAL_PLAYER1"
         ],
-        "ACTION": ["bebe", "reparte"],
-        "AMOUNT": ["2", "3", "4", "5"]
+        "PLAYER2": [
+          "DUAL_PLAYER2"
+        ],
+        "TRAIT": [
+          "alto",
+          "bajo",
+          "fuerte",
+          "joven",
+          "mayor",
+          "delgado",
+          "moreno",
+          "rubio"
+        ],
+        "ACTION": [
+          "bebe",
+          "reparte"
+        ],
+        "AMOUNT": [
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
       },
       "categoria": "Dual - Comparación"
     },
@@ -208,13 +319,31 @@
       "id": "dual_quien_primero",
       "template": "Entre {PLAYER1} y {PLAYER2}, quien {CONDITION} primero {ACTION} {AMOUNT} tragos",
       "variables": {
-        "PLAYER1": ["DUAL_PLAYER1"],
-        "PLAYER2": ["DUAL_PLAYER2"],
-        "CONDITION": [
-          "se levante mañana", "hable", "vaya al baño", "mire el móvil", "se ría", "tose", "estornude", "bostecer"
+        "PLAYER1": [
+          "DUAL_PLAYER1"
         ],
-        "ACTION": ["bebe", "reparte"],
-        "AMOUNT": ["2", "3", "4"]
+        "PLAYER2": [
+          "DUAL_PLAYER2"
+        ],
+        "CONDITION": [
+          "se levante mañana",
+          "hable",
+          "vaya al baño",
+          "mire el móvil",
+          "se ría",
+          "tose",
+          "estornude",
+          "bostecer"
+        ],
+        "ACTION": [
+          "bebe",
+          "reparte"
+        ],
+        "AMOUNT": [
+          "2",
+          "3",
+          "4"
+        ]
       },
       "categoria": "Dual - Condición"
     },
@@ -222,13 +351,30 @@
       "id": "dual_batalla_conocimiento",
       "template": "Entre {PLAYER1} y {PLAYER2}, quien {CHALLENGE} mejor {ACTION} {AMOUNT} tragos",
       "variables": {
-        "PLAYER1": ["DUAL_PLAYER1"],
-        "PLAYER2": ["DUAL_PLAYER2"],
-        "CHALLENGE": [
-          "cante una canción", "baile", "imite a un animal", "diga trabalenguas", "cuente un chiste", "haga flexiones", "rapee"
+        "PLAYER1": [
+          "DUAL_PLAYER1"
         ],
-        "ACTION": ["bebe", "reparte"],
-        "AMOUNT": ["3", "4", "5"]
+        "PLAYER2": [
+          "DUAL_PLAYER2"
+        ],
+        "CHALLENGE": [
+          "cante una canción",
+          "baile",
+          "imite a un animal",
+          "diga trabalenguas",
+          "cuente un chiste",
+          "haga flexiones",
+          "rapee"
+        ],
+        "ACTION": [
+          "bebe",
+          "reparte"
+        ],
+        "AMOUNT": [
+          "3",
+          "4",
+          "5"
+        ]
       },
       "categoria": "Dual - Batalla"
     },
@@ -236,13 +382,30 @@
       "id": "dual_verdad_mentira",
       "template": "Entre {PLAYER1} y {PLAYER2}, quien {CONDITION} {ACTION} {AMOUNT} tragos",
       "variables": {
-        "PLAYER1": ["DUAL_PLAYER1"],
-        "PLAYER2": ["DUAL_PLAYER2"],
-        "CONDITION": [
-          "haya viajado más lejos", "tenga más seguidores en redes", "sepa cocinar mejor", "sea mejor conduciendo", "haya besado a más personas", "sea más organizado", "duerma menos horas"
+        "PLAYER1": [
+          "DUAL_PLAYER1"
         ],
-        "ACTION": ["bebe", "reparte"],
-        "AMOUNT": ["2", "3", "4"]
+        "PLAYER2": [
+          "DUAL_PLAYER2"
+        ],
+        "CONDITION": [
+          "haya viajado más lejos",
+          "tenga más seguidores en redes",
+          "sepa cocinar mejor",
+          "sea mejor conduciendo",
+          "haya besado a más personas",
+          "sea más organizado",
+          "duerma menos horas"
+        ],
+        "ACTION": [
+          "bebe",
+          "reparte"
+        ],
+        "AMOUNT": [
+          "2",
+          "3",
+          "4"
+        ]
       },
       "categoria": "Dual - Verdad"
     },
@@ -250,10 +413,21 @@
       "id": "dual_adivinanza",
       "template": "{PLAYER1} le dice a otro jugador un número del 1 al 10, {PLAYER2} debe adivinarlo. Si acierta, {PLAYER1} bebe {AMOUNT1} tragos. Si falla, {PLAYER2} bebe {AMOUNT2} tragos",
       "variables": {
-        "PLAYER1": ["DUAL_PLAYER1"],
-        "PLAYER2": ["DUAL_PLAYER2"],
-        "AMOUNT1": ["3", "4", "5"],
-        "AMOUNT2": ["2", "3"]
+        "PLAYER1": [
+          "DUAL_PLAYER1"
+        ],
+        "PLAYER2": [
+          "DUAL_PLAYER2"
+        ],
+        "AMOUNT1": [
+          "3",
+          "4",
+          "5"
+        ],
+        "AMOUNT2": [
+          "2",
+          "3"
+        ]
       },
       "categoria": "Dual - Adivinanza"
     },
@@ -265,7 +439,11 @@
           "PLAYER"
         ],
         "Y": [
-          "1", "2", "3", "4", "5"
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
         ]
       },
       "categoria": "Genérico - Reparte"
@@ -278,14 +456,28 @@
           "PLAYER"
         ],
         "Y": [
-          "1", "2", "3", "4", "5"
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
         ],
         "Z": [
-          "nombrar 5 países en 15 segundos", "hacer 10 flexiones seguidas", "cantar una canción completa",
-          "contar hasta 20 al revés", "nombrar 7 animales que empiecen por la misma letra", "imitar 3 animales diferentes",
-          "decir el abecedario al revés", "hacer el pino durante 10 segundos", "silbar una melodía reconocible",
-          "decir 5 palabras que rimen con 'fiesta'", "nombrar 10 marcas de coches", "hacer una voltereta",
-          "tocar la punta de su nariz con la lengua", "bailar durante 30 segundos sin parar", "contar una broma que haga reír a todos"
+          "nombrar 5 países en 15 segundos",
+          "hacer 10 flexiones seguidas",
+          "cantar una canción completa",
+          "contar hasta 20 al revés",
+          "nombrar 7 animales que empiecen por la misma letra",
+          "imitar 3 animales diferentes",
+          "decir el abecedario al revés",
+          "hacer el pino durante 10 segundos",
+          "silbar una melodía reconocible",
+          "decir 5 palabras que rimen con 'fiesta'",
+          "nombrar 10 marcas de coches",
+          "hacer una voltereta",
+          "tocar la punta de su nariz con la lengua",
+          "bailar durante 30 segundos sin parar",
+          "contar una broma que haga reír a todos"
         ]
       },
       "categoria": "Genérico - Reto Éxito"
@@ -298,14 +490,28 @@
           "PLAYER"
         ],
         "Y": [
-          "1", "2", "3", "4", "5"
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
         ],
         "Z": [
-          "nombrar 3 países en 10 segundos", "decir el abecedario al revés sin errores", "tocar la punta de su nariz con la lengua",
-          "hacer 5 flexiones", "cantar una canción infantil entera", "nombrar 5 animales que empiecen por M",
-          "decir 3 palabras que rimen con amor", "contar hasta 20 en otro idioma", "nombrar 5 marcas de coches",
-          "imitar a un animal durante 30 segundos", "decir 5 colores en inglés", "silbar una melodía reconocible",
-          "hacer el equilibrio sobre un pie durante 20 segundos", "nombrar 3 capitales europeas", "recitar las tablas de multiplicar del 7"
+          "nombrar 3 países en 10 segundos",
+          "decir el abecedario al revés sin errores",
+          "tocar la punta de su nariz con la lengua",
+          "hacer 5 flexiones",
+          "cantar una canción infantil entera",
+          "nombrar 5 animales que empiecen por M",
+          "decir 3 palabras que rimen con amor",
+          "contar hasta 20 en otro idioma",
+          "nombrar 5 marcas de coches",
+          "imitar a un animal durante 30 segundos",
+          "decir 5 colores en inglés",
+          "silbar una melodía reconocible",
+          "hacer el equilibrio sobre un pie durante 20 segundos",
+          "nombrar 3 capitales europeas",
+          "recitar las tablas de multiplicar del 7"
         ]
       },
       "categoria": "Genérico - Reto Fallo"
@@ -318,14 +524,28 @@
           "PLAYER"
         ],
         "Y": [
-          "1", "2", "3", "4", "5"
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
         ],
         "Z": [
-          "¿Cuál es la capital de Francia? (París)", "¿En qué año comenzó la Segunda Guerra Mundial? (1939)", "¿Cuántos días tiene febrero en año bisiesto? (29)",
-          "¿Cuál es el planeta más grande del sistema solar? (Júpiter)", "¿Quién pintó La Mona Lisa? (Leonardo da Vinci)", "¿Cuál es el río más largo del mundo? (Nilo)",
-          "¿Cuántos huesos tiene el cuerpo humano adulto? (206)", "¿En qué continente está Egipto? (África)", "¿Cuál es la montaña más alta del mundo? (Everest)",
-          "¿Qué gas respiramos principalmente? (Oxígeno)", "¿Cuántos corazones tiene un pulpo? (3)", "¿Cuál es el océano más grande? (Pacífico)",
-          "¿En qué año llegó el hombre a la luna? (1969)", "¿Quién escribió Don Quijote? (Cervantes)", "¿Cuál es la capital de Australia? (Canberra)"
+          "¿Cuál es la capital de Francia? (París)",
+          "¿En qué año comenzó la Segunda Guerra Mundial? (1939)",
+          "¿Cuántos días tiene febrero en año bisiesto? (29)",
+          "¿Cuál es el planeta más grande del sistema solar? (Júpiter)",
+          "¿Quién pintó La Mona Lisa? (Leonardo da Vinci)",
+          "¿Cuál es el río más largo del mundo? (Nilo)",
+          "¿Cuántos huesos tiene el cuerpo humano adulto? (206)",
+          "¿En qué continente está Egipto? (África)",
+          "¿Cuál es la montaña más alta del mundo? (Everest)",
+          "¿Qué gas respiramos principalmente? (Oxígeno)",
+          "¿Cuántos corazones tiene un pulpo? (3)",
+          "¿Cuál es el océano más grande? (Pacífico)",
+          "¿En qué año llegó el hombre a la luna? (1969)",
+          "¿Quién escribió Don Quijote? (Cervantes)",
+          "¿Cuál es la capital de Australia? (Canberra)"
         ]
       },
       "categoria": "Genérico - Conocimiento Éxito"
@@ -338,14 +558,28 @@
           "PLAYER"
         ],
         "Y": [
-          "1", "2", "3", "4", "5"
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
         ],
         "Z": [
-          "¿Cuál es la capital de Australia?", "¿En qué año comenzó la Segunda Guerra Mundial?", "¿Cuántos huesos tiene el cuerpo humano?",
-          "¿Cuál es el río más largo del mundo?", "¿Quién pintó La Mona Lisa?", "¿Cuál es el planeta más grande del sistema solar?",
-          "¿En qué continente está Egipto?", "¿Cuántos días tiene un año bisiesto?", "¿Cuál es la montaña más alta del mundo?",
-          "¿Qué gas respiramos principalmente?", "¿Cuántos corazones tiene un pulpo?", "¿Cuál es el océano más grande?",
-          "¿En qué año llegó el hombre a la luna?", "¿Quién escribió Don Quijote?", "¿Cuál es el metal más abundante en la Tierra?"
+          "¿Cuál es la capital de Australia?",
+          "¿En qué año comenzó la Segunda Guerra Mundial?",
+          "¿Cuántos huesos tiene el cuerpo humano?",
+          "¿Cuál es el río más largo del mundo?",
+          "¿Quién pintó La Mona Lisa?",
+          "¿Cuál es el planeta más grande del sistema solar?",
+          "¿En qué continente está Egipto?",
+          "¿Cuántos días tiene un año bisiesto?",
+          "¿Cuál es la montaña más alta del mundo?",
+          "¿Qué gas respiramos principalmente?",
+          "¿Cuántos corazones tiene un pulpo?",
+          "¿Cuál es el océano más grande?",
+          "¿En qué año llegó el hombre a la luna?",
+          "¿Quién escribió Don Quijote?",
+          "¿Cuál es el metal más abundante en la Tierra?"
         ]
       },
       "categoria": "Genérico - Conocimiento Fallo"
@@ -358,12 +592,28 @@
           "PLAYER"
         ],
         "Y": [
-          "1", "2", "3", "4", "5"
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
         ],
         "Z": [
-          "25 x 4", "144 ÷ 12", "15% de 200", "√81", "2³ + 3²", "50 - 23",
-          "7 x 9", "100 ÷ 4", "8² - 10", "3 x 15", "200 - 87", "6 x 7",
-          "45 ÷ 9", "12 + 28", "9 x 6"
+          "25 x 4",
+          "144 ÷ 12",
+          "15% de 200",
+          "√81",
+          "2³ + 3²",
+          "50 - 23",
+          "7 x 9",
+          "100 ÷ 4",
+          "8² - 10",
+          "3 x 15",
+          "200 - 87",
+          "6 x 7",
+          "45 ÷ 9",
+          "12 + 28",
+          "9 x 6"
         ]
       },
       "categoria": "Genérico - Matemáticas Éxito"
@@ -376,11 +626,28 @@
           "PLAYER"
         ],
         "Y": [
-          "1", "2", "3", "4", "5"
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
         ],
         "Z": [
-          "25 x 4", "144 ÷ 12", "15% de 200", "√81", "2³ + 3²", "50 - 23", "7 x 9", "100 ÷ 4",
-          "8² - 10", "3 x 15", "200 - 87", "6 x 7", "45 ÷ 9", "12 + 28", "9 x 6"
+          "25 x 4",
+          "144 ÷ 12",
+          "15% de 200",
+          "√81",
+          "2³ + 3²",
+          "50 - 23",
+          "7 x 9",
+          "100 ÷ 4",
+          "8² - 10",
+          "3 x 15",
+          "200 - 87",
+          "6 x 7",
+          "45 ÷ 9",
+          "12 + 28",
+          "9 x 6"
         ]
       },
       "categoria": "Genérico - Matemáticas Fallo"
@@ -393,12 +660,28 @@
           "PLAYER"
         ],
         "Y": [
-          "1", "2", "3", "4", "5"
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
         ],
         "Z": [
-          "un famoso cantante", "un animal salvaje", "un robot", "un bebé", "un anciano", "un superhéroe",
-          "una persona borracha", "un deportista famoso", "una sirena", "un alien", "un zombie", "un ninja",
-          "una persona muy elegante", "alguien muy tímido", "una persona con mucha prisa"
+          "un famoso cantante",
+          "un animal salvaje",
+          "un robot",
+          "un bebé",
+          "un anciano",
+          "un superhéroe",
+          "una persona borracha",
+          "un deportista famoso",
+          "una sirena",
+          "un alien",
+          "un zombie",
+          "un ninja",
+          "una persona muy elegante",
+          "alguien muy tímido",
+          "una persona con mucha prisa"
         ]
       },
       "categoria": "Genérico - Imitación Éxito"
@@ -411,14 +694,28 @@
           "PLAYER"
         ],
         "Y": [
-          "1", "2", "3", "4", "5"
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
         ],
         "Z": [
-          "el nombre completo de su primer amor", "su dirección de la infancia completa", "el nombre de su profesor de primaria favorito",
-          "qué regalo recibió en su último cumpleaños", "la primera película que vio en el cine", "su primera mascota",
-          "el nombre de su mejor amigo de la infancia", "su primer número de teléfono", "su primer trabajo",
-          "el nombre de su primera escuela", "su comida favorita de niño", "su programa de TV favorito de pequeño",
-          "su juguete favorito de la infancia", "dónde conoció a su mejor amigo actual", "su primera mascota"
+          "el nombre completo de su primer amor",
+          "su dirección de la infancia completa",
+          "el nombre de su profesor de primaria favorito",
+          "qué regalo recibió en su último cumpleaños",
+          "la primera película que vio en el cine",
+          "su primera mascota",
+          "el nombre de su mejor amigo de la infancia",
+          "su primer número de teléfono",
+          "su primer trabajo",
+          "el nombre de su primera escuela",
+          "su comida favorita de niño",
+          "su programa de TV favorito de pequeño",
+          "su juguete favorito de la infancia",
+          "dónde conoció a su mejor amigo actual",
+          "su primera mascota"
         ]
       },
       "categoria": "Genérico - Memoria Éxito"
@@ -431,14 +728,28 @@
           "PLAYER"
         ],
         "Y": [
-          "1", "2", "3", "4", "5"
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
         ],
         "Z": [
-          "un presentador de televisión", "un alien visitando la Tierra", "un detective muy serio",
-          "alguien con superpoderes", "un chef muy exigente", "una persona de la realeza",
-          "un guía turístico entusiasta", "un profesor muy estricto", "un vendedor insistente",
-          "un reportero de noticias", "un entrenador deportivo motivador", "un médico muy preocupado",
-          "un camarero muy elegante", "un disc jockey", "un meteorológo exagerado"
+          "un presentador de televisión",
+          "un alien visitando la Tierra",
+          "un detective muy serio",
+          "alguien con superpoderes",
+          "un chef muy exigente",
+          "una persona de la realeza",
+          "un guía turístico entusiasta",
+          "un profesor muy estricto",
+          "un vendedor insistente",
+          "un reportero de noticias",
+          "un entrenador deportivo motivador",
+          "un médico muy preocupado",
+          "un camarero muy elegante",
+          "un disc jockey",
+          "un meteorológo exagerado"
         ]
       },
       "categoria": "Genérico - Actuación Éxito"
@@ -451,13 +762,28 @@
           "PLAYER"
         ],
         "Y": [
-          "1", "2", "3", "4", "5"
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
         ],
         "Z": [
-          "ser demasiado guapo", "tener una sonrisa perfecta", "ser el más divertido del grupo", "tener los mejores chistes",
-          "ser demasiado inteligente", "tener el mejor estilo", "ser el más carismático", "tener la mejor risa",
-          "ser demasiado bueno en este juego", "tener demasiada suerte", "ser el más popular", "tener los ojos más bonitos",
-          "ser demasiado talentoso", "tener la mejor personalidad", "ser el favorito de todos"
+          "ser demasiado guapo",
+          "tener una sonrisa perfecta",
+          "ser el más divertido del grupo",
+          "tener los mejores chistes",
+          "ser demasiado inteligente",
+          "tener el mejor estilo",
+          "ser el más carismático",
+          "tener la mejor risa",
+          "ser demasiado bueno en este juego",
+          "tener demasiada suerte",
+          "ser el más popular",
+          "tener los ojos más bonitos",
+          "ser demasiado talentoso",
+          "tener la mejor personalidad",
+          "ser el favorito de todos"
         ]
       },
       "categoria": "Genérico - Bebe por Razón"
@@ -470,761 +796,1450 @@
           "PLAYER"
         ],
         "Y": [
-          "1", "2", "3", "4", "5"
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
         ],
         "Z": [
-          "organizar esta fiesta increíble", "tener la mejor actitud", "animar a todo el grupo", "ser tan buen amigo",
-          "hacer que todos se diviertan", "tener las mejores ideas", "ser el alma de la fiesta", "mantener el buen rollo",
-          "ser tan generoso", "hacer reír a todos", "tener tanta energía positiva", "ser tan divertido",
-          "cuidar tan bien del grupo", "tener el mejor corazón", "ser tan especial"
+          "organizar esta fiesta increíble",
+          "tener la mejor actitud",
+          "animar a todo el grupo",
+          "ser tan buen amigo",
+          "hacer que todos se diviertan",
+          "tener las mejores ideas",
+          "ser el alma de la fiesta",
+          "mantener el buen rollo",
+          "ser tan generoso",
+          "hacer reír a todos",
+          "tener tanta energía positiva",
+          "ser tan divertido",
+          "cuidar tan bien del grupo",
+          "tener el mejor corazón",
+          "ser tan especial"
         ]
       },
       "categoria": "Genérico - Reparte por Razón"
     },
-  {
-    "id": "generico_bebe_simple_1",
-    "template": "{X} bebe {Y} tragos por llegar tarde",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_simple_1",
+      "template": "{X} bebe {Y} tragos por llegar tarde",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Genérico - Bebe"
     },
-    "categoria": "Genérico - Bebe"
-  },
-  {
-    "id": "generico_bebe_simple_2",
-    "template": "{X} bebe {Y} tragos si ha enviado un mensaje vergonzoso",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_simple_2",
+      "template": "{X} bebe {Y} tragos si ha enviado un mensaje vergonzoso",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Genérico - Bebe"
     },
-    "categoria": "Genérico - Bebe"
-  },
-  {
-    "id": "generico_bebe_simple_3",
-    "template": "{X} bebe {Y} tragos si ha stalkeado a alguien esta semana",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_simple_3",
+      "template": "{X} bebe {Y} tragos si ha stalkeado a alguien esta semana",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Genérico - Bebe"
     },
-    "categoria": "Genérico - Bebe"
-  },
-  {
-    "id": "generico_bebe_simple_4",
-    "template": "{X} bebe {Y} tragos por revisar el celular durante el juego",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_simple_4",
+      "template": "{X} bebe {Y} tragos por revisar el celular durante el juego",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Genérico - Bebe"
     },
-    "categoria": "Genérico - Bebe"
-  },
-  {
-    "id": "generico_bebe_simple_5",
-    "template": "{X} bebe {Y} tragos si alguna vez ha mentido en este juego",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_simple_5",
+      "template": "{X} bebe {Y} tragos si alguna vez ha mentido en este juego",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Genérico - Bebe"
     },
-    "categoria": "Genérico - Bebe"
-  },
-  {
-    "id": "generico_bebe_simple_6",
-    "template": "{X} bebe {Y} tragos por decir una palabra prohibida",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_simple_6",
+      "template": "{X} bebe {Y} tragos por decir una palabra prohibida",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Genérico - Bebe"
     },
-    "categoria": "Genérico - Bebe"
-  },
-  {
-    "id": "generico_bebe_simple_7",
-    "template": "{X} bebe {Y} tragos si ha tenido una cita esta semana",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_simple_7",
+      "template": "{X} bebe {Y} tragos si ha tenido una cita esta semana",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Genérico - Bebe"
     },
-    "categoria": "Genérico - Bebe"
-  },
-  {
-    "id": "generico_bebe_simple_8",
-    "template": "{X} bebe {Y} tragos si alguna vez se ha besado con otro jugador",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_simple_8",
+      "template": "{X} bebe {Y} tragos si alguna vez se ha besado con otro jugador",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Genérico - Bebe"
     },
-    "categoria": "Genérico - Bebe"
-  },
-  {
-    "id": "generico_bebe_simple_9",
-    "template": "{X} bebe {Y} tragos si ha hecho ghosting a alguien",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_simple_9",
+      "template": "{X} bebe {Y} tragos si ha hecho ghosting a alguien",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Genérico - Bebe"
     },
-    "categoria": "Genérico - Bebe"
-  },
-  {
-    "id": "generico_bebe_simple_10",
-    "template": "{X} bebe {Y} tragos si no ha hecho ejercicio en toda la semana",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_simple_10",
+      "template": "{X} bebe {Y} tragos si no ha hecho ejercicio en toda la semana",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Genérico - Bebe"
     },
-    "categoria": "Genérico - Bebe"
-  },
-  {
-    "id": "generico_bebe_simple_11",
-    "template": "{X} bebe {Y} tragos si ha perdido algo importante recientemente",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_simple_11",
+      "template": "{X} bebe {Y} tragos si ha perdido algo importante recientemente",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Genérico - Bebe"
     },
-    "categoria": "Genérico - Bebe"
-  },
-  {
-    "id": "generico_bebe_simple_12",
-    "template": "{X} bebe {Y} tragos si ha tenido una pelea esta semana",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_simple_12",
+      "template": "{X} bebe {Y} tragos si ha tenido una pelea esta semana",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Genérico - Bebe"
     },
-    "categoria": "Genérico - Bebe"
-  },
-  {
-    "id": "generico_bebe_simple_13",
-    "template": "{X} bebe {Y} tragos si ha comido comida chatarra hoy",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_simple_13",
+      "template": "{X} bebe {Y} tragos si ha comido comida chatarra hoy",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Genérico - Bebe"
     },
-    "categoria": "Genérico - Bebe"
-  },
-  {
-    "id": "generico_bebe_simple_14",
-    "template": "{X} bebe {Y} tragos si ha llorado viendo una película",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_simple_14",
+      "template": "{X} bebe {Y} tragos si ha llorado viendo una película",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Genérico - Bebe"
     },
-    "categoria": "Genérico - Bebe"
-  },
-  {
-    "id": "generico_bebe_simple_15",
-    "template": "{X} bebe {Y} tragos si ha tenido una resaca esta semana",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_simple_15",
+      "template": "{X} bebe {Y} tragos si ha tenido una resaca esta semana",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Genérico - Bebe"
     },
-    "categoria": "Genérico - Bebe"
-  },
-  {
-    "id": "generico_bebe_simple_16",
-    "template": "{X} bebe {Y} tragos si ha usado una excusa para no salir",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_simple_16",
+      "template": "{X} bebe {Y} tragos si ha usado una excusa para no salir",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Genérico - Bebe"
     },
-    "categoria": "Genérico - Bebe"
-  },
-  {
-    "id": "generico_bebe_simple_17",
-    "template": "{X} bebe {Y} tragos si se ha enamorado de un profesor o jefa",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_simple_17",
+      "template": "{X} bebe {Y} tragos si se ha enamorado de un profesor o jefa",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Genérico - Bebe"
     },
-    "categoria": "Genérico - Bebe"
-  },
-  {
-    "id": "generico_bebe_simple_18",
-    "template": "{X} bebe {Y} tragos si ha hablado mal de alguien del grupo",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_simple_18",
+      "template": "{X} bebe {Y} tragos si ha hablado mal de alguien del grupo",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Genérico - Bebe"
     },
-    "categoria": "Genérico - Bebe"
-  },
-  {
-    "id": "generico_bebe_simple_19",
-    "template": "{X} bebe {Y} tragos si ha tenido un sueño raro últimamente",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_simple_19",
+      "template": "{X} bebe {Y} tragos si ha tenido un sueño raro últimamente",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Genérico - Bebe"
     },
-    "categoria": "Genérico - Bebe"
-  },
-  {
-    "id": "generico_bebe_simple_20",
-    "template": "{X} bebe {Y} tragos si ha hecho una compra impulsiva reciente",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_simple_20",
+      "template": "{X} bebe {Y} tragos si ha hecho una compra impulsiva reciente",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Genérico - Bebe"
     },
-    "categoria": "Genérico - Bebe"
-  },
-  {
-    "id": "generico_bebe_simple_21",
-    "template": "{X} bebe {Y} tragos si ha usado una app de citas",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_simple_21",
+      "template": "{X} bebe {Y} tragos si ha usado una app de citas",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Genérico - Bebe"
     },
-    "categoria": "Genérico - Bebe"
-  },
-  {
-    "id": "generico_bebe_simple_22",
-    "template": "{X} bebe {Y} tragos si ha mentido sobre su edad",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_simple_22",
+      "template": "{X} bebe {Y} tragos si ha mentido sobre su edad",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Genérico - Bebe"
     },
-    "categoria": "Genérico - Bebe"
-  },
-  {
-    "id": "generico_bebe_simple_23",
-    "template": "{X} bebe {Y} tragos si se ha quedado dormido en una clase o reunión",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_simple_23",
+      "template": "{X} bebe {Y} tragos si se ha quedado dormido en una clase o reunión",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Genérico - Bebe"
     },
-    "categoria": "Genérico - Bebe"
-  },
-  {
-    "id": "generico_bebe_simple_24",
-    "template": "{X} bebe {Y} tragos si ha stalkeado a su ex",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_simple_24",
+      "template": "{X} bebe {Y} tragos si ha stalkeado a su ex",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Genérico - Bebe"
     },
-    "categoria": "Genérico - Bebe"
-  },
-  {
-    "id": "generico_bebe_sarcasmo_1",
-    "template": "{X} bebe {Y} tragos por tener esa cara de influencer frustrado",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_sarcasmo_1",
+      "template": "{X} bebe {Y} tragos por tener esa cara de influencer frustrado",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Sarcasmo - Bebe"
     },
-    "categoria": "Sarcasmo - Bebe"
-  },
-  {
-    "id": "generico_bebe_sarcasmo_2",
-    "template": "{X} bebe {Y} tragos por existir tan intensamente",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_sarcasmo_2",
+      "template": "{X} bebe {Y} tragos por existir tan intensamente",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Sarcasmo - Bebe"
     },
-    "categoria": "Sarcasmo - Bebe"
-  },
-  {
-    "id": "generico_bebe_sarcasmo_3",
-    "template": "{X} bebe {Y} tragos por creerse el alma de la fiesta... y fallar",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_sarcasmo_3",
+      "template": "{X} bebe {Y} tragos por creerse el alma de la fiesta... y fallar",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Sarcasmo - Bebe"
     },
-    "categoria": "Sarcasmo - Bebe"
-  },
-  {
-    "id": "generico_bebe_sarcasmo_4",
-    "template": "{X} bebe {Y} tragos por usar frases motivacionales en Instagram",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_sarcasmo_4",
+      "template": "{X} bebe {Y} tragos por usar frases motivacionales en Instagram",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Sarcasmo - Bebe"
     },
-    "categoria": "Sarcasmo - Bebe"
-  },
-  {
-    "id": "generico_bebe_sarcasmo_5",
-    "template": "{X} bebe {Y} tragos por creer que el horóscopo le guía la vida",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_sarcasmo_5",
+      "template": "{X} bebe {Y} tragos por creer que el horóscopo le guía la vida",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Sarcasmo - Bebe"
     },
-    "categoria": "Sarcasmo - Bebe"
-  },
-  {
-    "id": "generico_bebe_sarcasmo_6",
-    "template": "{X} bebe {Y} tragos por esa risa que parece alarma de coche",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_sarcasmo_6",
+      "template": "{X} bebe {Y} tragos por esa risa que parece alarma de coche",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Sarcasmo - Bebe"
     },
-    "categoria": "Sarcasmo - Bebe"
-  },
-  {
-    "id": "generico_bebe_sarcasmo_7",
-    "template": "{X} bebe {Y} tragos por tener barba como si eso te diera personalidad",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_sarcasmo_7",
+      "template": "{X} bebe {Y} tragos por tener barba como si eso te diera personalidad",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Sarcasmo - Bebe"
     },
-    "categoria": "Sarcasmo - Bebe"
-  },
-  {
-    "id": "generico_bebe_sarcasmo_8",
-    "template": "{X} bebe {Y} tragos por usar Crocs y creerse con estilo",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_sarcasmo_8",
+      "template": "{X} bebe {Y} tragos por usar Crocs y creerse con estilo",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Sarcasmo - Bebe"
     },
-    "categoria": "Sarcasmo - Bebe"
-  },
-  {
-    "id": "generico_bebe_sarcasmo_9",
-    "template": "{X} bebe {Y} tragos por decir 'yo no tomo mucho' mientras bebe esto",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_sarcasmo_9",
+      "template": "{X} bebe {Y} tragos por decir 'yo no tomo mucho' mientras bebe esto",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Sarcasmo - Bebe"
     },
-    "categoria": "Sarcasmo - Bebe"
-  },
-  {
-    "id": "generico_bebe_sarcasmo_10",
-    "template": "{X} bebe {Y} tragos por tener más selfies que neuronas",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_sarcasmo_10",
+      "template": "{X} bebe {Y} tragos por tener más selfies que neuronas",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Sarcasmo - Bebe"
     },
-    "categoria": "Sarcasmo - Bebe"
-  },
-  {
-    "id": "generico_bebe_sarcasmo_11",
-    "template": "{X} bebe {Y} tragos por decir que 'no le gusta el drama' mientras crea uno",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_sarcasmo_11",
+      "template": "{X} bebe {Y} tragos por decir que 'no le gusta el drama' mientras crea uno",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Sarcasmo - Bebe"
     },
-    "categoria": "Sarcasmo - Bebe"
-  },
-  {
-    "id": "generico_bebe_sarcasmo_12",
-    "template": "{X} bebe {Y} tragos por tener más ex que zapatos",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_sarcasmo_12",
+      "template": "{X} bebe {Y} tragos por tener más ex que zapatos",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Sarcasmo - Bebe"
     },
-    "categoria": "Sarcasmo - Bebe"
-  },
-  {
-    "id": "generico_bebe_sarcasmo_13",
-    "template": "{X} bebe {Y} tragos por seguir diciendo que va al gym 'mañana'",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_sarcasmo_13",
+      "template": "{X} bebe {Y} tragos por seguir diciendo que va al gym 'mañana'",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Sarcasmo - Bebe"
     },
-    "categoria": "Sarcasmo - Bebe"
-  },
-  {
-    "id": "generico_bebe_sarcasmo_14",
-    "template": "{X} bebe {Y} tragos por creerse modelo solo por tener TikTok",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_sarcasmo_14",
+      "template": "{X} bebe {Y} tragos por creerse modelo solo por tener TikTok",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Sarcasmo - Bebe"
     },
-    "categoria": "Sarcasmo - Bebe"
-  },
-  {
-    "id": "generico_bebe_sarcasmo_15",
-    "template": "{X} bebe {Y} tragos por decir que está soltero por decisión propia",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_sarcasmo_15",
+      "template": "{X} bebe {Y} tragos por decir que está soltero por decisión propia",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Sarcasmo - Bebe"
     },
-    "categoria": "Sarcasmo - Bebe"
-  },
-  {
-    "id": "generico_bebe_sarcasmo_16",
-    "template": "{X} bebe {Y} tragos por ser el que más habla y menos aporta",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_sarcasmo_16",
+      "template": "{X} bebe {Y} tragos por ser el que más habla y menos aporta",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Sarcasmo - Bebe"
     },
-    "categoria": "Sarcasmo - Bebe"
-  },
-  {
-    "id": "generico_bebe_sarcasmo_17",
-    "template": "{X} bebe {Y} tragos por tener playlist de 'perreo triste'",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_sarcasmo_17",
+      "template": "{X} bebe {Y} tragos por tener playlist de 'perreo triste'",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Sarcasmo - Bebe"
     },
-    "categoria": "Sarcasmo - Bebe"
-  },
-  {
-    "id": "generico_bebe_sarcasmo_18",
-    "template": "{X} bebe {Y} tragos por enviar stickers en vez de respuestas",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_sarcasmo_18",
+      "template": "{X} bebe {Y} tragos por enviar stickers en vez de respuestas",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Sarcasmo - Bebe"
     },
-    "categoria": "Sarcasmo - Bebe"
-  },
-  {
-    "id": "generico_bebe_sarcasmo_19",
-    "template": "{X} bebe {Y} tragos por decir 'yo soy diferente' como todos los demás",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_sarcasmo_19",
+      "template": "{X} bebe {Y} tragos por decir 'yo soy diferente' como todos los demás",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Sarcasmo - Bebe"
     },
-    "categoria": "Sarcasmo - Bebe"
-  },
-  {
-    "id": "generico_bebe_sarcasmo_20",
-    "template": "{X} bebe {Y} tragos solo por mirar así de sospechoso",
-    "variables": {
-      "X": ["PLAYER"],
-      "Y": ["1", "2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_sarcasmo_20",
+      "template": "{X} bebe {Y} tragos solo por mirar así de sospechoso",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Sarcasmo - Bebe"
     },
-    "categoria": "Sarcasmo - Bebe"
-  },
-  {
-    "id": "dual_quien_se_rie_primero",
-    "template": "Entre {PLAYER1} y {PLAYER2}, quien se ría primero bebe {AMOUNT} tragos",
-    "variables": {
-      "PLAYER1": ["DUAL_PLAYER1"],
-      "PLAYER2": ["DUAL_PLAYER2"],
-      "AMOUNT": ["2", "3", "4"]
+    {
+      "id": "dual_quien_se_rie_primero",
+      "template": "Entre {PLAYER1} y {PLAYER2}, quien se ría primero bebe {AMOUNT} tragos",
+      "variables": {
+        "PLAYER1": [
+          "DUAL_PLAYER1"
+        ],
+        "PLAYER2": [
+          "DUAL_PLAYER2"
+        ],
+        "AMOUNT": [
+          "2",
+          "3",
+          "4"
+        ]
+      },
+      "categoria": "Dual - Reacción"
     },
-    "categoria": "Dual - Reacción"
-  },
-  {
-    "id": "dual_quien_mira_movil_primero",
-    "template": "Entre {PLAYER1} y {PLAYER2}, quien mire el móvil primero bebe {AMOUNT} tragos",
-    "variables": {
-      "PLAYER1": ["DUAL_PLAYER1"],
-      "PLAYER2": ["DUAL_PLAYER2"],
-      "AMOUNT": ["2", "3", "4", "5"]
+    {
+      "id": "dual_quien_mira_movil_primero",
+      "template": "Entre {PLAYER1} y {PLAYER2}, quien mire el móvil primero bebe {AMOUNT} tragos",
+      "variables": {
+        "PLAYER1": [
+          "DUAL_PLAYER1"
+        ],
+        "PLAYER2": [
+          "DUAL_PLAYER2"
+        ],
+        "AMOUNT": [
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Dual - Condición"
     },
-    "categoria": "Dual - Condición"
-  },
-  {
-    "id": "generico_trabalenguas_rapido",
-    "template": "{X} reparte {AMOUNT} tragos si dice sin fallar: '{PHRASE}'",
-    "variables": {
-      "X": ["PLAYER"],
-      "AMOUNT": ["2", "3", "4"],
-      "PHRASE": [
-        "Tres tristes tigres comen trigo en un trigal",
-        "Pablito clavó un clavito en la calva de un calvito",
-        "El perro de San Roque no tiene rabo"
-      ]
+    {
+      "id": "generico_trabalenguas_rapido",
+      "template": "{X} reparte {AMOUNT} tragos si dice sin fallar: '{PHRASE}'",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "AMOUNT": [
+          "2",
+          "3",
+          "4"
+        ],
+        "PHRASE": [
+          "Tres tristes tigres comen trigo en un trigal",
+          "Pablito clavó un clavito en la calva de un calvito",
+          "El perro de San Roque no tiene rabo"
+        ]
+      },
+      "categoria": "Genérico - Habilidad Verbal"
     },
-    "categoria": "Genérico - Habilidad Verbal"
-  },
-  {
-    "id": "generico_equilibrio_20s",
-    "template": "{X} reparte {AMOUNT} tragos si mantiene el equilibrio sobre un pie durante 20 segundos",
-    "variables": {
-      "X": ["PLAYER"],
-      "AMOUNT": ["2", "3", "4"]
+    {
+      "id": "generico_equilibrio_20s",
+      "template": "{X} reparte {AMOUNT} tragos si mantiene el equilibrio sobre un pie durante 20 segundos",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "AMOUNT": [
+          "2",
+          "3",
+          "4"
+        ]
+      },
+      "categoria": "Genérico - Habilidad Física"
     },
-    "categoria": "Genérico - Habilidad Física"
-  },
-  {
-    "id": "generico_plancha_30s",
-    "template": "{X} bebe {AMOUNT} tragos si no aguanta la plancha 30 segundos",
-    "variables": {
-      "X": ["PLAYER"],
-      "AMOUNT": ["2", "3", "4", "5"]
+    {
+      "id": "generico_plancha_30s",
+      "template": "{X} bebe {AMOUNT} tragos si no aguanta la plancha 30 segundos",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "AMOUNT": [
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Genérico - Habilidad Física"
     },
-    "categoria": "Genérico - Habilidad Física"
-  },
-  {
-    "id": "generico_mimo_adivinanza",
-    "template": "{X} reparte {AMOUNT} tragos si todos adivinan su mímica de {THEME}",
-    "variables": {
-      "X": ["PLAYER"],
-      "AMOUNT": ["2", "3", "4"],
-      "THEME": [
-        "un animal", "una profesión", "una película famosa", "un deporte"
-      ]
+    {
+      "id": "generico_mimo_adivinanza",
+      "template": "{X} reparte {AMOUNT} tragos si todos adivinan su mímica de {THEME}",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "AMOUNT": [
+          "2",
+          "3",
+          "4"
+        ],
+        "THEME": [
+          "un animal",
+          "una profesión",
+          "una película famosa",
+          "un deporte"
+        ]
+      },
+      "categoria": "Genérico - Imitación Éxito"
     },
-    "categoria": "Genérico - Imitación Éxito"
-  },
-  {
-    "id": "generico_rap_10s",
-    "template": "{X} reparte {AMOUNT} tragos si rapea 10 segundos sobre el tema: {TOPIC}",
-    "variables": {
-      "X": ["PLAYER"],
-      "AMOUNT": ["2", "3", "4"],
-      "TOPIC": [
-        "la fiesta", "la amistad", "el amor", "la resaca", "los lunes"
-      ]
+    {
+      "id": "generico_rap_10s",
+      "template": "{X} reparte {AMOUNT} tragos si rapea 10 segundos sobre el tema: {TOPIC}",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "AMOUNT": [
+          "2",
+          "3",
+          "4"
+        ],
+        "TOPIC": [
+          "la fiesta",
+          "la amistad",
+          "el amor",
+          "la resaca",
+          "los lunes"
+        ]
+      },
+      "categoria": "Genérico - Actuación Éxito"
     },
-    "categoria": "Genérico - Actuación Éxito"
-  },
-  {
-    "id": "generico_lista_rapida",
-    "template": "{X} reparte {AMOUNT} tragos si nombra {COUNT} {THING} en 15 segundos",
-    "variables": {
-      "X": ["PLAYER"],
-      "AMOUNT": ["2", "3", "4"],
-      "COUNT": ["5", "7"],
-      "THING": [
-        "países", "frutas", "cantantes", "marcas de coches", "películas"
-      ]
+    {
+      "id": "generico_lista_rapida",
+      "template": "{X} reparte {AMOUNT} tragos si nombra {COUNT} {THING} en 15 segundos",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "AMOUNT": [
+          "2",
+          "3",
+          "4"
+        ],
+        "COUNT": [
+          "5",
+          "7"
+        ],
+        "THING": [
+          "países",
+          "frutas",
+          "cantantes",
+          "marcas de coches",
+          "películas"
+        ]
+      },
+      "categoria": "Genérico - Reto Éxito"
     },
-    "categoria": "Genérico - Reto Éxito"
-  },
-  {
-    "id": "generico_memoria_cadena",
-    "template": "{X} bebe {AMOUNT} tragos si no recuerda las últimas {COUNT} acciones del juego",
-    "variables": {
-      "X": ["PLAYER"],
-      "AMOUNT": ["2", "3", "4", "5"],
-      "COUNT": ["3", "4"]
+    {
+      "id": "generico_memoria_cadena",
+      "template": "{X} bebe {AMOUNT} tragos si no recuerda las últimas {COUNT} acciones del juego",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "AMOUNT": [
+          "2",
+          "3",
+          "4",
+          "5"
+        ],
+        "COUNT": [
+          "3",
+          "4"
+        ]
+      },
+      "categoria": "Genérico - Memoria Fallo"
     },
-    "categoria": "Genérico - Memoria Fallo"
-  },
-  {
-    "id": "dual_palabra_prohibida",
-    "template": "Entre {PLAYER1} y {PLAYER2}, quien diga la palabra '{WORD}' primero bebe {AMOUNT} tragos",
-    "variables": {
-      "PLAYER1": ["DUAL_PLAYER1"],
-      "PLAYER2": ["DUAL_PLAYER2"],
-      "WORD": ["vale", "literal", "bro", "nada"],
-      "AMOUNT": ["2", "3", "4", "5"]
+    {
+      "id": "dual_palabra_prohibida",
+      "template": "Entre {PLAYER1} y {PLAYER2}, quien diga la palabra '{WORD}' primero bebe {AMOUNT} tragos",
+      "variables": {
+        "PLAYER1": [
+          "DUAL_PLAYER1"
+        ],
+        "PLAYER2": [
+          "DUAL_PLAYER2"
+        ],
+        "WORD": [
+          "vale",
+          "literal",
+          "bro",
+          "nada"
+        ],
+        "AMOUNT": [
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Dual - Condición"
     },
-    "categoria": "Dual - Condición"
-  },
-  {
-    "id": "generico_bebe_por_fallo_memoria",
-    "template": "{X} bebe {AMOUNT} tragos si olvida el nombre de la última persona que habló",
-    "variables": {
-      "X": ["PLAYER"],
-      "AMOUNT": ["2", "3", "4", "5"]
+    {
+      "id": "generico_bebe_por_fallo_memoria",
+      "template": "{X} bebe {AMOUNT} tragos si olvida el nombre de la última persona que habló",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "AMOUNT": [
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Genérico - Memoria Fallo"
     },
-    "categoria": "Genérico - Memoria Fallo"
-  },
-  {
-    "id": "generico_susurro",
-    "template": "Bebeis todos {Y} tragos por ser una panda de payasos",
-    "variables": {
-      "Y": ["tragos"]
+    {
+      "id": "generico_susurro",
+      "template": "Bebeis todos {Y} tragos por ser una panda de payasos",
+      "variables": {
+        "Y": [
+          "tragos"
+        ]
+      },
+      "categoria": "Restricción"
     },
-    "categoria": "Restricción"
-  },
-  {
-    "id": "generico_movil_en_mesa",
-    "template": "Cualquiera que deje el móvil en la mesa bebe {Y}",
-    "variables": {
-      "Y": ["tragos"]
+    {
+      "id": "generico_movil_en_mesa",
+      "template": "Cualquiera que deje el móvil en la mesa bebe {Y}",
+      "variables": {
+        "Y": [
+          "tragos"
+        ]
+      },
+      "categoria": "Tecnología"
     },
-    "categoria": "Tecnología"
-  },
-  {
-    "id": "generico_dificil_raro",
-    "template": "{X} bebe {AMOUNT} tragos si no puede decir 10 palabras que rimen con 'ar' en 30 segundos",
-    "variables": {
-      "X": ["PLAYER"],
-      "AMOUNT": ["5", "6"]
+    {
+      "id": "generico_dificil_raro",
+      "template": "{X} bebe {AMOUNT} tragos si no puede decir 10 palabras que rimen con 'ar' en 30 segundos",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "AMOUNT": [
+          "5",
+          "6"
+        ]
+      },
+      "categoria": "Genérico - Difícil"
     },
-    "categoria": "Genérico - Difícil"
-  },
-  {
-    "id": "mas_probable_que",
-    "template": "A la de 3 todos señalan al jugador que sea más probable que {THING}; ese jugador beberá {AMOUNT} tragos",
-    "variables": {
-      "THING": [
-        "se quede dormido en la fiesta",
-        "llegue tarde a todo",
-        "responda un mensaje de su ex esta noche",
-        "se case primero",
-        "olvide su propio cumpleaños",
-        "haga karaoke en público sin vergüenza",
-        "se pierda volviendo a casa",
-        "organice la próxima fiesta",
-        "rompa una regla del juego",
-        "mande un audio de 5 minutos",
-        "llore viendo una película",
-        "ligue esta noche",
-        "gane un concurso de baile",
-        "se vaya sin despedirse",
-        "haga el ridículo en público",
-        "haga un viaje improvisado",
-        "se haga famoso en redes",
-        "tenga más resacas este mes",
-        "se declare en público",
-        "sea millonario",
-        "adopte un perro",
-        "se tatúe por impulso",
-        "coma pizza a las 6 de la mañana",
-        "cante bajo la ducha hoy",
-        "pierda el móvil"
-      ],
-      "AMOUNT": ["1", "2", "3", "4", "5"]
+    {
+      "id": "mas_probable_que",
+      "template": "A la de 3 todos señalan al jugador que sea más probable que {THING}; ese jugador beberá {AMOUNT} tragos",
+      "variables": {
+        "THING": [
+          "se quede dormido en la fiesta",
+          "llegue tarde a todo",
+          "responda un mensaje de su ex esta noche",
+          "se case primero",
+          "olvide su propio cumpleaños",
+          "haga karaoke en público sin vergüenza",
+          "se pierda volviendo a casa",
+          "organice la próxima fiesta",
+          "rompa una regla del juego",
+          "mande un audio de 5 minutos",
+          "llore viendo una película",
+          "ligue esta noche",
+          "gane un concurso de baile",
+          "se vaya sin despedirse",
+          "haga el ridículo en público",
+          "haga un viaje improvisado",
+          "se haga famoso en redes",
+          "tenga más resacas este mes",
+          "se declare en público",
+          "sea millonario",
+          "adopte un perro",
+          "se tatúe por impulso",
+          "coma pizza a las 6 de la mañana",
+          "cante bajo la ducha hoy",
+          "pierda el móvil"
+        ],
+        "AMOUNT": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Más Probable"
     },
-    "categoria": "Más Probable"
-  },
-  {
-    "id": "mas_probable_que_v2",
-    "template": "A la de 3, señalen a quien sea más probable que {THING}. Esa persona beberá {AMOUNT} tragos",
-    "variables": {
-      "THING": [
-        "olvide las llaves de casa",
-        "se cambie de ciudad este año",
-        "suba un story vergonzoso",
-        "cambie de look radical mañana",
-        "se tatúe algo sin pensarlo",
-        "haga un maratón de series sin dormir",
-        "cocine para todo el grupo",
-        "se apunte a un triatlón",
-        "sea influencer",
-        "se rompa el móvil esta semana",
-        "olvide dónde aparcó",
-        "pierda la cartera",
-        "haga match con su ex",
-        "se haga un piercing",
-        "cante a gritos en el taxi",
-        "se duerma en el transporte público",
-        "robe protagonismo en una boda",
-        "adopte un gato",
-        "se haga vegano por un mes",
-        "llore de la risa hoy",
-        "cuente un secreto por accidente",
-        "cambie de trabajo este año",
-        "deje todo para última hora",
-        "se apunte a clases de baile",
-        "abra un canal de YouTube",
-        "pierda una apuesta hoy",
-        "se enamore en la primera cita",
-        "haga ghosting a alguien",
-        "vuelva con un ex",
-        "se olvide de pagar una ronda"
-      ],
-      "AMOUNT": ["1", "2", "3", "4", "5"]
+    {
+      "id": "mas_probable_que_v2",
+      "template": "A la de 3, señalen a quien sea más probable que {THING}. Esa persona beberá {AMOUNT} tragos",
+      "variables": {
+        "THING": [
+          "olvide las llaves de casa",
+          "se cambie de ciudad este año",
+          "suba un story vergonzoso",
+          "cambie de look radical mañana",
+          "se tatúe algo sin pensarlo",
+          "haga un maratón de series sin dormir",
+          "cocine para todo el grupo",
+          "se apunte a un triatlón",
+          "sea influencer",
+          "se rompa el móvil esta semana",
+          "olvide dónde aparcó",
+          "pierda la cartera",
+          "haga match con su ex",
+          "se haga un piercing",
+          "cante a gritos en el taxi",
+          "se duerma en el transporte público",
+          "robe protagonismo en una boda",
+          "adopte un gato",
+          "se haga vegano por un mes",
+          "llore de la risa hoy",
+          "cuente un secreto por accidente",
+          "cambie de trabajo este año",
+          "deje todo para última hora",
+          "se apunte a clases de baile",
+          "abra un canal de YouTube",
+          "pierda una apuesta hoy",
+          "se enamore en la primera cita",
+          "haga ghosting a alguien",
+          "vuelva con un ex",
+          "se olvide de pagar una ronda"
+        ],
+        "AMOUNT": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Más Probable"
     },
-    "categoria": "Más Probable"
-  },
-  {
-    "id": "mas_probable_que_v3",
-    "template": "A la cuenta de 3, apunten a quien crean que {THING}; quien reciba más dedos bebe {AMOUNT} tragos",
-    "variables": {
-      "THING": [
-        "organice una escapada de fin de semana",
-        "aprenda un idioma nuevo",
-        "empiece un podcast",
-        "se pierda en su propio barrio",
-        "haga un ridículo épico en el trabajo",
-        "olvide responder mensajes por días",
-        "sea famoso por un meme",
-        "se vuelva adicto al gimnasio",
-        "deje el teléfono en casa",
-        "se convierta en noctámbulo profesional",
-        "bese a alguien esta noche",
-        "rompa una dieta en 24 horas",
-        "coleccione plantas y las mate sin querer",
-        "se haga amigo del camarero",
-        "pida shots para todos",
-        "se compre algo que no necesita",
-        "se tire del karaoke sin que se lo pidan",
-        "haga un TikTok viral",
-        "sea el último en irse de la fiesta",
-        "llegue antes que todos a la fiesta",
-        "olvide una cita importante",
-        "cambie de peinado cada mes",
-        "se apasione por un hobby raro",
-        "cierre el bar",
-        "se tropiece en público",
-        "haga amigos con desconocidos",
-        "sea multado por estacionar mal",
-        "salga en las noticias por algo gracioso",
-        "se pinte el pelo de un color loco",
-        "meta la pata en una reunión"
-      ],
-      "AMOUNT": ["1", "2", "3", "4", "5"]
+    {
+      "id": "mas_probable_que_v3",
+      "template": "A la cuenta de 3, apunten a quien crean que {THING}; quien reciba más dedos bebe {AMOUNT} tragos",
+      "variables": {
+        "THING": [
+          "organice una escapada de fin de semana",
+          "aprenda un idioma nuevo",
+          "empiece un podcast",
+          "se pierda en su propio barrio",
+          "haga un ridículo épico en el trabajo",
+          "olvide responder mensajes por días",
+          "sea famoso por un meme",
+          "se vuelva adicto al gimnasio",
+          "deje el teléfono en casa",
+          "se convierta en noctámbulo profesional",
+          "bese a alguien esta noche",
+          "rompa una dieta en 24 horas",
+          "coleccione plantas y las mate sin querer",
+          "se haga amigo del camarero",
+          "pida shots para todos",
+          "se compre algo que no necesita",
+          "se tire del karaoke sin que se lo pidan",
+          "haga un TikTok viral",
+          "sea el último en irse de la fiesta",
+          "llegue antes que todos a la fiesta",
+          "olvide una cita importante",
+          "cambie de peinado cada mes",
+          "se apasione por un hobby raro",
+          "cierre el bar",
+          "se tropiece en público",
+          "haga amigos con desconocidos",
+          "sea multado por estacionar mal",
+          "salga en las noticias por algo gracioso",
+          "se pinte el pelo de un color loco",
+          "meta la pata en una reunión"
+        ],
+        "AMOUNT": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Más Probable"
     },
-    "categoria": "Más Probable"
-  },
-  {
-    "id": "mas_probable_que_v4",
-    "template": "A la de 3, señalen a la persona más propensa a {THING}; el elegido bebe {AMOUNT} tragos",
-    "variables": {
-      "THING": [
-        "olvidar un aniversario",
-        "comprar vuelos sin avisar a nadie",
-        "aprender a tocar un instrumento",
-        "cambiarse el nombre en redes",
-        "correr una maratón",
-        "dormir 12 horas seguidas",
-        "leer un libro en un día",
-        "romper su propio récord de siestas",
-        "hacer una broma pesada",
-        "llamar a su ex por accidente",
-        "cocinar una receta imposible",
-        "irse de after sin planearlo",
-        "hacerse un baile de TikTok en público",
-        "perderse en un centro comercial",
-        "olvidar dónde dejó las gafas",
-        "decir sí a todo por un día",
-        "montar una empresa",
-        "quedarse sin batería otra vez",
-        "pedir comida a las 4 am",
-        "ganar un concurso al azar",
-        "hablar con extraños en la fila",
-        "viajar solo/a",
-        "gastar todo en caprichos",
-        "romper un vaso sin querer",
-        "convertirse en DJ de la fiesta",
-        "adoptar una planta y nombrarla",
-        "ser trending topic del grupo",
-        "irse de vacaciones improvisadas",
-        "aprender a hacer magia",
-        "probar un deporte extremo"
-      ],
-      "AMOUNT": ["1", "2", "3", "4", "5"]
+    {
+      "id": "mas_probable_que_v4",
+      "template": "A la de 3, señalen a la persona más propensa a {THING}; el elegido bebe {AMOUNT} tragos",
+      "variables": {
+        "THING": [
+          "olvidar un aniversario",
+          "comprar vuelos sin avisar a nadie",
+          "aprender a tocar un instrumento",
+          "cambiarse el nombre en redes",
+          "correr una maratón",
+          "dormir 12 horas seguidas",
+          "leer un libro en un día",
+          "romper su propio récord de siestas",
+          "hacer una broma pesada",
+          "llamar a su ex por accidente",
+          "cocinar una receta imposible",
+          "irse de after sin planearlo",
+          "hacerse un baile de TikTok en público",
+          "perderse en un centro comercial",
+          "olvidar dónde dejó las gafas",
+          "decir sí a todo por un día",
+          "montar una empresa",
+          "quedarse sin batería otra vez",
+          "pedir comida a las 4 am",
+          "ganar un concurso al azar",
+          "hablar con extraños en la fila",
+          "viajar solo/a",
+          "gastar todo en caprichos",
+          "romper un vaso sin querer",
+          "convertirse en DJ de la fiesta",
+          "adoptar una planta y nombrarla",
+          "ser trending topic del grupo",
+          "irse de vacaciones improvisadas",
+          "aprender a hacer magia",
+          "probar un deporte extremo"
+        ],
+        "AMOUNT": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "categoria": "Más Probable"
     },
-    "categoria": "Más Probable"
-  },
-  {
-    "id": "yo_nunca",
-    "template": "Yo nunca he {THING}; quien lo haya hecho bebe {AMOUNT} tragos",
-    "variables": {
-      "THING": [
-        "olvidado una fecha importante",
-        "pensado que le caigo mal a alguien",
-        "sido visto meando en público",
-        "cambiado de nombre en redes",
-        "corrido una maratón",
-        "dormido 12 horas seguidas",
-        "olvidado una noche entera",
-        "mandado fotos comprometedoras",
-        "vomitado encima de alguien",
-        "llamado a mi ex borracho",
-        "sido pillado manteniendo relaciones",
-        "mantenido relaciones en un lugar público",
-        "probado drogas duras",
-        "puesto los cuernos",
-        "bailado sexualmente con un desconocido",
-        "pensado cosas indecentes de un amigo/a",
-        "mentido sobre alguno de los presentes",
-        "robado en una tienda de ropa",
-        "hecho un striptease",
-        "hecho un trío",
-        "nadado desnudo",
-        "hecho trampas en un juego de mesa",
-        "hecho chuletas en un examen",
-        "desaparecio de una fiesta con un desconocido",
-        "fingido estar enfermo para no ir a algo",
-        "sido pillado con fotos comprometedoras en el móvil",
-        "estado más de dos días sin ducharme",
-        "ligado con un camarero/a",
-        "jugado a La Previa",
-        "hecho un deporte extremo",
-        "estado enamorado de un profesor/a",
-        "enviado un mensaje vergonzoso a la persona equivocada",
-        "mantenido relaciones con el amigo/a de un amigo/a",
-        "mentido sobre mi edad",
-        "sido arrestado",
-        "saltado de un acantilado al mar",
-        "ido a una cita a ciegas",
-        "tenido una aventura de una noche"
-      ],
-      "AMOUNT": ["2", "3", "4", "5", "6"]
+    {
+      "id": "yo_nunca",
+      "template": "Yo nunca he {THING}; quien lo haya hecho bebe {AMOUNT} tragos",
+      "variables": {
+        "THING": [
+          "olvidado una fecha importante",
+          "pensado que le caigo mal a alguien",
+          "sido visto meando en público",
+          "cambiado de nombre en redes",
+          "corrido una maratón",
+          "dormido 12 horas seguidas",
+          "olvidado una noche entera",
+          "mandado fotos comprometedoras",
+          "vomitado encima de alguien",
+          "llamado a mi ex borracho",
+          "sido pillado manteniendo relaciones",
+          "mantenido relaciones en un lugar público",
+          "probado drogas duras",
+          "puesto los cuernos",
+          "bailado sexualmente con un desconocido",
+          "pensado cosas indecentes de un amigo/a",
+          "mentido sobre alguno de los presentes",
+          "robado en una tienda de ropa",
+          "hecho un striptease",
+          "hecho un trío",
+          "nadado desnudo",
+          "hecho trampas en un juego de mesa",
+          "hecho chuletas en un examen",
+          "desaparecio de una fiesta con un desconocido",
+          "fingido estar enfermo para no ir a algo",
+          "sido pillado con fotos comprometedoras en el móvil",
+          "estado más de dos días sin ducharme",
+          "ligado con un camarero/a",
+          "jugado a La Previa",
+          "hecho un deporte extremo",
+          "estado enamorado de un profesor/a",
+          "enviado un mensaje vergonzoso a la persona equivocada",
+          "mantenido relaciones con el amigo/a de un amigo/a",
+          "mentido sobre mi edad",
+          "sido arrestado",
+          "saltado de un acantilado al mar",
+          "ido a una cita a ciegas",
+          "tenido una aventura de una noche"
+        ],
+        "AMOUNT": [
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ]
+      },
+      "categoria": "Yo Nunca"
     },
-    "categoria": "Yo Nunca"
-  }
+    {
+      "id": "verdad_o_bebe_liar",
+      "template": "{X} responde si te liarías con alguien del juego o bebe {Y} tragos",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "3",
+          "4",
+          "5",
+          "6"
+        ]
+      },
+      "categoria": "Verdad o Bebe"
+    },
+    {
+      "id": "verdad_o_bebe_acciones_pasadas",
+      "template": "{X} confiesa si alguna vez has {ACTION} o bebe {Y} tragos",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "3",
+          "4",
+          "5"
+        ],
+        "ACTION": [
+          "robado algo de una tienda",
+          "mentido a un policía",
+          "llorado para librarte de una multa",
+          "espiado el móvil de tu pareja",
+          "tenido una cita solo por comida gratis",
+          "dicho 'te quiero' sin sentirlo",
+          "fingido un orgasmo",
+          "usado el cepillo de dientes de otra persona sin decírselo",
+          "leído el diario de alguien",
+          "hecho pis en una piscina pública siendo adulto",
+          "mentido en tu currículum",
+          "ghostadeado a alguien que te caía bien solo por pereza",
+          "stalkeado a la ex pareja de tu pareja actual",
+          "dado un nombre falso a un desconocido",
+          "tenido un sueño erótico con alguien de este grupo",
+          "besado a más de 3 personas en una noche",
+          "sido infiel alguna vez",
+          "pillado a tus padres haciéndolo",
+          "tenido sexo en un lugar público",
+          "vomitado sobre otra persona",
+          "mandado nudes a la persona equivocada"
+        ]
+      },
+      "categoria": "Verdad o Bebe"
+    },
+    {
+      "id": "verdad_o_bebe_opiniones_grupo",
+      "template": "{X} responde quién del grupo {JUDGEMENT} o bebe {Y} tragos",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "3",
+          "4",
+          "5"
+        ],
+        "JUDGEMENT": [
+          "te cae peor",
+          "es el más falso",
+          "viste mejor",
+          "es más probable que acabe en la cárcel",
+          "sería el primero en morir en una película de terror",
+          "es el más inteligente",
+          "tiene el peor gusto musical",
+          "es el más tacaño",
+          "te llevarías a una isla desierta",
+          "baila peor",
+          "besa mejor (si lo sabes)",
+          "tiene el historial de búsqueda más turbio",
+          "es el más dramático",
+          "ligaría más si se callara",
+          "nunca invita a nada",
+          "es el más guapo/a",
+          "sería tu pareja si no conocieras a nadie más",
+          "crees que gana más dinero",
+          "tiene los pies más feos",
+          "huele mejor siempre"
+        ]
+      },
+      "categoria": "Verdad o Bebe"
+    },
+    {
+      "id": "verdad_o_bebe_movil_privacidad",
+      "template": "{X} responde {QUESTION_MOBILE} o bebe {Y} tragos",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "3",
+          "4",
+          "5"
+        ],
+        "QUESTION_MOBILE": [
+          "cuánto tiempo pasas en TikTok/Instagram al día",
+          "a quién stalkeaste por última vez en Instagram",
+          "cuál es la última foto que borraste de tu galería",
+          "qué dice el último mensaje de WhatsApp que leíste y no respondiste",
+          "quién es la persona más famosa que te sigue",
+          "cuál es tu contraseña de desbloqueo (o una parte)",
+          "qué es lo más raro que has buscado en Google esta semana",
+          "cuántas selfies te tomas antes de subir una",
+          "quién es tu contacto fijado en WhatsApp",
+          "cuál es la app que más batería te gasta",
+          "qué foto te da más vergüenza de tu galería",
+          "cuál fue el último pantallazo que hiciste",
+          "a quién tienes silenciado en stories",
+          "qué audio de WhatsApp te da vergüenza que alguien escuche",
+          "cuál es el grupo de WhatsApp con nombre más ridículo que tienes"
+        ]
+      },
+      "categoria": "Verdad o Bebe"
+    },
+    {
+      "id": "verdad_o_bebe_cantidades",
+      "template": "{X} responde {QUESTION_COUNT} o bebe {Y} tragos",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "3",
+          "4",
+          "5"
+        ],
+        "QUESTION_COUNT": [
+          "con cuántas personas has estado este año",
+          "cuánto dinero tienes en la cuenta ahora mismo (aprox)",
+          "cuántas veces te has enamorado de verdad",
+          "a qué edad perdiste la virginidad",
+          "cuántas veces a la semana te masturbas",
+          "cuántas multas de tráfico has tenido",
+          "con cuántas personas del grupo te has liado",
+          "cuántas veces has vomitado por alcohol este año",
+          "cuánto es lo máximo que has gastado en una noche de fiesta",
+          "cuántos días has estado sin ducharte seguido",
+          "cuántas veces has mentido hoy",
+          "cuántas personas has bloqueado en redes sociales",
+          "cuántas relaciones serias has tenido",
+          "cuántas veces has sido rechazado/a"
+        ]
+      },
+      "categoria": "Verdad o Bebe"
+    },
+    {
+      "id": "verdad_o_bebe_preferencias",
+      "template": "{X} responde {QUESTION_PREF} o bebe {Y} tragos",
+      "variables": {
+        "X": [
+          "PLAYER"
+        ],
+        "Y": [
+          "3",
+          "4",
+          "5"
+        ],
+        "QUESTION_PREF": [
+          "qué parte de tu cuerpo cambiarías si pudieras",
+          "qué es lo que menos te gusta de tu personalidad",
+          "cuál es tu mayor miedo irracional",
+          "qué es lo más asqueroso que has comido",
+          "cuál es tu placer culposo más vergonzoso",
+          "qué harías si fueras del sexo opuesto por un día",
+          "qué es lo ilegal que harías si no hubiera consecuencias",
+          "cuál es la mentira más grande que has dicho para ligar",
+          "qué rumor falso has extendido sobre alguien",
+          "de qué te arrepientes más en tu vida",
+          "cuál ha sido tu peor cita",
+          "qué harías con 1 millón de euros ahora mismo",
+          "qué secreto no le has contado a tus padres",
+          "qué es lo que más te excita",
+          "cuál es tu posición favorita"
+        ]
+      },
+      "categoria": "Verdad o Bebe"
+    }
   ]
 }
-
-

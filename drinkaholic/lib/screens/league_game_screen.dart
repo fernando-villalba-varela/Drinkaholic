@@ -221,7 +221,9 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
     return _currentPlayerIndex >= 0 &&
         _currentPlayerIndex < widget.players.length &&
         (_currentChallenge.contains('${widget.players[_currentPlayerIndex].nombre} bebe') ||
-            _currentChallenge.contains('${widget.players[_currentPlayerIndex].nombre} reparte'));
+            _currentChallenge.contains('${widget.players[_currentPlayerIndex].nombre} reparte') ||
+            _currentChallenge.contains('${widget.players[_currentPlayerIndex].nombre} responde') ||
+            _currentChallenge.contains('${widget.players[_currentPlayerIndex].nombre} confiesa'));
   }
 
   bool _isConditionalQuestion() {
@@ -992,6 +994,32 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Icon(Icons.arrow_back, color: Colors.white, size: isSmallScreen ? 20 : 24),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  // Round Counter - top right corner
+                  Positioned(
+                    top: 12,
+                    right: 12,
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        return Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.3),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: Colors.white.withOpacity(0.2)),
+                          ),
+                          child: Text(
+                            'RONDA $_currentRound',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.2,
+                            ),
                           ),
                         );
                       },

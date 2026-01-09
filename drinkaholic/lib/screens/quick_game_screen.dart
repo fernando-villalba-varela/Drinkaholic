@@ -209,7 +209,9 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
     return _currentPlayerIndex >= 0 &&
         _currentPlayerIndex < _players.length &&
         (_currentChallenge.contains('${_players[_currentPlayerIndex].nombre} bebe') ||
-            _currentChallenge.contains('${_players[_currentPlayerIndex].nombre} reparte'));
+            _currentChallenge.contains('${_players[_currentPlayerIndex].nombre} reparte') ||
+            _currentChallenge.contains('${_players[_currentPlayerIndex].nombre} responde') ||
+            _currentChallenge.contains('${_players[_currentPlayerIndex].nombre} confiesa'));
   }
 
   void _selectWeightedRandomPlayer() {
@@ -678,6 +680,48 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
                             child: Icon(Icons.arrow_back, color: Colors.white, size: iconSize),
                           ),
                         ),
+                        const Spacer(),
+                        // Invisible container to balance the Row
+                        Container(
+                          width: iconSize + 14,
+                          margin: EdgeInsets.only(bottom: containerMargin),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                // Round Counter - top center
+                Positioned(
+                  top: padding + MediaQuery.of(context).padding.top, // Adjust for status bar visual
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: Colors.white.withOpacity(0.2)),
+                      ),
+                      child: Text(
+                        'RONDA $_currentRound',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: getResponsiveSize(context, small: 14, medium: 16, large: 20),
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SafeArea(
+                  child: Padding(
+                    padding: EdgeInsets.all(padding),
+                    child: Row(
+                      children: [
+                        // Spacer to push content to center (since we have a back button row above)
+                        const SizedBox(width: 0),
                         Expanded(
                           child: AnimatedBuilder(
                             animation: _tapAnimation,
