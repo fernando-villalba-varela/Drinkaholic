@@ -52,6 +52,24 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
   ConstantChallengeEnd? _currentChallengeEnd;
   List<Event> _events = [];
   EventEnd? _currentEventEnd;
+  
+  // Endless mode state
+  bool _isEndlessMode = false;
+  
+  // Helper to calculate extra drinks in endless mode
+  int _getEndlessModifier() {
+    if (!_isEndlessMode || _currentRound < 125) return 0;
+    return ((_currentRound - 100) / 25).floor();
+  }
+  
+  // Helper to append modifier text
+  String _appendModifierText(String originalText) {
+    int extra = _getEndlessModifier();
+    if (extra > 0) {
+      return '$originalText\n\n(+$extra tragos por endless)';
+    }
+    return originalText;
+  }
 
   @override
   void initState() {
@@ -111,7 +129,55 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
     super.dispose();
   }
 
+  Future<void> _checkEndlessModeCheckpoint() async {
+    if (_currentRound == 100 && !_isEndlessMode) {
+      bool? continueGame = await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          backgroundColor: const Color(0xFF2A2A3E),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: const Text(
+            '¡Ronda 100 Completada!',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          content: const Text(
+            'Habéis sobrevivido a la previa, ¿Queréis continuar en el MODO ENDLESS?\n\nLa dificultad aumentará cada 25 rondas (+1 trago permanente).',
+            style: TextStyle(color: Colors.white70),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Terminar aquí', style: TextStyle(color: Colors.redAccent)),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF00C9FF),
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('¡Continuar!'),
+            ),
+          ],
+        ),
+      );
+
+      if (continueGame == true) {
+        setState(() {
+          _isEndlessMode = true;
+        });
+      } else {
+        // End game normally
+        if (mounted) Navigator.of(context).pop();
+      }
+    }
+  }
+
   Future<void> _generateNewChallenge() async {
+    // Check for endless mode checkpoint
+    await _checkEndlessModeCheckpoint();
+    if (!mounted) return;
+
     // Generar pregunta (30% probabilidad de ser genérica con jugador específico)
     if (Random().nextDouble() < 0.3 && _players.isNotEmpty) {
       // Seleccionar un jugador aleatorio para la pregunta genérica
@@ -128,7 +194,7 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
       _usedQuestions.add(question.question);
 
       setState(() {
-        _currentChallenge = question.question;
+        _currentChallenge = _appendModifierText(question.question);
         _currentAnswer = question.answer;
         _currentPlayerIndex = selectedPlayerIndex;
       });
@@ -143,7 +209,7 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
       _usedQuestions.add(question.question);
 
       setState(() {
-        _currentChallenge = question.question;
+        _currentChallenge = _appendModifierText(question.question);
         _currentAnswer = question.answer;
         _currentPlayerIndex = -1; // Marcar que no hay jugador asignado aún
       });
@@ -463,7 +529,7 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
 
     setState(() {
       _constantChallenges.add(constantChallenge);
-      _currentChallenge = constantChallenge.description;
+      _currentChallenge = _appendModifierText(constantChallenge.description);
       _currentAnswer = null; // Los retos constantes no tienen respuesta oculta
       _currentPlayerIndex = _players.indexWhere((p) => p.id == eligiblePlayer.id);
     });
@@ -500,7 +566,7 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
 
     setState(() {
       _events.add(event);
-      _currentChallenge = '${event.typeIcon} ${event.title}: ${event.description}';
+      _currentChallenge = _appendModifierText('${event.typeIcon} ${event.title}: ${event.description}');
       _currentAnswer = null; // Los eventos no tienen respuesta oculta
       _currentPlayerIndex = -1; // Eventos son globales, no hay jugador específico
     });
@@ -531,7 +597,7 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
     final player2Index = _players.indexOf(player2);
 
     setState(() {
-      _currentChallenge = question.question;
+      _currentChallenge = _appendModifierText(question.question);
       _currentAnswer = question.answer;
       _currentPlayerIndex = player1Index;
       _dualPlayerIndex = player2Index;
@@ -564,7 +630,7 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
 
     setState(() {
       _constantChallenges.add(constantChallenge);
-      _currentChallenge = constantChallenge.description;
+      _currentChallenge = _appendModifierText(constantChallenge.description);
       _currentPlayerIndex = _players.indexOf(player1);
       _dualPlayerIndex = _players.indexOf(player2);
     });
@@ -597,6 +663,223 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
     return eligiblePlayers.take(2).toList();
   }
 
+  void _openActiveChallengesModal() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.6,
+          minChildSize: 0.4,
+          maxChildSize: 0.9,
+          builder: (context, scrollController) {
+            return Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFF2A2A3E),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                border: Border.all(color: Colors.white24),
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.symmetric(vertical: 12),
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.white24,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 16),
+                    child: Text(
+                      'Retos y Eventos Activos',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView(
+                      controller: scrollController,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      children: [
+                        if (_isEndlessMode) ...[
+                          _buildSectionTitle('🔥 Modo Endless'),
+                          Container(
+                            margin: const EdgeInsets.only(bottom: 12),
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.red.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.red.withOpacity(0.3)),
+                            ),
+                            child: Row(
+                              children: [
+                                const Text('🔥', style: TextStyle(fontSize: 24)),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Nivel ${_getEndlessModifier()}',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      Text(
+                                        '+${_getEndlessModifier()} tragos en todas las cartas',
+                                        style: const TextStyle(color: Colors.white70),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                        
+                        _buildSectionTitle('📋 Retos Constantes'),
+                        if (_constantChallenges.where((c) => c.status == ConstantChallengeStatus.active).isEmpty)
+                          _buildEmptyState('No hay retos constantes activos')
+                        else
+                          ..._constantChallenges
+                              .where((c) => c.status == ConstantChallengeStatus.active)
+                              .map((c) => _buildActiveChallengeItem(c)),
+
+                        _buildSectionTitle('🌐 Eventos Globales'),
+                        if (_events.where((e) => e.status == EventStatus.active).isEmpty)
+                          _buildEmptyState('No hay eventos globales activos')
+                        else
+                          ..._events.where((e) => e.status == EventStatus.active).map((e) => _buildActiveEventItem(e)),
+                          
+                        const SizedBox(height: 24),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Text(
+        title,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 1,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(String message) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      alignment: Alignment.center,
+      child: Text(
+        message,
+        style: TextStyle(color: Colors.white.withOpacity(0.5), fontStyle: FontStyle.italic),
+      ),
+    );
+  }
+
+  Widget _buildActiveChallengeItem(ConstantChallenge challenge) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white.withOpacity(0.1)),
+      ),
+      child: Row(
+        children: [
+          Text(challenge.typeIcon, style: const TextStyle(fontSize: 24)),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Para: ${challenge.targetPlayer.nombre}',
+                  style: const TextStyle(
+                    color: Color(0xFF00C9FF),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  challenge.description,
+                  style: const TextStyle(color: Colors.white),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  challenge.getDurationDescription(_currentRound),
+                  style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActiveEventItem(Event event) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white.withOpacity(0.1)),
+      ),
+      child: Row(
+        children: [
+          Text(event.typeIcon, style: const TextStyle(fontSize: 24)),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  event.title,
+                  style: const TextStyle(
+                    color: Color(0xFF92FE9D),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  event.description,
+                  style: const TextStyle(color: Colors.white),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  event.getDurationDescription(_currentRound),
+                  style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -619,9 +902,9 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
 
             final padding = getResponsiveSize(
               context,
-              small: 18, // Aumentado de 15
-              medium: 28, // Aumentado de 25
-              large: 38, // Aumentado de 35
+              small: 16.0,
+              medium: 24.0,
+              large: 32.0,
             );
 
             getResponsiveSize(
@@ -838,6 +1121,23 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
                         //    ),
                         //  ),
                       ],
+                    ),
+                  ),
+                ),
+                // Active Challenges button (top-right, left of players button)
+                Positioned(
+                  top: padding,
+                  right: padding + iconSize + 24, // Spaced to the left of players button
+                  child: GestureDetector(
+                    onTap: _openActiveChallengesModal,
+                    child: Container(
+                      padding: const EdgeInsets.all(7),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
+                      ),
+                      child: Icon(Icons.list_alt, color: Colors.white, size: iconSize),
                     ),
                   ),
                 ),

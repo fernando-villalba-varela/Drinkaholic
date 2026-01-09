@@ -829,6 +829,185 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
     return eligiblePlayers.take(2).toList();
   }
 
+  void _openActiveChallengesModal() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.6,
+          minChildSize: 0.4,
+          maxChildSize: 0.9,
+          builder: (context, scrollController) {
+            return Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFF2A2A3E),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                border: Border.all(color: Colors.white24),
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.symmetric(vertical: 12),
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.white24,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 16),
+                    child: Text(
+                      'Retos y Eventos Activos',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: ListView(
+                      controller: scrollController,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      children: [
+                        _buildSectionTitle('📋 Retos Constantes'),
+                        if (_constantChallenges.where((c) => c.status == ConstantChallengeStatus.active).isEmpty)
+                          _buildEmptyState('No hay retos constantes activos')
+                        else
+                          ..._constantChallenges
+                              .where((c) => c.status == ConstantChallengeStatus.active)
+                              .map((c) => _buildActiveChallengeItem(c)),
+
+                        _buildSectionTitle('🌐 Eventos Globales'),
+                        if (_events.where((e) => e.status == EventStatus.active).isEmpty)
+                          _buildEmptyState('No hay eventos globales activos')
+                        else
+                          ..._events.where((e) => e.status == EventStatus.active).map((e) => _buildActiveEventItem(e)),
+                          
+                        const SizedBox(height: 24),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Text(
+        title,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 1,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(String message) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      alignment: Alignment.center,
+      child: Text(
+        message,
+        style: TextStyle(color: Colors.white.withOpacity(0.5), fontStyle: FontStyle.italic),
+      ),
+    );
+  }
+
+  Widget _buildActiveChallengeItem(ConstantChallenge challenge) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white.withOpacity(0.1)),
+      ),
+      child: Row(
+        children: [
+          Text(challenge.typeIcon, style: const TextStyle(fontSize: 24)),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Para: ${challenge.targetPlayer.nombre}',
+                  style: const TextStyle(
+                    color: Color(0xFF00C9FF),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  challenge.description,
+                  style: const TextStyle(color: Colors.white),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  challenge.getDurationDescription(_currentRound),
+                  style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActiveEventItem(Event event) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white.withOpacity(0.1)),
+      ),
+      child: Row(
+        children: [
+          Text(event.typeIcon, style: const TextStyle(fontSize: 24)),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  event.title,
+                  style: const TextStyle(
+                    color: Color(0xFF92FE9D),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  event.description,
+                  style: const TextStyle(color: Colors.white),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  event.getDurationDescription(_currentRound),
+                  style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _endGame() async {
     // Cambiar a vertical ANTES de navegar para evitar parpadeo
     await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
@@ -994,6 +1173,34 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Icon(Icons.arrow_back, color: Colors.white, size: isSmallScreen ? 20 : 24),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+
+                  // Active Challenges button - top right corner
+                  Positioned(
+                    top: 12,
+                    right: 12,
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final screenWidth = MediaQuery.of(context).size.width;
+                        final isSmallScreen = screenWidth < 600;
+                        final buttonSize = isSmallScreen ? 40.0 : 50.0;
+                        final iconSize = isSmallScreen ? 20.0 : 25.0;
+
+                        return GestureDetector(
+                          onTap: _openActiveChallengesModal,
+                          child: Container(
+                            width: buttonSize,
+                            height: buttonSize,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
+                            ),
+                            child: Icon(Icons.list_alt, color: Colors.white, size: iconSize),
                           ),
                         );
                       },
