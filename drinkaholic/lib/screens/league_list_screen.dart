@@ -93,8 +93,53 @@ class _LeagueListScreenState extends State<LeagueListScreen> with TickerProvider
             ),
           ],
         ),
-        floatingActionButton: FabNewLeague(onPressed: () => vm.showCreateLeagueDialog(context)),
+        floatingActionButton: FabNewLeague(onPressed: () => _showCreateLeagueDialog(context)),
       ),
     );
+  }
+
+  void _showCreateLeagueDialog(BuildContext context) {
+    final nameCtrl = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: const Color(0xFF16363F),
+        title: const Text('Crear nueva liga', style: TextStyle(color: Colors.white)),
+        content: TextField(
+          controller: nameCtrl,
+          style: const TextStyle(color: Colors.white),
+          cursorColor: Colors.tealAccent,
+          decoration: const InputDecoration(
+            labelText: 'Nombre de la liga',
+            labelStyle: TextStyle(color: Colors.tealAccent),
+            focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.tealAccent)),
+          ),
+          textInputAction: TextInputAction.done,
+          onSubmitted: (_) => _submitCreateLeague(context, nameCtrl),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child:
+                const Text('Cancelar', style: TextStyle(color: Colors.white70)),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+                backgroundColor: Colors.tealAccent.shade700),
+            onPressed: () => _submitCreateLeague(context, nameCtrl),
+            child: const Text('Aceptar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _submitCreateLeague(BuildContext context, TextEditingController c) {
+    final name = c.text.trim();
+    if (name.isNotEmpty) {
+      context.read<LeagueListViewModel>().createLeague(name);
+    }
+    Navigator.pop(context);
   }
 }

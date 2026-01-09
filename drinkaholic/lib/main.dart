@@ -2,6 +2,7 @@ import 'package:drinkaholic/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'services/league_storage_service.dart';
 import 'ui/transitions/custom_page_transitions.dart';
 import 'viewmodels/league_list_viewmodel.dart';
 
@@ -9,8 +10,11 @@ void main() async {
   // Asegurar que Flutter esté inicializado
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Crear el ViewModel y cargar las ligas guardadas
-  final leagueListVM = LeagueListViewModel();
+  // Servicio de almacenamiento (Inyección de Dependencias manual sencilla)
+  final storageService = LeagueStorageService();
+
+  // Crear el ViewModel inyectando el servicio y cargar las ligas guardadas
+  final leagueListVM = LeagueListViewModel(storageService: storageService);
   await leagueListVM.loadLeagues();
 
   runApp(

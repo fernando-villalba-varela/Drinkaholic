@@ -1,12 +1,15 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import '../models/league.dart';
 import '../services/league_storage_service.dart';
 
 class LeagueListViewModel extends ChangeNotifier {
   final List<League> _leagues = [];
-  final LeagueStorageService _storageService = LeagueStorageService();
+  final LeagueStorageService _storageService;
   bool _isLoaded = false;
+
+  LeagueListViewModel({required LeagueStorageService storageService})
+      : _storageService = storageService;
 
   List<League> get leagues => List.unmodifiable(_leagues);
   bool get isLoaded => _isLoaded;
@@ -50,97 +53,31 @@ class LeagueListViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  League? byId(String id) => _leagues.where((l) => l.id == id).cast<League?>().firstOrNull;
+  League? byId(String id) =>
+      _leagues.where((l) => l.id == id).cast<League?>().firstOrNull;
 
   // export simple
   String exportLeague(League l) => l.toJson().toString();
 
-  // Dialog methods
-  void showCreateLeagueDialog(BuildContext context) {
-    final nameCtrl = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        backgroundColor: const Color(0xFF16363F),
-        title: const Text('Crear nueva liga', style: TextStyle(color: Colors.white)),
-        content: TextField(
-          controller: nameCtrl,
-          style: const TextStyle(color: Colors.white),
-          cursorColor: Colors.tealAccent,
-          decoration: const InputDecoration(
-            labelText: 'Nombre de la liga',
-            labelStyle: TextStyle(color: Colors.tealAccent),
-            focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.tealAccent)),
-          ),
-          textInputAction: TextInputAction.done,
-          onSubmitted: (_) => _submitCreateLeague(context, nameCtrl),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar', style: TextStyle(color: Colors.white70)),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: Colors.tealAccent.shade700),
-            onPressed: () => _submitCreateLeague(context, nameCtrl),
-            child: const Text('Aceptar'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _submitCreateLeague(BuildContext context, TextEditingController c) {
-    final name = c.text.trim();
-    if (name.isNotEmpty) {
-      createLeague(name);
+  /// Intenta importar una liga desde un JSON.
+  /// Retorna true si se creó exitosamente, false si falló o ya existía.
+  bool importLeagueFromJson(String rawJson) {
+    final map = _safeDecode(rawJson);
+    if (map != null) {
+      try {
+        final league = League.fromJson(map);
+        final exists = _leagues.any((l) => l.id == league.id);
+        if (!exists) {
+          // Nota original: createLeague crea una NUEVA liga con el nombre, no importa todos los datos.
+          // Manteniendo comportamiento original.
+          createLeague(league.name);
+          return true;
+        }
+      } catch (e) {
+        if (kDebugMode) print('Error parsing league: $e');
+      }
     }
-    Navigator.pop(context);
-  }
-
-  void showImportLeagueDialog(BuildContext context) {
-    final jsonCtrl = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        backgroundColor: const Color(0xFF16363F),
-        title: const Text('Importar liga (JSON)', style: TextStyle(color: Colors.white)),
-        content: TextField(
-          controller: jsonCtrl,
-          maxLines: 8,
-          style: const TextStyle(color: Colors.white),
-          decoration: const InputDecoration(
-            hintText: 'Pega aquí el JSON exportado',
-            hintStyle: TextStyle(color: Colors.white54),
-            border: OutlineInputBorder(),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar', style: TextStyle(color: Colors.white70)),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: Colors.tealAccent.shade700),
-            onPressed: () {
-              final raw = jsonCtrl.text.trim();
-              if (raw.isNotEmpty) {
-                final map = _safeDecode(raw);
-                if (map != null) {
-                  final league = League.fromJson(map);
-                  final exists = _leagues.any((l) => l.id == league.id);
-                  if (!exists) {
-                    createLeague(league.name);
-                  }
-                }
-              }
-              Navigator.pop(context);
-            },
-            child: const Text('Importar'),
-          ),
-        ],
-      ),
-    );
+    return false;
   }
 
   Map<String, dynamic>? _safeDecode(String raw) {

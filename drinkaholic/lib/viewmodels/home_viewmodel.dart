@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import '../screens/participants_screen.dart';
-import '../screens/league_list_screen.dart';
-import '../models/button_config.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart'; // Mantener si Gridient/Color se usan aquí o en constantes, pero idealmente desacoplar.
+// En este caso, dejamos Gradient constants aquí por conveniencia de diseño centralizado,
+// pero eliminamos la lógica de navegación y contexto.
 
 class HomeViewModel extends ChangeNotifier {
   final bool _isLoading = false;
@@ -12,65 +12,21 @@ class HomeViewModel extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
   bool get hasError => _errorMessage != null;
 
-  static const LinearGradient quickGameGradient = LinearGradient(colors: [Color(0xFF00C9FF), Color(0xFF92FE9D)]);
+  static const LinearGradient quickGameGradient =
+      LinearGradient(colors: [Color(0xFF00C9FF), Color(0xFF92FE9D)]);
 
-  static const LinearGradient leagueGradient = LinearGradient(colors: [Color(0xFFFC466B), Color(0xFF3F5EFB)]);
+  static const LinearGradient leagueGradient =
+      LinearGradient(colors: [Color(0xFFFC466B), Color(0xFF3F5EFB)]);
 
-  void navigateToQuickGame(BuildContext context) {
-    try {
-      _clearError();
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const ParticipantsScreen(title: 'Partida Rápida')),
-      );
-    } catch (e) {
-      _setError('Error al navegar a Partida Rápida: ${e.toString()}');
-    }
-  }
+  static const LinearGradient elixirsGradient =
+      LinearGradient(colors: [Color(0xFFFFD200), Color(0xFFF7971E)]);
 
-  void navigateToLeague(BuildContext context) {
-    try {
-      _clearError();
-      Navigator.push(context, MaterialPageRoute(builder: (_) => const LeagueListScreen()));
-    } catch (e) {
-      _setError('Error al navegar a Liga: ${e.toString()}');
-    }
-  }
-
-  ButtonConfig getQuickGameButtonConfig(
-    BuildContext context,
-    Function(Gradient, String, IconData, VoidCallback) onAnimatedTap,
-  ) {
-    return ButtonConfig(
-      text: 'PARTIDA RÁPIDA',
-      icon: Icons.flash_on,
-      gradient: quickGameGradient,
-      onTap: () {
-        onAnimatedTap(quickGameGradient, 'PARTIDA RÁPIDA', Icons.flash_on, () => navigateToQuickGame(context));
-      },
-    );
-  }
-
-  ButtonConfig getLeagueButtonConfig(
-    BuildContext context,
-    Function(Gradient, String, IconData, VoidCallback) onAnimatedTap,
-  ) {
-    return ButtonConfig(
-      text: 'LIGA',
-      icon: Icons.emoji_events,
-      gradient: leagueGradient,
-      onTap: () {
-        onAnimatedTap(leagueGradient, 'LIGA', Icons.emoji_events, () => navigateToLeague(context));
-      },
-    );
-  }
-
-  void _setError(String message) {
+  void setError(String message) {
     _errorMessage = message;
     notifyListeners();
   }
 
-  void _clearError() {
+  void clearError() {
     _errorMessage = null;
     notifyListeners();
   }

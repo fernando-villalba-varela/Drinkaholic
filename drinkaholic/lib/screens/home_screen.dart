@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../viewmodels/home_viewmodel.dart';
 import '../widgets/home/modern_button.dart';
+import '../models/button_config.dart';
+import '../screens/participants_screen.dart';
+import '../screens/league_list_screen.dart';
 import '../widgets/home/animated_icon_widget.dart';
 import '../widgets/home/floating_particle.dart';
 import 'dart:math';
@@ -228,7 +231,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           children: [
                             Builder(
                               builder: (context) {
-                                final config = _viewModel.getQuickGameButtonConfig(context, _startAnimatedNavigation);
+                                final config = _getQuickGameButtonConfig();
                                 return ModernButton(
                                   onTap: config.onTap,
                                   text: config.text,
@@ -241,7 +244,20 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
                             Builder(
                               builder: (context) {
-                                final config = _viewModel.getLeagueButtonConfig(context, _startAnimatedNavigation);
+                                final config = _getLeagueButtonConfig();
+                                return ModernButton(
+                                  onTap: config.onTap,
+                                  text: config.text,
+                                  icon: config.icon,
+                                  gradient: config.gradient,
+                                );
+                              },
+                            ),
+                            SizedBox(height: 18.h),
+
+                            Builder(
+                              builder: (context) {
+                                final config = _getElixirsButtonConfig();
                                 return ModernButton(
                                   onTap: config.onTap,
                                   text: config.text,
@@ -346,6 +362,73 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           );
         },
       ),
+    );
+  }
+
+  void _navigateToQuickGame() {
+    try {
+      _viewModel.clearError();
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                const ParticipantsScreen(title: 'Partida Rápida')),
+      );
+    } catch (e) {
+      _viewModel.setError('Error al navegar a Partida Rápida: ${e.toString()}');
+    }
+  }
+
+  void _navigateToLeague() {
+    try {
+      _viewModel.clearError();
+      Navigator.push(context,
+          MaterialPageRoute(builder: (_) => const LeagueListScreen()));
+    } catch (e) {
+      _viewModel.setError('Error al navegar a Liga: ${e.toString()}');
+    }
+  }
+
+  void _navigateToElixirs() {
+    // Placeholder function for now
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Recarga de elixires próximamente')),
+    );
+  }
+
+  ButtonConfig _getQuickGameButtonConfig() {
+    return ButtonConfig(
+      text: 'PARTIDA RÁPIDA',
+      icon: Icons.flash_on,
+      gradient: HomeViewModel.quickGameGradient,
+      onTap: () {
+        _startAnimatedNavigation(HomeViewModel.quickGameGradient,
+            'PARTIDA RÁPIDA', Icons.flash_on, _navigateToQuickGame);
+      },
+    );
+  }
+
+  ButtonConfig _getLeagueButtonConfig() {
+    return ButtonConfig(
+      text: 'LIGA',
+      icon: Icons.emoji_events,
+      gradient: HomeViewModel.leagueGradient,
+      onTap: () {
+        _startAnimatedNavigation(HomeViewModel.leagueGradient, 'LIGA',
+            Icons.emoji_events, _navigateToLeague);
+      },
+    );
+  }
+
+  ButtonConfig _getElixirsButtonConfig() {
+    return ButtonConfig(
+      text: 'RECARGA TUS ELIXIRES',
+      icon: Icons.local_drink,
+      gradient: HomeViewModel.elixirsGradient,
+      onTap: () {
+        _startAnimatedNavigation(HomeViewModel.elixirsGradient,
+            'RECARGA TUS ELIXIRES', Icons.local_drink, _navigateToElixirs);
+      },
     );
   }
 }
