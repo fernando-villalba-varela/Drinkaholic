@@ -896,8 +896,8 @@ Widget _buildPlayerImage(Player player, GameState gameState, BuildContext contex
 
   return player.imagen != null
       ? Image.file(player.imagen!, fit: BoxFit.contain) // Cambiado de cover a contain
-      : gameState.currentPlayer!.avatar != null
-          ? Image.asset(gameState.currentPlayer!.avatar!, fit: BoxFit.contain)
+      : player.avatar != null
+          ? Image.asset(player.avatar!, fit: BoxFit.contain)
           : Container(
               color: Colors.white.withOpacity(0.2),
               child: Icon(Icons.person, color: Colors.white.withOpacity(gameState.glowAnimation.value), size: iconSize),
