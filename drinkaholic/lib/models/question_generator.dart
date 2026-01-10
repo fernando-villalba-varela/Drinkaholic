@@ -96,15 +96,31 @@ class QuestionGenerator {
 
   /// Genera el número de tragos con probabilidades ponderadas
   /// 70% = 1 trago, 20% = 2 tragos, 10% = 3 tragos
-  static String _generateDrinkAmount() {
+  static String _generateDrinkAmount({String language = 'es', bool skipWord = false}) {
     final randomValue = _random.nextDouble();
-
+    
+    int drinks;
     if (randomValue < 0.5) {
-      return '1 trago';
+      drinks = 1;
     } else if (randomValue < 0.8) {
-      return '2 tragos';
+      drinks = 2;
     } else {
-      return '3 tragos';
+      drinks = 3;
+    }
+    
+    // Si el template ya contiene la palabra "drinks", solo devolver el número
+    if (skipWord) {
+      return drinks.toString();
+    }
+    
+    // Formato según el idioma
+    if (language == 'es') {
+      return '$drinks ${drinks == 1 ? 'trago' : 'tragos'}';
+    } else if (language == 'en') {
+      return '$drinks ${drinks == 1 ? 'drink' : 'drinks'}';
+    } else {
+      // Para otros idiomas, devolver solo el número
+      return drinks.toString();
     }
   }
 
@@ -246,9 +262,16 @@ class QuestionGenerator {
 
     // Reemplazar cada variable con un valor aleatorio
     template.variables.forEach((variableName, possibleValues) {
-      if (variableName == 'Y' && possibleValues.contains('tragos')) {
-        // Para Y = tragos, usar el generador de probabilidades
-        final drinkAmount = _generateDrinkAmount();
+      if ((variableName == 'Y' && (possibleValues.contains('tragos') || possibleValues.contains('drinks'))) ||
+          (variableName == 'DRINKS')) {
+        // Para Y = tragos/drinks o DRINKS, usar el generador de probabilidades
+        // Detectar si el template ya contiene "drinks" después de {Y} o {DRINKS}
+        bool templateHasDrinks = question.contains('{$variableName} drinks') || 
+                                 question.contains('drinks {$variableName}');
+        final drinkAmount = _generateDrinkAmount(
+          language: _currentLanguage, 
+          skipWord: templateHasDrinks
+        );
         question = question.replaceAll('{$variableName}', drinkAmount);
         usedVariables[variableName] = drinkAmount;
       } else if (possibleValues.length == 1 && possibleValues[0] == 'PLAYER' && playerName != null) {

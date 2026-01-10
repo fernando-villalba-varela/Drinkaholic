@@ -64,6 +64,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
   bool _showingPlayerSelector = false;
   bool _showingLetterCounter = false;
   List<int> _selectedPlayerIdsForLetterCounter = []; // Guardar IDs seleccionados
+  bool _isCurrentChallengeConstant = false; // Flag para marcar si el reto actual es constante
 
   // Variables para el doble tap "nadie cumple"
   DateTime? _lastTapTime;
@@ -214,6 +215,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
       dualPlayerIndex: _dualPlayerIndex,
       dualPlayer1Name: dualPlayer1Name,
       dualPlayer2Name: dualPlayer2Name,
+      isCurrentChallengeConstant: _isCurrentChallengeConstant,
     );
   }
 
@@ -617,6 +619,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
       _currentEventEnd = null;
       _dualPlayerIndex = null;
       _currentAnswer = null; // Limpiar respuesta anterior
+      _isCurrentChallengeConstant = false; // Limpiar flag de reto constante
     });
 
     // Verificar si alcanzamos el límite de rondas
@@ -715,6 +718,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
       _currentChallenge = constantChallenge.description;
       _currentAnswer = null; // Los retos constantes no tienen respuesta oculta
       _currentPlayerIndex = widget.players.indexWhere((p) => p.id == eligiblePlayer.id);
+      _isCurrentChallengeConstant = true; // Marcar como reto constante
     });
   }
 

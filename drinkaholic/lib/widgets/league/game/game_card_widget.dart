@@ -364,6 +364,34 @@ class GameCard extends StatelessWidget {
                         ),
                         child: Column(
                           children: [
+                            // Mostrar badge si es un reto constante
+                            if (gameState.isNewConstantChallenge)
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF92FE9D).withOpacity(0.3),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: const Color(0xFF92FE9D), width: 1.5),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.repeat, color: const Color(0xFF92FE9D), size: 16),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      'RETO CONSTANTE',
+                                      style: TextStyle(
+                                        color: const Color(0xFF92FE9D),
+                                        fontSize: fontSize * 0.6,
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 1,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            if (gameState.isNewConstantChallenge)
+                              SizedBox(height: 12),
                             Icon(Icons.local_drink, size: iconSize, color: Colors.white.withOpacity(0.9)),
                             SizedBox(height: 15),
                             Row(

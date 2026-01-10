@@ -54,6 +54,7 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
   ConstantChallengeEnd? _currentChallengeEnd;
   List<Event> _events = [];
   EventEnd? _currentEventEnd;
+  bool _isCurrentChallengeConstant = false; // Flag para marcar si el reto actual es constante
   
   // Endless mode state
   bool _isEndlessMode = false;
@@ -268,6 +269,7 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
       dualPlayerIndex: _dualPlayerIndex,
       dualPlayer1Name: dualPlayer1Name,
       dualPlayer2Name: dualPlayer2Name,
+      isCurrentChallengeConstant: _isCurrentChallengeConstant,
     );
   }
 
@@ -430,6 +432,7 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
       _currentEventEnd = null; // Limpiar cualquier fin de evento
       _dualPlayerIndex = null; // Limpiar jugador dual previo
       _currentAnswer = null; // Limpiar respuesta anterior
+      _isCurrentChallengeConstant = false; // Limpiar flag de reto constante
     });
 
     // 0. Verificar si hemos llegado al checkpoint de Endless Mode (Ronda 100)
@@ -542,6 +545,7 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
       _currentChallenge = _appendModifierText(constantChallenge.description);
       _currentAnswer = null; // Los retos constantes no tienen respuesta oculta
       _currentPlayerIndex = _players.indexWhere((p) => p.id == eligiblePlayer.id);
+      _isCurrentChallengeConstant = true; // Marcar como reto constante
     });
   }
 

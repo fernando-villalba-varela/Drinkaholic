@@ -60,10 +60,12 @@ class LeagueDetailViewModel extends ChangeNotifier {
     }
 
     // Generar mensajes para rachas de MVP (2 o más victorias consecutivas)
+    if (league.mvpStreakCount >= 2) {
       final mvpPlayer = league.players.firstWhere((p) => p.playerId == mvpId);
       streakMessages[mvpId] = languageService.translate('mvp_streak_message')
           .replaceAll('{name}', mvpPlayer.name)
           .replaceAll('{count}', league.mvpStreakCount.toString());
+    }
 
     // Generar mensajes para rachas de Ratita (2 o más derrotas consecutivas)
     if (league.ratitaStreakCount >= 2) {

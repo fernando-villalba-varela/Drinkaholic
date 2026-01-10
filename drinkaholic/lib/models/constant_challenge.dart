@@ -95,6 +95,9 @@ class ConstantChallenge {
     }
   }
 
+  /// Returns true since this is always a constant challenge
+  bool get isConstantChallenge => true;
+
   @override
   String toString() {
     return 'ConstantChallenge(${targetPlayer.nombre}: $description, Round $startRound${endRound != null ? '-$endRound' : '+'}';

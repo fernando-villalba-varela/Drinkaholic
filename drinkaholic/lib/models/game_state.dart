@@ -21,6 +21,7 @@ class GameState {
   final int? dualPlayerIndex; // Index of second player for dual challenges
   final String? dualPlayer1Name; // Name of first player for dual challenges
   final String? dualPlayer2Name; // Name of second player for dual challenges
+  final bool isCurrentChallengeConstant; // Flag para marcar si el reto actual es constante
 
   const GameState({
     required this.players,
@@ -39,6 +40,7 @@ class GameState {
     this.dualPlayerIndex,
     this.dualPlayer1Name,
     this.dualPlayer2Name,
+    this.isCurrentChallengeConstant = false,
   });
 
   /// Creates a copy of this GameState with the given fields replaced with new values
@@ -59,6 +61,7 @@ class GameState {
     int? dualPlayerIndex,
     String? dualPlayer1Name,
     String? dualPlayer2Name,
+    bool? isCurrentChallengeConstant,
   }) {
     return GameState(
       players: players ?? this.players,
@@ -77,6 +80,7 @@ class GameState {
       dualPlayerIndex: dualPlayerIndex ?? this.dualPlayerIndex,
       dualPlayer1Name: dualPlayer1Name ?? this.dualPlayer1Name,
       dualPlayer2Name: dualPlayer2Name ?? this.dualPlayer2Name,
+      isCurrentChallengeConstant: isCurrentChallengeConstant ?? this.isCurrentChallengeConstant,
     );
   }
 
@@ -84,7 +88,11 @@ class GameState {
   bool get isChallengeForAll {
     if (currentChallenge == null) return false;
     final lower = currentChallenge!.toLowerCase();
-    return lower.contains('todos') || lower.contains('cualquiera');
+    // Spanish keywords
+    final isSpanish = lower.contains('todos') || lower.contains('cualquiera');
+    // English keywords
+    final isEnglish = lower.contains('everyone') || lower.contains('anybody') || lower.contains('someone');
+    return isSpanish || isEnglish;
   }
 
   /// Returns the current player or null if the challenge is for all players
@@ -126,11 +134,7 @@ class GameState {
 
   /// Returns true if the current challenge is a new constant challenge
   bool get isNewConstantChallenge {
-    if (currentChallenge == null) return false;
-    return currentChallenge!.contains('no puede') ||
-        currentChallenge!.contains('debe') ||
-        currentChallenge!.contains('ya puede') ||
-        currentChallenge!.contains('regla:');
+    return isCurrentChallengeConstant;
   }
 
   /// Returns true if the current challenge is ending a constant challenge
