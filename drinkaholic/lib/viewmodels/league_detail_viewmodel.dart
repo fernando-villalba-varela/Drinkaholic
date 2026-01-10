@@ -176,20 +176,14 @@ class LeagueDetailViewModel extends ChangeNotifier {
 
   Future<void> _chooseAvatar(BuildContext context, int playerId) async {
     try {
-      final manifest = await rootBundle.loadString('AssetManifest.json');
-      final Map<String, dynamic> map = jsonDecode(manifest);
-      final assets = map.keys
-          .where(
-            (k) =>
-                k.startsWith('assets/avatars/') &&
-                (k.endsWith('.png') ||
-                    k.endsWith('.jpg') ||
-                    k.endsWith('.jpeg') ||
-                    k.endsWith('.gif') ||
-                    k.endsWith('.webp')),
-          )
-          .toList();
+      final manifestContent = await rootBundle.loadString('assets/avatar_manifest.json');
+      final Map<String, dynamic> manifestMap = json.decode(manifestContent);
+      final List<String> assets = [];
+      if (manifestMap.containsKey('avatars')) {
+        assets.addAll(List<String>.from(manifestMap['avatars']));
+      }
       if (assets.isEmpty) return;
+      assets.sort();
       final used = league.players
           .where((p) => p.avatarPath != null && p.playerId != playerId)
           .map((p) => p.avatarPath!)
