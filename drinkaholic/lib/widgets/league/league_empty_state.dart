@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../services/language_service.dart';
 
 class LeagueEmptyState extends StatelessWidget {
   const LeagueEmptyState({super.key});
@@ -11,17 +13,17 @@ class LeagueEmptyState extends StatelessWidget {
         children: [
           Icon(Icons.local_drink, size: 110, color: Colors.amber.shade500),
           const SizedBox(height: 34),
-          const Text(
-            'Aún no eres un borracho',
-            style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, letterSpacing: .5, color: Colors.white),
+          Text(
+            Provider.of<LanguageService>(context).translate('empty_league_title'),
+            style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold, letterSpacing: .5, color: Colors.white),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 14),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 32),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32),
             child: Text(
-              'Pulsa "Nueva liga" para emborracharte de gloria o importa una liga de tu amigo.',
-              style: TextStyle(color: Colors.white70, fontSize: 14),
+              Provider.of<LanguageService>(context).translate('empty_league_subtitle'),
+              style: const TextStyle(color: Colors.white70, fontSize: 14),
               textAlign: TextAlign.center,
             ),
           ),

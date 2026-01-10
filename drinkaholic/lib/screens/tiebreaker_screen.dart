@@ -6,6 +6,8 @@ import 'dart:ui' as ui;
 import '../models/player.dart';
 import '../widgets/common/animated_background.dart';
 import '../ui/components/drinkaholic_button.dart';
+import 'package:provider/provider.dart';
+import '../services/language_service.dart';
 
 class WheelPainter extends CustomPainter {
   final List<Player> players;
@@ -499,7 +501,7 @@ class _TiebreakerScreenState extends State<TiebreakerScreen> with TickerProvider
                             _colorAnimation.value,
                           )!;
                           return Text(
-                            '⚖️ El duende va a hablar',
+                            Provider.of<LanguageService>(context).translate('tiebreaker_question_title'),
                             style: TextStyle(
                               color: color,
                               fontSize: 28,
@@ -512,14 +514,16 @@ class _TiebreakerScreenState extends State<TiebreakerScreen> with TickerProvider
                       )
                     else
                       Text(
-                        isMVP ? 'Desempate MVDP' : 'Desempate Ratita',
+                        isMVP 
+                          ? Provider.of<LanguageService>(context).translate('tiebreaker_mvp_title')
+                          : Provider.of<LanguageService>(context).translate('tiebreaker_ratita_title'),
                         style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
                       ),
                     const SizedBox(height: 12),
                     // Subtitle - Personalizado si es desempate de pregunta
                     if (widget.isQuestionTiebreaker)
                       Text(
-                        'Hay empate en quien cumple la condición\n¡El duende te ayudará a elegir!',
+                        Provider.of<LanguageService>(context).translate('tiebreaker_question_subtitle'),
                         textAlign: TextAlign.center,
                         style: const TextStyle(color: Colors.white70, fontSize: 16),
                       )
@@ -532,10 +536,10 @@ class _TiebreakerScreenState extends State<TiebreakerScreen> with TickerProvider
                                 children: [
                                   TextSpan(
                                     text:
-                                        'Hay varios jugones empatados con ${widget.tiedScore} tragos\n (Solo puede haber un ',
+                                        '${Provider.of<LanguageService>(context).translate('tiebreaker_mvp_subtitle_1')} ${widget.tiedScore} ${Provider.of<LanguageService>(context).translate('tiebreaker_mvp_subtitle_2')} ',
                                   ),
                                   TextSpan(
-                                    text: 'puto amo',
+                                    text: Provider.of<LanguageService>(context).translate('mvp_highlight'),
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: Colors.white,
@@ -555,12 +559,12 @@ class _TiebreakerScreenState extends State<TiebreakerScreen> with TickerProvider
                             )
                           : RichText(
                               textAlign: TextAlign.center,
-                              text: TextSpan(
-                                style: const TextStyle(color: Colors.white70, fontSize: 16),
-                                children: [
-                                  TextSpan(text: 'Manda huevos que hayais bebido ${widget.tiedScore} tragos\n ('),
-                                  TextSpan(
-                                    text: 'sois escoria',
+                                text: TextSpan(
+                                  style: const TextStyle(color: Colors.white70, fontSize: 16),
+                                  children: [
+                                    TextSpan(text: '${Provider.of<LanguageService>(context).translate('tiebreaker_ratita_subtitle_1')} ${widget.tiedScore} ${Provider.of<LanguageService>(context).translate('tiebreaker_ratita_subtitle_2')}'),
+                                    TextSpan(
+                                      text: Provider.of<LanguageService>(context).translate('ratita_highlight'),
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: Colors.white,
@@ -587,14 +591,14 @@ class _TiebreakerScreenState extends State<TiebreakerScreen> with TickerProvider
                         children: [
                           if (!_hasSpun && !_isSpinning) ...[
                             Text(
-                              'Solo el Little Boy sabe tu destino...',
+                              Provider.of<LanguageService>(context).translate('spin_hint'),
                               style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
                               textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 32),
                           ] else if (_isSpinning) ...[
                             Text(
-                              '¡Girando...!',
+                              Provider.of<LanguageService>(context).translate('spinning_text'),
                               style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
                               textAlign: TextAlign.center,
                             ),
@@ -611,8 +615,8 @@ class _TiebreakerScreenState extends State<TiebreakerScreen> with TickerProvider
                                   ],
                                   stops: const [0.0, 0.5, 1.0],
                                 ).createShader(bounds),
-                                child: Text(
-                                  '🧙 El duende elige a... 🧙',
+                                  child: Text(
+                                  Provider.of<LanguageService>(context).translate('elf_chooses'),
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 26,
@@ -625,7 +629,9 @@ class _TiebreakerScreenState extends State<TiebreakerScreen> with TickerProvider
                             ] else ...[
                               // Desempate final: mostrar mensaje normal
                               Text(
-                                isMVP ? '¡Se te ha caido esto! -> 👑' : '¡Ratitaa🐭🐭 (JAJA)!',
+                                isMVP 
+                                  ? Provider.of<LanguageService>(context).translate('mvp_winner_msg') 
+                                  : Provider.of<LanguageService>(context).translate('ratita_winner_msg'),
                                 style: TextStyle(
                                   color: isMVP ? const Color(0xFFFFD700) : const Color(0xFF8B4513),
                                   fontSize: 24,
@@ -684,7 +690,7 @@ class _TiebreakerScreenState extends State<TiebreakerScreen> with TickerProvider
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 16.0),
                               child: Text(
-                                'El duende sabe que ${_extractQuestionPart()}... ¡Así que bebete los ${_extractDrinksFromQuestion()} tragos!',
+                                '${Provider.of<LanguageService>(context).translate('question_tiebreaker_result_1')} ${_extractQuestionPart()}${Provider.of<LanguageService>(context).translate('question_tiebreaker_result_2')} ${_extractDrinksFromQuestion()} ${Provider.of<LanguageService>(context).translate('drinks_count_suffix')}!',
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 16,
@@ -705,7 +711,9 @@ class _TiebreakerScreenState extends State<TiebreakerScreen> with TickerProvider
                         children: [
                           if (_hasSpun && _winner != null)
                             DrinkaholicButton(
-                              label: widget.isQuestionTiebreaker ? 'Confirmar' : 'Confirmar Resultado',
+                              label: widget.isQuestionTiebreaker 
+                                ? Provider.of<LanguageService>(context).translate('confirm')
+                                : Provider.of<LanguageService>(context).translate('confirm_result'),
                               icon: Icons.check_circle_outline,
                               onPressed: () {
                                 final loser = widget.tiedPlayers.length > 1

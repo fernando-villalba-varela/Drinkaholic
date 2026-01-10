@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../services/language_service.dart';
 
 class FabNewLeague extends StatelessWidget {
   final VoidCallback onPressed;
@@ -13,7 +15,7 @@ class FabNewLeague extends StatelessWidget {
       elevation: 4,
       onPressed: onPressed,
       icon: const Icon(Icons.add),
-      label: const Text('Nueva liga'),
+      label: Text(Provider.of<LanguageService>(context).translate('new_league_button')),
     );
   }
 }

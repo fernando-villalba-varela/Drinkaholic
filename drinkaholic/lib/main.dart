@@ -1,10 +1,11 @@
-import 'package:drinkaholic/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'services/language_service.dart';
 import 'services/league_storage_service.dart';
 import 'ui/transitions/custom_page_transitions.dart';
 import 'viewmodels/league_list_viewmodel.dart';
+import 'screens/home_screen.dart';
 
 void main() async {
   // Asegurar que Flutter esté inicializado
@@ -17,9 +18,16 @@ void main() async {
   final leagueListVM = LeagueListViewModel(storageService: storageService);
   await leagueListVM.loadLeagues();
 
+  // Inicializar servicio de idiomas
+  final languageService = LanguageService();
+  await languageService.loadLanguage();
+
   runApp(
     MultiProvider(
-      providers: [ChangeNotifierProvider.value(value: leagueListVM)],
+      providers: [
+        ChangeNotifierProvider.value(value: leagueListVM),
+        ChangeNotifierProvider.value(value: languageService),
+      ],
       child: const MyApp(),
     ),
   );
@@ -52,7 +60,7 @@ class MyApp extends StatelessWidget {
               },
             ),
           ),
-          home: const HomeScreen(),
+          home: HomeScreen(),
         );
       },
     );

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../services/language_service.dart';
 import '../../../viewmodels/league_detail_viewmodel.dart';
 
 class ParticipantsTab extends StatefulWidget {
@@ -154,9 +155,9 @@ class AddPlayerCard extends StatelessWidget {
             child: TextField(
               controller: controller,
               style: const TextStyle(color: Colors.white),
-              decoration: const InputDecoration(
-                hintText: 'Añadir jugador...',
-                hintStyle: TextStyle(color: Colors.white70),
+              decoration: InputDecoration(
+                hintText: Provider.of<LanguageService>(context).translate('add_player_dots_hint'),
+                hintStyle: const TextStyle(color: Colors.white70),
                 border: InputBorder.none,
               ),
               onSubmitted: (_) => onAdd(),

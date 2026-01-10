@@ -10,6 +10,8 @@ import '../models/league_player_stats.dart';
 import '../models/match_result.dart';
 import 'league_list_viewmodel.dart';
 import '../services/avatar_service.dart';
+import 'package:provider/provider.dart';
+import '../services/language_service.dart';
 
 class LeagueDetailViewModel extends ChangeNotifier {
   final League league;
@@ -24,7 +26,7 @@ class LeagueDetailViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Map<int, String> recordMatch(Map<int, int> drinksMap) {
+  Map<int, String> recordMatch(Map<int, int> drinksMap, LanguageService languageService) {
     final Map<int, String> streakMessages = {};
 
     if (drinksMap.isEmpty) return streakMessages;
@@ -58,17 +60,17 @@ class LeagueDetailViewModel extends ChangeNotifier {
     }
 
     // Generar mensajes para rachas de MVP (2 o más victorias consecutivas)
-    if (league.mvpStreakCount >= 2) {
       final mvpPlayer = league.players.firstWhere((p) => p.playerId == mvpId);
-      streakMessages[mvpId] =
-          '${mvpPlayer.name} ha ganado ${league.mvpStreakCount} veces seguidas!. El duende te da 10 tragos a repartir mientras se rie y bebe.';
-    }
+      streakMessages[mvpId] = languageService.translate('mvp_streak_message')
+          .replaceAll('{name}', mvpPlayer.name)
+          .replaceAll('{count}', league.mvpStreakCount.toString());
 
     // Generar mensajes para rachas de Ratita (2 o más derrotas consecutivas)
     if (league.ratitaStreakCount >= 2) {
       final ratitaPlayer = league.players.firstWhere((p) => p.playerId == ratitaId);
-      streakMessages[ratitaId] =
-          '${ratitaPlayer.name} ha perdido ${league.ratitaStreakCount} veces seguidas. El duende se mea en tu boca y bebes 10 tragos.';
+      streakMessages[ratitaId] = languageService.translate('ratita_streak_message')
+          .replaceAll('{name}', ratitaPlayer.name)
+          .replaceAll('{count}', league.ratitaStreakCount.toString());
     }
 
     for (final p in league.players) {
@@ -125,16 +127,16 @@ class LeagueDetailViewModel extends ChangeNotifier {
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: const Color(0xF200C9FF), // 00C9FF with 95% opacity
-        title: const Text(
-          'Avatar / Foto',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
+          title: Text(
+            Provider.of<LanguageService>(context, listen: false).translate('avatar_photo_title'),
+            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
               leading: const Icon(Icons.collections, color: Colors.white),
-              title: const Text('Elegir avatar', style: TextStyle(color: Colors.white)),
+              title: Text(Provider.of<LanguageService>(context, listen: false).translate('choose_avatar_option'), style: const TextStyle(color: Colors.white)),
               onTap: () {
                 Navigator.pop(context);
                 _chooseAvatar(context, playerId);
@@ -142,7 +144,7 @@ class LeagueDetailViewModel extends ChangeNotifier {
             ),
             ListTile(
               leading: const Icon(Icons.camera_alt, color: Colors.white),
-              title: const Text('Tomar foto', style: TextStyle(color: Colors.white)),
+              title: Text(Provider.of<LanguageService>(context, listen: false).translate('take_photo_option'), style: const TextStyle(color: Colors.white)),
               onTap: () {
                 Navigator.pop(context);
                 _takePhoto(context, playerId);
@@ -151,7 +153,7 @@ class LeagueDetailViewModel extends ChangeNotifier {
             if (league.players.firstWhere((p) => p.playerId == playerId).avatarPath != null)
               ListTile(
                 leading: const Icon(Icons.delete_forever, color: Colors.white),
-                title: const Text('Quitar avatar/foto', style: TextStyle(color: Colors.white)),
+                title: Text(Provider.of<LanguageService>(context, listen: false).translate('remove_avatar_option'), style: const TextStyle(color: Colors.white)),
                 onTap: () {
                   Navigator.pop(context);
                   final p = league.players.firstWhere((e) => e.playerId == playerId);
@@ -165,7 +167,7 @@ class LeagueDetailViewModel extends ChangeNotifier {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar', style: TextStyle(color: Colors.white70)),
+            child: Text(Provider.of<LanguageService>(context, listen: false).translate('cancel'), style: const TextStyle(color: Colors.white70)),
           ),
         ],
       ),
@@ -197,9 +199,9 @@ class LeagueDetailViewModel extends ChangeNotifier {
         context: context,
         builder: (_) => AlertDialog(
           backgroundColor: const Color(0xF200C9FF), // 00C9FF with 95% opacity
-          title: const Text(
-            'Elegir avatar',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          title: Text(
+            Provider.of<LanguageService>(context, listen: false).translate('choose_avatar_dialog_title'),
+            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
           content: SizedBox(
             width: double.maxFinite,
@@ -248,7 +250,7 @@ class LeagueDetailViewModel extends ChangeNotifier {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancelar', style: TextStyle(color: Colors.white70)),
+              child: Text(Provider.of<LanguageService>(context, listen: false).translate('cancel'), style: const TextStyle(color: Colors.white70)),
             ),
           ],
         ),
@@ -313,10 +315,10 @@ class LeagueDetailViewModel extends ChangeNotifier {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Eliminar jugador'),
-        content: const Text('¿Seguro que quieres eliminarlo?'),
+        title: Text(Provider.of<LanguageService>(context, listen: false).translate('delete_player_title')),
+        content: Text(Provider.of<LanguageService>(context, listen: false).translate('confirm_delete_player_dialog_content')),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(Provider.of<LanguageService>(context, listen: false).translate('cancel'))),
           TextButton(
             onPressed: () {
               league.players.removeWhere((p) => p.playerId == playerId);
@@ -324,7 +326,7 @@ class LeagueDetailViewModel extends ChangeNotifier {
               notifyListeners();
               Navigator.pop(context);
             },
-            child: const Text('Eliminar', style: TextStyle(color: Colors.red)),
+            child: Text(Provider.of<LanguageService>(context, listen: false).translate('delete'), style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -337,7 +339,7 @@ class LeagueDetailViewModel extends ChangeNotifier {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Exportar liga'),
+        title: Text(Provider.of<LanguageService>(context, listen: false).translate('export_league_title')),
         content: SizedBox(
           width: double.maxFinite,
           child: SingleChildScrollView(child: SelectableText(jsonString)),
@@ -348,9 +350,9 @@ class LeagueDetailViewModel extends ChangeNotifier {
               Clipboard.setData(ClipboardData(text: jsonString));
               Navigator.pop(context);
             },
-            child: const Text('Copiar'),
+            child: Text(Provider.of<LanguageService>(context, listen: false).translate('copy_button')),
           ),
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cerrar')),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(Provider.of<LanguageService>(context, listen: false).translate('close_button'))),
         ],
       ),
     );

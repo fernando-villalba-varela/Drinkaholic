@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import '../models/player.dart';
 import 'tiebreaker_screen.dart';
+import 'package:provider/provider.dart';
+import '../services/language_service.dart';
 
 class GameResultsScreen extends StatefulWidget {
   final List<Player> players;
@@ -294,7 +296,7 @@ class _GameResultsScreenState extends State<GameResultsScreen> with TickerProvid
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          '¡Juego Terminado!',
+                          Provider.of<LanguageService>(context).translate('game_over_title'),
                           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: titleFontSize),
                         ),
                       ),
@@ -308,7 +310,7 @@ class _GameResultsScreenState extends State<GameResultsScreen> with TickerProvid
                     child: Column(
                       children: [
                         Text(
-                          'Se han completado ${widget.maxRounds} rondas',
+                          '${Provider.of<LanguageService>(context).translate('rounds_completed_text')} ${widget.maxRounds} ${Provider.of<LanguageService>(context).translate('rounds')}',
                           style: TextStyle(color: Colors.white, fontSize: subtitleFontSize),
                           textAlign: TextAlign.center,
                         ),
@@ -331,14 +333,14 @@ class _GameResultsScreenState extends State<GameResultsScreen> with TickerProvid
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                'Estadísticas del Juego',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: sectionTitleFontSize,
-                                  fontWeight: FontWeight.bold,
+                                Text(
+                                  Provider.of<LanguageService>(context).translate('game_statistics_title'),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: sectionTitleFontSize,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
                               SizedBox(height: isSmallScreen ? 12 : 16),
                               ...sortedPlayers.map((entry) {
                                 final playerId = entry.key;
@@ -442,7 +444,7 @@ class _GameResultsScreenState extends State<GameResultsScreen> with TickerProvid
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         elevation: 4,
                       ),
-                      child: const Text('Guardar y Volver'),
+                      child: Text(Provider.of<LanguageService>(context).translate('save_and_return_button')),
                     ),
                   ),
                 ),
@@ -496,7 +498,7 @@ class _GameResultsScreenState extends State<GameResultsScreen> with TickerProvid
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '🏆 MVDP',
+                  Provider.of<LanguageService>(context).translate('mvp_title'),
                   style: TextStyle(
                     color: const Color(0xFFFFD700),
                     fontSize: titleFontSize,
@@ -511,7 +513,7 @@ class _GameResultsScreenState extends State<GameResultsScreen> with TickerProvid
                 ),
                 SizedBox(height: isSmallScreen ? 2 : 4),
                 Text(
-                  '$drinks tragos',
+                  '$drinks ${Provider.of<LanguageService>(context).translate('drinks_count_suffix')}',
                   style: TextStyle(color: Colors.white70, fontSize: drinksFontSize),
                 ),
               ],
@@ -557,7 +559,7 @@ class _GameResultsScreenState extends State<GameResultsScreen> with TickerProvid
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '🐭 Ratita',
+                  Provider.of<LanguageService>(context).translate('rat_title'),
                   style: TextStyle(
                     color: const Color.fromARGB(255, 98, 46, 33),
                     fontSize: titleFontSize,
@@ -572,7 +574,7 @@ class _GameResultsScreenState extends State<GameResultsScreen> with TickerProvid
                 ),
                 SizedBox(height: isSmallScreen ? 2 : 4),
                 Text(
-                  '$drinks tragos',
+                  '$drinks ${Provider.of<LanguageService>(context).translate('drinks_count_suffix')}',
                   style: TextStyle(color: Colors.white70, fontSize: drinksFontSize),
                 ),
               ],
@@ -669,7 +671,7 @@ class _GameResultsScreenState extends State<GameResultsScreen> with TickerProvid
                       ),
                     ),
                     TextSpan(
-                      text: ' -> El duende con un litte boy en la mano anuncia lo siguiente:',
+                      text: Provider.of<LanguageService>(context).translate('breaking_news_intro'),
                       style: TextStyle(
                         color: const Color(0xFFCC0000), // Rojo CNN
                         fontSize: isSmallScreen ? 15.0 : 18.0,
@@ -797,7 +799,7 @@ class _GameResultsScreenState extends State<GameResultsScreen> with TickerProvid
                       ),
                     ),
                     TextSpan(
-                      text: ' -> El duende con un litte boy en la mano anuncia lo siguiente:',
+                      text: Provider.of<LanguageService>(context).translate('breaking_news_intro'),
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: isSmallScreen ? 15.0 : 18.0,

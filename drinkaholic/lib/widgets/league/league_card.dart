@@ -5,6 +5,7 @@ import '../../models/league.dart';
 import '../../viewmodels/league_list_viewmodel.dart';
 import '../../viewmodels/league_detail_viewmodel.dart';
 import '../../screens/league_detail_screen.dart';
+import '../../services/language_service.dart';
 
 class LeagueCard extends StatelessWidget {
   final League league;
@@ -164,7 +165,7 @@ class ParticipantsPill extends StatelessWidget {
         children: [
           const Icon(Icons.group, size: 14, color: Colors.tealAccent),
           const SizedBox(width: 4),
-          Text('$count participantes', style: const TextStyle(color: Colors.white70, fontSize: 12, letterSpacing: .2)),
+          Text('$count ${Provider.of<LanguageService>(context).translate('participants_count')}', style: const TextStyle(color: Colors.white70, fontSize: 12, letterSpacing: .2)),
         ],
       ),
     );

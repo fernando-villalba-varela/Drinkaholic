@@ -6,6 +6,8 @@ import 'package:drinkaholic/models/player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import '../services/language_service.dart';
 
 class ParticipantsViewmodel extends ChangeNotifier {
   BuildContext? context;
@@ -76,7 +78,7 @@ class ParticipantsViewmodel extends ChangeNotifier {
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF00C9FF).withOpacity(0.95),
         title: Text(
-          'Seleccionar avatar para ${_players[index].nombre}',
+          '${Provider.of<LanguageService>(context, listen: false).translate('select_avatar_title')} ${_players[index].nombre}',
           style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         content: Column(
@@ -84,7 +86,7 @@ class ParticipantsViewmodel extends ChangeNotifier {
           children: [
             ListTile(
               leading: const Icon(Icons.collections, color: Colors.white),
-              title: const Text('Elegir avatar creado', style: TextStyle(color: Colors.white)),
+              title: Text(Provider.of<LanguageService>(context, listen: false).translate('choose_avatar_option'), style: const TextStyle(color: Colors.white)),
               onTap: () {
                 Navigator.of(context).pop();
                 chooseAvatar(index);
@@ -92,7 +94,7 @@ class ParticipantsViewmodel extends ChangeNotifier {
             ),
             ListTile(
               leading: const Icon(Icons.camera_alt, color: Colors.white),
-              title: const Text('Tomar foto', style: TextStyle(color: Colors.white)),
+              title: Text(Provider.of<LanguageService>(context, listen: false).translate('take_photo_option'), style: const TextStyle(color: Colors.white)),
               onTap: () {
                 Navigator.of(context).pop();
                 pickImage(index);
@@ -102,7 +104,7 @@ class ParticipantsViewmodel extends ChangeNotifier {
         ),
         actions: [
           TextButton(
-            child: const Text('Cancelar', style: TextStyle(color: Colors.white70)),
+            child: Text(Provider.of<LanguageService>(context, listen: false).translate('cancel'), style: const TextStyle(color: Colors.white70)),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ],
@@ -133,8 +135,8 @@ class ParticipantsViewmodel extends ChangeNotifier {
     if (avatarPaths.isEmpty) {
       if (context != null) {
         ScaffoldMessenger.of(context!).showSnackBar(
-          const SnackBar(
-            content: Text('No se encontraron avatars. Verifica la carpeta assets/avatars/'),
+           SnackBar(
+            content: Text(Provider.of<LanguageService>(context!, listen: false).translate('no_avatars_found')),
             backgroundColor: Colors.orange,
           ),
         );
@@ -157,7 +159,7 @@ class ParticipantsViewmodel extends ChangeNotifier {
             backgroundColor: const Color(0xFF00C9FF).withOpacity(0.95),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             title: Text(
-              'Elegir avatar para ${_players[index].nombre}',
+              '${Provider.of<LanguageService>(context, listen: false).translate('select_avatar_grid_title')} ${_players[index].nombre}',
               style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             ),
             content: SizedBox(
@@ -234,7 +236,7 @@ class ParticipantsViewmodel extends ChangeNotifier {
             ),
             actions: [
               TextButton(
-                child: const Text('Cancelar', style: TextStyle(color: Colors.white70)),
+                child: Text(Provider.of<LanguageService>(context, listen: false).translate('cancel'), style: const TextStyle(color: Colors.white70)),
                 onPressed: () => Navigator.of(context).pop(),
               ),
             ],
@@ -263,9 +265,9 @@ class ParticipantsViewmodel extends ChangeNotifier {
     } else if (status.isDenied || status.isPermanentlyDenied) {
       if (context != null) {
         ScaffoldMessenger.of(context!).showSnackBar(
-          const SnackBar(
-            content: Text('Debes dar permiso de cámara para tomar una foto.'),
-            backgroundColor: Colors.redAccent,
+          SnackBar(
+            content: Text(Provider.of<LanguageService>(context!, listen: false).translate('camera_permission_denied')),
+            backgroundColor: Colors.orange,
           ),
         );
       }
@@ -279,16 +281,16 @@ class ParticipantsViewmodel extends ChangeNotifier {
         backgroundColor: const Color(0xFF00C9FF).withOpacity(0.95),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
-          '¿Quieres eliminar la foto de ${_players[index].nombre}?',
+          '${Provider.of<LanguageService>(context, listen: false).translate('confirm_delete_photo_content')} ${_players[index].nombre}?',
           style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         actions: [
           TextButton(
-            child: const Text('Cancelar', style: TextStyle(color: Colors.white70)),
+            child: Text(Provider.of<LanguageService>(context, listen: false).translate('cancel'), style: const TextStyle(color: Colors.white70)),
             onPressed: () => Navigator.of(context).pop(),
           ),
           TextButton(
-            child: const Text('Eliminar', style: TextStyle(color: Colors.redAccent)),
+            child: Text(Provider.of<LanguageService>(context, listen: false).translate('delete'), style: const TextStyle(color: Colors.redAccent)),
             onPressed: () {
               _players[index] = Player(id: _players[index].id, nombre: _players[index].nombre);
               notifyListeners(); // Notifica a la UI el cambio
@@ -307,16 +309,16 @@ class ParticipantsViewmodel extends ChangeNotifier {
         backgroundColor: const Color(0xFF00C9FF).withOpacity(0.95),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
-          '¿Quieres eliminar a ${_players[index].nombre}?',
+          '${Provider.of<LanguageService>(context, listen: false).translate('confirm_delete_player_content')} ${_players[index].nombre}?',
           style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         actions: [
           TextButton(
-            child: const Text('Cancelar', style: TextStyle(color: Colors.white70)),
+            child: Text(Provider.of<LanguageService>(context, listen: false).translate('cancel'), style: const TextStyle(color: Colors.white70)),
             onPressed: () => Navigator.of(context).pop(),
           ),
           TextButton(
-            child: const Text('Eliminar', style: TextStyle(color: Colors.redAccent)),
+            child: Text(Provider.of<LanguageService>(context, listen: false).translate('delete'), style: const TextStyle(color: Colors.redAccent)),
             onPressed: () {
               removePlayer(index); // Usa removePlayer que llama a notifyListeners()
               Navigator.of(context).pop();

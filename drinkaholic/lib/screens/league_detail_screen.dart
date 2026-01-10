@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../services/language_service.dart'; // Import LanguageService
 import '../viewmodels/league_detail_viewmodel.dart';
 import '../widgets/league/league_app_bar_button.dart';
 import '../widgets/common/animated_background.dart';
@@ -69,7 +70,7 @@ class _LeagueDetailScreenState extends State<LeagueDetailScreen> with TickerProv
                   border: Border.all(color: const Color(0x4DFFFFFF), width: 1),
                   boxShadow: const [BoxShadow(color: Color(0x1A000000), blurRadius: 10, offset: Offset(0, 4))],
                 ),
-                child: const TabBar(
+                child: TabBar(
                   labelColor: Colors.white,
                   unselectedLabelColor: Colors.white70,
                   indicator: BoxDecoration(),
@@ -78,9 +79,9 @@ class _LeagueDetailScreenState extends State<LeagueDetailScreen> with TickerProv
                   labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                   unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
                   tabs: [
-                    Tab(text: 'Scoreboard'),
-                    Tab(text: 'Jugadores'),
-                    Tab(text: 'Jugar'),
+                    Tab(text: Provider.of<LanguageService>(context).translate('scoreboard_tab')),
+                    Tab(text: Provider.of<LanguageService>(context).translate('players_tab')),
+                    Tab(text: Provider.of<LanguageService>(context).translate('play_tab')),
                   ],
                 ),
               ),

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import '../services/language_service.dart';
 import '../viewmodels/home_viewmodel.dart';
 import '../widgets/home/modern_button.dart';
-import '../models/button_config.dart';
-import '../screens/participants_screen.dart';
-import '../screens/league_list_screen.dart';
 import '../widgets/home/animated_icon_widget.dart';
 import '../widgets/home/floating_particle.dart';
+import '../screens/participants_screen.dart';
+import '../screens/league_list_screen.dart';
+import '../models/button_config.dart';
 import 'dart:math';
 
 class HomeScreen extends StatefulWidget {
@@ -231,7 +233,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           children: [
                             Builder(
                               builder: (context) {
-                                final config = _getQuickGameButtonConfig();
+                                final config = _getQuickGameButtonConfig(context);
                                 return ModernButton(
                                   onTap: config.onTap,
                                   text: config.text,
@@ -244,7 +246,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
                             Builder(
                               builder: (context) {
-                                final config = _getLeagueButtonConfig();
+                                final config = _getLeagueButtonConfig(context);
                                 return ModernButton(
                                   onTap: config.onTap,
                                   text: config.text,
@@ -257,7 +259,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
                             Builder(
                               builder: (context) {
-                                final config = _getElixirsButtonConfig();
+                                final config = _getElixirsButtonConfig(context);
                                 return ModernButton(
                                   onTap: config.onTap,
                                   text: config.text,
@@ -274,6 +276,45 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   ],
                 ),
               ),
+
+              // Language Toggle Button
+              Positioned(
+                top: MediaQuery.of(context).padding.top + 20,
+                right: 20,
+                child: Consumer<LanguageService>(
+                  builder: (context, languageService, child) {
+                    return GestureDetector(
+                      onTap: () => languageService.toggleLanguage(),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: Colors.white.withOpacity(0.2)),
+                        ),
+                        child: Row(
+                          children: [
+                            Text(
+                              languageService.isSpanish ? '🇪🇸' : '🇬🇧',
+                              style: const TextStyle(fontSize: 24),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              languageService.isSpanish ? 'ES' : 'EN',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+
               if (_isAnimating && _currentGradient != null)
                 AnimatedBuilder(
                   animation: _animationController,
@@ -368,11 +409,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void _navigateToQuickGame() {
     try {
       _viewModel.clearError();
+      final title = Provider.of<LanguageService>(context, listen: false).translate('play_quick'); // Use translated title
       Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) =>
-                const ParticipantsScreen(title: 'Partida Rápida')),
+                ParticipantsScreen(title: title)),
       );
     } catch (e) {
       _viewModel.setError('Error al navegar a Partida Rápida: ${e.toString()}');
@@ -391,43 +433,53 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   void _navigateToElixirs() {
     // Placeholder function for now
+    final msg = Provider.of<LanguageService>(context, listen: false).isSpanish 
+        ? 'Recarga de elixires próximamente' 
+        : 'Elixir refill coming soon';
+        
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Recarga de elixires próximamente')),
+      SnackBar(content: Text(msg)),
     );
   }
 
-  ButtonConfig _getQuickGameButtonConfig() {
+  ButtonConfig _getQuickGameButtonConfig(BuildContext context) {
+    final languageService = Provider.of<LanguageService>(context);
+    final text = languageService.translate('play_quick');
     return ButtonConfig(
-      text: 'PARTIDA RÁPIDA',
+      text: text,
       icon: Icons.flash_on,
       gradient: HomeViewModel.quickGameGradient,
       onTap: () {
         _startAnimatedNavigation(HomeViewModel.quickGameGradient,
-            'PARTIDA RÁPIDA', Icons.flash_on, _navigateToQuickGame);
+            text, Icons.flash_on, _navigateToQuickGame);
       },
     );
   }
 
-  ButtonConfig _getLeagueButtonConfig() {
+  ButtonConfig _getLeagueButtonConfig(BuildContext context) {
+    final languageService = Provider.of<LanguageService>(context);
+    final text = languageService.translate('play_league');
     return ButtonConfig(
-      text: 'LIGA',
+      text: text,
       icon: Icons.emoji_events,
       gradient: HomeViewModel.leagueGradient,
       onTap: () {
-        _startAnimatedNavigation(HomeViewModel.leagueGradient, 'LIGA',
+        _startAnimatedNavigation(HomeViewModel.leagueGradient, text,
             Icons.emoji_events, _navigateToLeague);
       },
     );
   }
 
-  ButtonConfig _getElixirsButtonConfig() {
+  ButtonConfig _getElixirsButtonConfig(BuildContext context) {
+    final languageService = Provider.of<LanguageService>(context);
+    final text = languageService.translate('menu_reload_elixirs');
     return ButtonConfig(
-      text: 'RECARGA TUS ELIXIRES',
+      text: text,
       icon: Icons.local_drink,
       gradient: HomeViewModel.elixirsGradient,
       onTap: () {
         _startAnimatedNavigation(HomeViewModel.elixirsGradient,
-            'RECARGA TUS ELIXIRES', Icons.local_drink, _navigateToElixirs);
+            text, Icons.local_drink, _navigateToElixirs);
       },
     );
   }

@@ -10,6 +10,8 @@ import '../models/constant_challenge.dart';
 import '../models/constant_challenge_generator.dart';
 import '../models/event.dart';
 import '../models/event_generator.dart';
+import '../services/language_service.dart'; // Import LanguageService
+import 'package:provider/provider.dart'; // Import Provider
 import '../widgets/common/animated_background.dart';
 import '../widgets/league/game/game_card_widget.dart';
 import '../widgets/league/game/player_selector_overlay.dart';
@@ -857,10 +859,10 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.only(bottom: 16),
                     child: Text(
-                      'Retos y Eventos Activos',
+                      Provider.of<LanguageService>(context).translate('active_challenges_title'),
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,
@@ -873,17 +875,17 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
                       controller: scrollController,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       children: [
-                        _buildSectionTitle('📋 Retos Constantes'),
+                        _buildSectionTitle(Provider.of<LanguageService>(context).translate('constant_challenges_title')),
                         if (_constantChallenges.where((c) => c.status == ConstantChallengeStatus.active).isEmpty)
-                          _buildEmptyState('No hay retos constantes activos')
+                          _buildEmptyState(Provider.of<LanguageService>(context).translate('empty_active_challenges'))
                         else
                           ..._constantChallenges
                               .where((c) => c.status == ConstantChallengeStatus.active)
                               .map((c) => _buildActiveChallengeItem(c)),
 
-                        _buildSectionTitle('🌐 Eventos Globales'),
+                        _buildSectionTitle(Provider.of<LanguageService>(context).translate('global_events_title')),
                         if (_events.where((e) => e.status == EventStatus.active).isEmpty)
-                          _buildEmptyState('No hay eventos globales activos')
+                          _buildEmptyState(Provider.of<LanguageService>(context).translate('empty_active_events'))
                         else
                           ..._events.where((e) => e.status == EventStatus.active).map((e) => _buildActiveEventItem(e)),
                           
@@ -1145,21 +1147,21 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
                             showDialog(
                               context: context,
                               builder: (context) => AlertDialog(
-                                title: const Text('¿Salir del juego?'),
-                                content: const Text(
-                                  '¿Estás seguro de que quieres salir? Se perderá el progreso del juego.',
+                                title: Text(Provider.of<LanguageService>(context, listen: false).translate('exit_game_title')),
+                                content: Text(
+                                  Provider.of<LanguageService>(context, listen: false).translate('exit_game_confirmation'),
                                 ),
                                 actions: [
                                   TextButton(
                                     onPressed: () => Navigator.of(context).pop(),
-                                    child: const Text('Cancelar'),
+                                    child: Text(Provider.of<LanguageService>(context, listen: false).translate('cancel')),
                                   ),
                                   TextButton(
                                     onPressed: () {
                                       Navigator.of(context).pop();
                                       Navigator.of(context).pop();
                                     },
-                                    child: const Text('Salir'),
+                                    child: Text(Provider.of<LanguageService>(context, listen: false).translate('exit')),
                                   ),
                                 ],
                               ),
@@ -1220,7 +1222,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
                             border: Border.all(color: Colors.white.withOpacity(0.2)),
                           ),
                           child: Text(
-                            'RONDA $_currentRound',
+                            '${Provider.of<LanguageService>(context).translate('round_label')} $_currentRound',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,

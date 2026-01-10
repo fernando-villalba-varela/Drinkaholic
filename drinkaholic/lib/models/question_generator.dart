@@ -58,21 +58,39 @@ class GeneratedQuestion {
 class QuestionGenerator {
   static final Random _random = Random();
   static List<QuestionTemplate>? _templates;
+  static String _currentLanguage = 'es';
 
   /// Cargar las plantillas desde el JSON
-  static Future<void> loadTemplates() async {
-    if (_templates != null) return;
+  static Future<void> loadTemplates({String language = 'es'}) async {
+    // Si ya están cargadas y el idioma es el mismo, no hacer nada
+    if (_templates != null && _currentLanguage == language) return;
+
+    // Actualizar idioma actual
+    _currentLanguage = language;
+    
+    // Resetear templates para forzar recarga
+    _templates = null;
 
     try {
-      final String jsonString = await rootBundle.loadString('assets/questions.json');
+      final String jsonPath = language == 'es' 
+          ? 'assets/questions.json' 
+          : 'assets/questions_$language.json';
+          
+      final String jsonString = await rootBundle.loadString(jsonPath);
       final Map<String, dynamic> jsonData = json.decode(jsonString);
 
       _templates = (jsonData['templates'] as List).map((template) => QuestionTemplate.fromJson(template)).toList();
     } catch (e) {
       if (kDebugMode) {
-        print('Error loading questions: $e');
+        print('Error loading questions ($language): $e');
       }
-      _templates = [];
+      // Fallback a español si falla inglés (opcional, pero seguro)
+      if (language != 'es') {
+        print('Falling back to Spanish questions');
+        await loadTemplates(language: 'es');
+      } else {
+        _templates = [];
+      }
     }
   }
 
@@ -91,8 +109,8 @@ class QuestionGenerator {
   }
 
   /// Generar una pregunta aleatoria (excluyendo templates con PLAYER)
-  static Future<GeneratedQuestion> generateRandomQuestion() async {
-    await loadTemplates();
+  static Future<GeneratedQuestion> generateRandomQuestion({String language = 'es'}) async {
+    await loadTemplates(language: language);
 
     if (_templates == null || _templates!.isEmpty) {
       return GeneratedQuestion(
@@ -128,8 +146,8 @@ class QuestionGenerator {
   }
 
   /// Generar una pregunta aleatoria con un jugador específico
-  static Future<GeneratedQuestion> generateRandomQuestionForPlayer(String playerName) async {
-    await loadTemplates();
+  static Future<GeneratedQuestion> generateRandomQuestionForPlayer(String playerName, {String language = 'es'}) async {
+    await loadTemplates(language: language);
 
     if (_templates == null || _templates!.isEmpty) {
       return GeneratedQuestion(
@@ -152,22 +170,23 @@ class QuestionGenerator {
       // Si no hay templates con PLAYER, usar uno normal
       final template = _templates![_random.nextInt(_templates!.length)];
       return _generateQuestionFromTemplate(template);
+      return GeneratedQuestion(
+        question: '$playerName bebe 1 trago (Fallback)',
+        categoria: 'Genérico',
+        usedVariables: {'PLAYER': playerName},
+      );
     }
 
     final template = playerTemplates[_random.nextInt(playerTemplates.length)];
     return _generateQuestionFromTemplate(template, playerName: playerName);
   }
 
-  /// Generar una pregunta dual con dos jugadores específicos
-  static Future<GeneratedQuestion> generateRandomDualQuestion(String player1Name, String player2Name) async {
-    await loadTemplates();
+  /// Generar una pregunta dual aleatoria (para 2 jugadores)
+  static Future<GeneratedQuestion> generateRandomDualQuestion(String player1Name, String player2Name, {String language = 'es'}) async {
+    await loadTemplates(language: language);
 
     if (_templates == null || _templates!.isEmpty) {
-      return GeneratedQuestion(
-        question: 'Error: No se pudieron cargar las preguntas',
-        categoria: 'Error',
-        usedVariables: {},
-      );
+      return generateRandomQuestion();
     }
 
     // Filtrar solo templates duales

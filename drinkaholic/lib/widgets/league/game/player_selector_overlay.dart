@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../services/language_service.dart';
 import '../../../models/player.dart';
 import '../../../ui/components/drinkaholic_button.dart';
 
@@ -152,8 +154,8 @@ class _PlayerSelectorOverlayState extends State<PlayerSelectorOverlay> with Sing
                               Expanded(
                                 child: Text(
                                   widget.isMoreLikelyQuestion
-                                      ? 'Habéis señalado a'
-                                      : '¿Quiénes cumplen la condición?',
+                                      ? Provider.of<LanguageService>(context).translate('you_have_selected')
+                                      : Provider.of<LanguageService>(context).translate('who_meets_condition'),
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: titleFontSize,
@@ -252,7 +254,7 @@ class _PlayerSelectorOverlayState extends State<PlayerSelectorOverlay> with Sing
                             children: [
                               Expanded(
                                 child: DrinkaholicButton(
-                                  label: 'Cancelar',
+                                  label: Provider.of<LanguageService>(context).translate('cancel'),
                                   onPressed: _cancel,
                                   variant: DrinkaholicButtonVariant.outline,
                                   fullWidth: true,
@@ -264,8 +266,8 @@ class _PlayerSelectorOverlayState extends State<PlayerSelectorOverlay> with Sing
                                 flex: 2,
                                 child: DrinkaholicButton(
                                   label: _selectedPlayerIds.isEmpty
-                                      ? 'Selecciona jugadores'
-                                      : 'Confirmar (${_selectedPlayerIds.length})',
+                                      ? Provider.of<LanguageService>(context).translate('select_players_button')
+                                      : '${Provider.of<LanguageService>(context).translate('confirm_selection')} (${_selectedPlayerIds.length})',
                                   onPressed: _selectedPlayerIds.isEmpty ? null : _confirm,
                                   variant: DrinkaholicButtonVariant.primary,
                                   fullWidth: true,

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../services/language_service.dart';
 import '../../../viewmodels/league_detail_viewmodel.dart';
 import '../../../models/player.dart';
 import '../../../screens/league_game_screen.dart';
@@ -40,7 +41,7 @@ class _PlayTabState extends State<PlayTab> {
     final vm = context.read<LeagueDetailViewModel>();
 
     // Usar el método correcto del ViewModel que maneja toda la lógica de puntuación
-    final streakMessages = vm.recordMatch(playerDrinks);
+    final streakMessages = vm.recordMatch(playerDrinks, Provider.of<LanguageService>(context, listen: false));
 
     setState(() {
       _selected.clear(); // Limpiar selección después de guardar
@@ -56,20 +57,20 @@ class _PlayTabState extends State<PlayTab> {
 
     // Si no hay jugadores, mostrar mensaje
     if (players.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.sports_esports_outlined, size: 64, color: Colors.white54),
             SizedBox(height: 16),
             Text(
-              'No hay jugadores',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: Colors.white),
+              Provider.of<LanguageService>(context).translate('no_players_title'),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: Colors.white),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
-              'Agrega jugadores desde la pestaña "Jugadores"',
-              style: TextStyle(fontSize: 16, color: Colors.white70),
+              Provider.of<LanguageService>(context).translate('add_players_hint'),
+              style: const TextStyle(fontSize: 16, color: Colors.white70),
               textAlign: TextAlign.center,
             ),
           ],
@@ -143,10 +144,10 @@ class _PlayTabState extends State<PlayTab> {
               icon: const Icon(Icons.local_drink),
               label: Text(
                 _selected.length >= 2
-                    ? '¡Que dios os bendiga!'
+                    ? Provider.of<LanguageService>(context).translate('god_bless_you')
                     : players.length < 2
-                    ? 'Necesitas al menos 2 jugadores'
-                    : 'Selecciona al menos 2 jugadores',
+                    ? Provider.of<LanguageService>(context).translate('need_at_least_2')
+                    : Provider.of<LanguageService>(context).translate('select_at_least_2'),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.lightBlueAccent,

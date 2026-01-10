@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'; // <-- Añade esta línea
 import '../viewmodels/participants_viewmodel.dart'; // <-- Añade esta línea
 import '../models/player.dart';
+import '../services/language_service.dart'; // Import LanguageService
 import 'quick_game_screen.dart';
 import '../widgets/common/animated_background.dart';
 
@@ -95,9 +96,9 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody> with T
                       ShaderMask(
                         shaderCallback: (bounds) =>
                             const LinearGradient(colors: [Colors.white, Color(0xFFE0F7FA)]).createShader(bounds),
-                        child: const Text(
-                          'JUGADORES',
-                          style: TextStyle(
+                        child: Text(
+                          Provider.of<LanguageService>(context).translate('players_title'),
+                          style: const TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 3,
@@ -166,20 +167,20 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody> with T
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                          child: const Row(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.sports_esports, color: Color(0xFF00C9FF), size: 28),
-                              SizedBox(width: 12),
-                              Text(
-                                '¡EMPEZAR A JUGAR!',
-                                style: TextStyle(
-                                  color: Color(0xFF00C9FF),
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: 1.2,
+                              const Icon(Icons.sports_esports, color: Color(0xFF00C9FF), size: 28),
+                              const SizedBox(width: 12),
+                                Text(
+                                  Provider.of<LanguageService>(context).translate('start_playing_button'),
+                                  style: const TextStyle(
+                                    color: Color(0xFF00C9FF),
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 1.2,
+                                  ),
                                 ),
-                              ),
                             ],
                           ),
                         ),
@@ -302,7 +303,7 @@ class _ParticipantsScreenBodyState extends State<_ParticipantsScreenBody> with T
                 controller: _controller,
                 style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w500),
                 decoration: InputDecoration(
-                  hintText: 'Añadir jugador...',
+                  hintText: Provider.of<LanguageService>(context).translate('add_player_hint'),
                   hintStyle: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 16),
                   border: InputBorder.none,
                   enabledBorder: InputBorder.none,

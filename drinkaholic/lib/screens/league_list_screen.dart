@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/league_list_viewmodel.dart';
+import '../services/language_service.dart'; // Import LanguageService
 import '../widgets/league/league_app_bar_button.dart';
 import '../widgets/common/animated_background.dart';
 import '../widgets/league/league_card.dart';
@@ -46,9 +47,9 @@ class _LeagueListScreenState extends State<LeagueListScreen> with TickerProvider
             children: [
               LeagueAppBarButton(onTap: () => Navigator.of(context).pop(), icon: Icons.arrow_back),
               const SizedBox(width: 16),
-              const Expanded(
+              Expanded(
                 child: Text(
-                  'LIGAS',
+                  Provider.of<LanguageService>(context).translate('leagues_title'),
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w900,
@@ -104,15 +105,15 @@ class _LeagueListScreenState extends State<LeagueListScreen> with TickerProvider
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: const Color(0xFF16363F),
-        title: const Text('Crear nueva liga', style: TextStyle(color: Colors.white)),
+        title: Text(Provider.of<LanguageService>(context, listen: false).translate('create_new_league_title'), style: const TextStyle(color: Colors.white)),
         content: TextField(
           controller: nameCtrl,
           style: const TextStyle(color: Colors.white),
           cursorColor: Colors.tealAccent,
-          decoration: const InputDecoration(
-            labelText: 'Nombre de la liga',
-            labelStyle: TextStyle(color: Colors.tealAccent),
-            focusedBorder: UnderlineInputBorder(
+          decoration: InputDecoration(
+            labelText: Provider.of<LanguageService>(context, listen: false).translate('league_name_label'),
+            labelStyle: const TextStyle(color: Colors.tealAccent),
+            focusedBorder: const UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.tealAccent)),
           ),
           textInputAction: TextInputAction.done,
@@ -122,13 +123,13 @@ class _LeagueListScreenState extends State<LeagueListScreen> with TickerProvider
           TextButton(
             onPressed: () => Navigator.pop(context),
             child:
-                const Text('Cancelar', style: TextStyle(color: Colors.white70)),
+                Text(Provider.of<LanguageService>(context, listen: false).translate('cancel'), style: const TextStyle(color: Colors.white70)),
           ),
           FilledButton(
             style: FilledButton.styleFrom(
                 backgroundColor: Colors.tealAccent.shade700),
             onPressed: () => _submitCreateLeague(context, nameCtrl),
-            child: const Text('Aceptar'),
+            child: Text(Provider.of<LanguageService>(context, listen: false).translate('accept')),
           ),
         ],
       ),

@@ -52,6 +52,9 @@ flutter:
     - assets/constant_challenges.json
     - assets/events.json
     - assets/avatar_manifest.json
+    - assets/questions_en.json
+    - assets/constant_challenges_en.json
+    - assets/events_en.json
 
 flutter_icons:
   android: true

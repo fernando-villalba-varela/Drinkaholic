@@ -61,13 +61,21 @@ class ConstantChallengeTemplate {
 class ConstantChallengeGenerator {
   static final Random _random = Random();
   static List<ConstantChallengeTemplate>? _templates;
+  static String _currentLanguage = 'es';
 
   /// Load constant challenge templates from JSON
-  static Future<void> loadTemplates() async {
-    if (_templates != null) return;
+  static Future<void> loadTemplates({String language = 'es'}) async {
+    if (_templates != null && _currentLanguage == language) return;
+    
+    _currentLanguage = language;
+    _templates = null;
 
     try {
-      final String jsonString = await rootBundle.loadString('assets/constant_challenges.json');
+      final String jsonPath = language == 'es' 
+          ? 'assets/constant_challenges.json' 
+          : 'assets/constant_challenges_$language.json';
+
+      final String jsonString = await rootBundle.loadString(jsonPath);
       final Map<String, dynamic> jsonData = json.decode(jsonString);
 
       _templates = (jsonData['templates'] as List)
@@ -75,15 +83,19 @@ class ConstantChallengeGenerator {
           .toList();
     } catch (e) {
       if (kDebugMode) {
-        print('Error loading constant challenges: $e');
+        print('Error loading constant challenges ($language): $e');
       }
-      _templates = [];
+      if (language != 'es') {
+        await loadTemplates(language: 'es');
+      } else {
+        _templates = [];
+      }
     }
   }
 
   /// Generate a random constant challenge for a specific player
-  static Future<ConstantChallenge> generateRandomConstantChallenge(Player targetPlayer, int currentRound) async {
-    await loadTemplates();
+  static Future<ConstantChallenge> generateRandomConstantChallenge(Player targetPlayer, int currentRound, {String language = 'es'}) async {
+    await loadTemplates(language: language);
 
     if (_templates == null || _templates!.isEmpty) {
       // Fallback challenge
@@ -119,8 +131,9 @@ class ConstantChallengeGenerator {
     Player player1,
     Player player2,
     int currentRound,
+    {String language = 'es'}
   ) async {
-    await loadTemplates();
+    await loadTemplates(language: language);
 
     if (_templates == null || _templates!.isEmpty) {
       // Fallback dual challenge
@@ -145,7 +158,7 @@ class ConstantChallengeGenerator {
     }).toList();
 
     if (dualTemplates.isEmpty) {
-      return generateRandomConstantChallenge(player1, currentRound);
+      return generateRandomConstantChallenge(player1, currentRound, language: language);
     }
 
     final template = dualTemplates[_random.nextInt(dualTemplates.length)];

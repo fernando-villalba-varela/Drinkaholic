@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../services/language_service.dart';
 import '../../../viewmodels/league_detail_viewmodel.dart';
 
 class LeaderboardTab extends StatelessWidget {
@@ -28,20 +29,20 @@ class LeaderboardTab extends StatelessWidget {
 
     // Si no hay jugadores, mostrar mensaje
     if (players.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.people_outline, size: 64, color: Colors.white54),
             SizedBox(height: 16),
             Text(
-              'No hay jugadores',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: Colors.white),
+              Provider.of<LanguageService>(context).translate('no_players_title'),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600, color: Colors.white),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
-              'Agrega jugadores desde la pestaña "Jugadores"',
-              style: TextStyle(fontSize: 16, color: Colors.white70),
+              Provider.of<LanguageService>(context).translate('add_players_hint'),
+              style: const TextStyle(fontSize: 16, color: Colors.white70),
               textAlign: TextAlign.center,
             ),
           ],

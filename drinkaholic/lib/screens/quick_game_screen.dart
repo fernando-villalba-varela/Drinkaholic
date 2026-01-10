@@ -11,6 +11,8 @@ import '../models/event.dart';
 import '../models/event_generator.dart';
 import '../widgets/quick_game_widgets.dart'; // Añade este import arriba
 import '../widgets/common/animated_background.dart';
+import 'package:provider/provider.dart';
+import '../services/language_service.dart';
 
 class QuickGameScreen extends StatefulWidget {
   final List<Player> players;
@@ -66,7 +68,10 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
   String _appendModifierText(String originalText) {
     int extra = _getEndlessModifier();
     if (extra > 0) {
-      return '$originalText\n\n(+$extra tragos por endless)';
+      final modifier = Provider.of<LanguageService>(context, listen: false)
+          .translate('endless_modifier')
+          .replaceAll('{extra}', extra.toString());
+      return '$originalText\n\n$modifier';
     }
     return originalText;
   }
@@ -137,18 +142,18 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
         builder: (context) => AlertDialog(
           backgroundColor: const Color(0xFF2A2A3E),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: const Text(
-            '¡Ronda 100 Completada!',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          title: Text(
+            Provider.of<LanguageService>(context, listen: false).translate('round_100_title'),
+            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
-          content: const Text(
-            'Habéis sobrevivido a la previa, ¿Queréis continuar en el MODO ENDLESS?\n\nLa dificultad aumentará cada 25 rondas (+1 trago permanente).',
-            style: TextStyle(color: Colors.white70),
+          content: Text(
+            Provider.of<LanguageService>(context, listen: false).translate('round_100_content'),
+            style: const TextStyle(color: Colors.white70),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Terminar aquí', style: TextStyle(color: Colors.redAccent)),
+              child: Text(Provider.of<LanguageService>(context, listen: false).translate('end_here'), style: const TextStyle(color: Colors.redAccent)),
             ),
             ElevatedButton(
               onPressed: () => Navigator.of(context).pop(true),
@@ -156,7 +161,7 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
                 backgroundColor: const Color(0xFF00C9FF),
                 foregroundColor: Colors.white,
               ),
-              child: const Text('¡Continuar!'),
+              child: Text(Provider.of<LanguageService>(context, listen: false).translate('continue')),
             ),
           ],
         ),
@@ -174,10 +179,9 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
   }
 
   Future<void> _generateNewChallenge() async {
-    // Check for endless mode checkpoint
-    await _checkEndlessModeCheckpoint();
     if (!mounted) return;
 
+    final languageCode = Provider.of<LanguageService>(context, listen: false).currentLocale.languageCode;
     // Generar pregunta (30% probabilidad de ser genérica con jugador específico)
     if (Random().nextDouble() < 0.3 && _players.isNotEmpty) {
       // Seleccionar un jugador aleatorio para la pregunta genérica
@@ -188,7 +192,7 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
       var attempts = 0;
       GeneratedQuestion question;
       do {
-        question = await QuestionGenerator.generateRandomQuestionForPlayer(selectedPlayer.nombre);
+        question = await QuestionGenerator.generateRandomQuestionForPlayer(selectedPlayer.nombre, language: languageCode);
         attempts++;
       } while (_usedQuestions.contains(question.question) && attempts < 30);
       _usedQuestions.add(question.question);
@@ -203,7 +207,7 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
       var attempts = 0;
       GeneratedQuestion question;
       do {
-        question = await QuestionGenerator.generateRandomQuestion();
+        question = await QuestionGenerator.generateRandomQuestion(language: languageCode);
         attempts++;
       } while (_usedQuestions.contains(question.question) && attempts < 30);
       _usedQuestions.add(question.question);
@@ -428,6 +432,10 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
       _currentAnswer = null; // Limpiar respuesta anterior
     });
 
+    // 0. Verificar si hemos llegado al checkpoint de Endless Mode (Ronda 100)
+    await _checkEndlessModeCheckpoint();
+    if (!mounted) return;
+
     // 1. Verificar si debemos terminar algún evento
     await _checkForEventEnding();
 
@@ -522,9 +530,11 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
       return;
     }
 
+    final languageCode = Provider.of<LanguageService>(context, listen: false).currentLocale.languageCode;
     final constantChallenge = await ConstantChallengeGenerator.generateRandomConstantChallenge(
       eligiblePlayer,
       _currentRound,
+      language: languageCode,
     );
 
     setState(() {
@@ -562,7 +572,8 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
   }
 
   Future<void> _generateNewEvent() async {
-    final event = await EventGenerator.generateRandomEvent(_currentRound);
+    final languageCode = Provider.of<LanguageService>(context, listen: false).currentLocale.languageCode;
+    final event = await EventGenerator.generateRandomEvent(_currentRound, language: languageCode);
 
     setState(() {
       _events.add(event);
@@ -587,8 +598,9 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
     // Intentar generar una pregunta dual única evitando repetidas
     var attempts = 0;
     GeneratedQuestion question;
+    final languageCode = Provider.of<LanguageService>(context, listen: false).currentLocale.languageCode;
     do {
-      question = await QuestionGenerator.generateRandomDualQuestion(player1.nombre, player2.nombre);
+      question = await QuestionGenerator.generateRandomDualQuestion(player1.nombre, player2.nombre, language: languageCode);
       attempts++;
     } while (_usedQuestions.contains(question.question) && attempts < 30);
     _usedQuestions.add(question.question);
@@ -622,10 +634,12 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
     final player1 = selectedPlayers[0];
     final player2 = selectedPlayers[1];
 
+    final languageCode = Provider.of<LanguageService>(context, listen: false).currentLocale.languageCode;
     final constantChallenge = await ConstantChallengeGenerator.generateRandomDualConstantChallenge(
       player1,
       player2,
       _currentRound,
+      language: languageCode,
     );
 
     setState(() {
@@ -691,11 +705,11 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(bottom: 16),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
                     child: Text(
-                      'Retos y Eventos Activos',
-                      style: TextStyle(
+                      Provider.of<LanguageService>(context).translate('active_challenges_title'),
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -708,7 +722,7 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       children: [
                         if (_isEndlessMode) ...[
-                          _buildSectionTitle('🔥 Modo Endless'),
+                          _buildSectionTitle('🔥 ${Provider.of<LanguageService>(context).translate("endless_mode")}'),
                           Container(
                             margin: const EdgeInsets.only(bottom: 12),
                             padding: const EdgeInsets.all(12),
@@ -726,7 +740,7 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        'Nivel ${_getEndlessModifier()}',
+                                        '${Provider.of<LanguageService>(context).translate('level')} ${_getEndlessModifier()}',
                                         style: const TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
@@ -734,7 +748,7 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
                                         ),
                                       ),
                                       Text(
-                                        '+${_getEndlessModifier()} tragos en todas las cartas',
+                                        '+${_getEndlessModifier()} ${Provider.of<LanguageService>(context).translate('drinks_per_endless')}',
                                         style: const TextStyle(color: Colors.white70),
                                       ),
                                     ],
@@ -745,17 +759,17 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
                           ),
                         ],
                         
-                        _buildSectionTitle('📋 Retos Constantes'),
+                        _buildSectionTitle(Provider.of<LanguageService>(context).translate('constant_challenges_title')),
                         if (_constantChallenges.where((c) => c.status == ConstantChallengeStatus.active).isEmpty)
-                          _buildEmptyState('No hay retos constantes activos')
+                          _buildEmptyState(Provider.of<LanguageService>(context).translate('empty_active_challenges'))
                         else
                           ..._constantChallenges
                               .where((c) => c.status == ConstantChallengeStatus.active)
                               .map((c) => _buildActiveChallengeItem(c)),
 
-                        _buildSectionTitle('🌐 Eventos Globales'),
+                        _buildSectionTitle(Provider.of<LanguageService>(context).translate('global_events_title')),
                         if (_events.where((e) => e.status == EventStatus.active).isEmpty)
-                          _buildEmptyState('No hay eventos globales activos')
+                          _buildEmptyState(Provider.of<LanguageService>(context).translate('empty_active_events'))
                         else
                           ..._events.where((e) => e.status == EventStatus.active).map((e) => _buildActiveEventItem(e)),
                           
@@ -816,7 +830,7 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Para: ${challenge.targetPlayer.nombre}',
+                  Provider.of<LanguageService>(context).translate('for_player').replaceAll('{name}', challenge.targetPlayer.nombre),
                   style: const TextStyle(
                     color: Color(0xFF00C9FF),
                     fontWeight: FontWeight.bold,
@@ -945,59 +959,49 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
                     index,
                   ),
                 ),
-                SafeArea(
-                  child: Padding(
-                    padding: EdgeInsets.all(padding),
-                    child: Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () => Navigator.of(context).pop(),
-                          child: Container(
-                            margin: EdgeInsets.only(bottom: containerMargin),
-                            padding: const EdgeInsets.all(7),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
-                            ),
-                            child: Icon(Icons.arrow_back, color: Colors.white, size: iconSize),
+                Positioned(
+                  top: padding,
+                  left: padding,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).pop(),
+                        child: Container(
+                          margin: const EdgeInsets.all(0),
+                          padding: const EdgeInsets.all(7),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
+                          ),
+                          child: Icon(Icons.arrow_back, color: Colors.white, size: iconSize),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: Colors.white.withOpacity(0.2)),
+                        ),
+                        child: Text(
+                          '${Provider.of<LanguageService>(context).translate('round')} $_currentRound',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: getResponsiveSize(context, small: 14, medium: 16, large: 20),
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.2,
                           ),
                         ),
-                        const Spacer(),
-                        // Invisible container to balance the Row
-                        Container(
-                          width: iconSize + 14,
-                          margin: EdgeInsets.only(bottom: containerMargin),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
                 // Round Counter - top center
-                Positioned(
-                  top: padding + MediaQuery.of(context).padding.top, // Adjust for status bar visual
-                  left: 0,
-                  right: 0,
-                  child: Center(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.3),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.white.withOpacity(0.2)),
-                      ),
-                      child: Text(
-                        'RONDA $_currentRound',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: getResponsiveSize(context, small: 14, medium: 16, large: 20),
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1.2,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+
+                // Round Counter removed from Positioned
                 SafeArea(
                   child: Padding(
                     padding: EdgeInsets.all(padding),
@@ -1195,12 +1199,12 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
                           children: [
                             const Icon(Icons.group, color: Colors.white),
                             const SizedBox(width: 8),
-                            const Expanded(
-                              child: Text(
-                                'Editar jugadores',
-                                style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                              Expanded(
+                                child: Text(
+                                  Provider.of<LanguageService>(context).translate('edit_players_title'),
+                                  style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                                ),
                               ),
-                            ),
                             IconButton(
                               icon: const Icon(Icons.close, color: Colors.white70),
                               onPressed: () => Navigator.pop(context),
@@ -1216,10 +1220,10 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
                               child: TextField(
                                 controller: controller,
                                 style: const TextStyle(color: Colors.white),
-                                decoration: const InputDecoration(
-                                  hintText: 'Añadir jugador...',
-                                  hintStyle: TextStyle(color: Colors.white70),
-                                  border: OutlineInputBorder(borderSide: BorderSide(color: Colors.white24)),
+                                decoration: InputDecoration(
+                                  hintText: Provider.of<LanguageService>(context).translate('add_player_dots_hint'),
+                                  hintStyle: const TextStyle(color: Colors.white70),
+                                  border: const OutlineInputBorder(borderSide: BorderSide(color: Colors.white24)),
                                 ),
                                 onSubmitted: (value) {
                                   if (value.trim().isEmpty) return;
@@ -1296,20 +1300,20 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
                                         context: context,
                                         builder: (context) {
                                           return AlertDialog(
-                                            title: const Text('Renombrar jugador'),
+                                            title: Text(Provider.of<LanguageService>(context, listen: false).translate('rename_player_title')),
                                             content: TextField(
                                               controller: tc,
                                               autofocus: true,
-                                              decoration: const InputDecoration(hintText: 'Nombre'),
+                                              decoration: InputDecoration(hintText: Provider.of<LanguageService>(context, listen: false).translate('name_hint')),
                                             ),
                                             actions: [
                                               TextButton(
                                                 onPressed: () => Navigator.pop(context),
-                                                child: const Text('Cancelar'),
+                                                child: Text(Provider.of<LanguageService>(context, listen: false).translate('cancel')),
                                               ),
                                               TextButton(
                                                 onPressed: () => Navigator.pop(context, tc.text.trim()),
-                                                child: const Text('Guardar'),
+                                                child: Text(Provider.of<LanguageService>(context, listen: false).translate('save_button')),
                                               ),
                                             ],
                                           );
@@ -1347,7 +1351,7 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
                           width: double.infinity,
                           child: ElevatedButton(
                             onPressed: () => Navigator.pop(context, temp),
-                            child: const Text('Listo'),
+                            child: Text(Provider.of<LanguageService>(context, listen: false).translate('done_button')),
                           ),
                         ),
                       ),
