@@ -126,34 +126,34 @@ class GameCard extends StatelessWidget {
       builder: (context, setState) {
         final iconSize = getResponsiveSize(
           context,
-          small: 35, // Aumentado de 28
-          medium: 40, // Aumentado de 35
-          large: 50, // Aumentado de 45
+          small: 20, // Reducido de 35
+          medium: 24, // Reducido de 40
+          large: 28, // Reducido de 50
         );
 
         final fontSize = getResponsiveSize(
           context,
-          small: 18, // Aumentado de 16
-          medium: 22, // Aumentado de 20
-          large: 26, // Aumentado de 24
+          small: 14, // Reducido de 18
+          medium: 16, // Reducido de 22
+          large: 20, // Reducido de 26
         );
 
         // Tamaños más compactos para evitar scroll
 
         final buttonHeight = getResponsiveSize(
           context,
-          small: 40, // Aumentado de 16
-          medium: 50, // Aumentado de 20
-          large: 60, // Aumentado de 24
+          small: 32, // Reducido de 40
+          medium: 40, // Reducido de 50
+          large: 48, // Reducido de 60
         );
 
         // Función para calcular ancho responsive basado en el nombre y si está seleccionado
         double getButtonWidth(String playerName, bool isSelected) {
           final baseWidth = getResponsiveSize(
             context,
-            small: 80, // Ancho base más pequeño
-            medium: 90,
-            large: 100,
+            small: 60, // Reducido de 80
+            medium: 70,
+            large: 80,
           );
 
           // Calcular ancho adicional basado en la longitud del nombre
@@ -161,9 +161,9 @@ class GameCard extends StatelessWidget {
               (playerName.length - 1) *
               getResponsiveSize(
                 context,
-                small: 12, // Píxeles adicionales por carácter
-                medium: 14,
-                large: 16,
+                small: 8, // Reducido de 12
+                medium: 10,
+                large: 12,
               );
 
           // Espacio adicional para el check cuando está seleccionado
@@ -177,8 +177,8 @@ class GameCard extends StatelessWidget {
               : 0;
 
           // Ancho mínimo y máximo (aumentados para nombres muy largos)
-          final minWidth = getResponsiveSize(context, small: 80, medium: 90, large: 100);
-          final maxWidth = getResponsiveSize(context, small: 250, medium: 280, large: 300);
+          final minWidth = getResponsiveSize(context, small: 60, medium: 70, large: 80);
+          final maxWidth = getResponsiveSize(context, small: 200, medium: 220, large: 240);
 
           // Margen de seguridad duplicado (más conservador)
           final safetyMargin = getResponsiveSize(context, small: 10, medium: 12, large: 15);
@@ -186,8 +186,8 @@ class GameCard extends StatelessWidget {
           return (baseWidth + extraWidth + checkWidth + safetyMargin).clamp(minWidth, maxWidth);
         }
 
-        final avatarSize = 24.0;
-        final spacing = 6.0;
+        final avatarSize = 18.0; // Reducido de 24.0
+        final spacing = 4.0; // Reducido de 6.0
 
         return Column(
           mainAxisSize: MainAxisSize.min,
@@ -273,9 +273,9 @@ class GameCard extends StatelessWidget {
   Widget _buildMiniAvatar(Player player, double size, BuildContext context) {
     final iconSize = getResponsiveSize(
       context,
-      small: 35, // Aumentado de 28
-      medium: 20, // Aumentado de 35
-      large: 30, // Aumentado de 45
+      small: 24, // Reducido de 35
+      medium: 28, // Corregido y reducido
+      large: 32, // Reducido
     );
 
     final fontSize = getResponsiveSize(

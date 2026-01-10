@@ -498,6 +498,8 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
           drinksAmount: drinksAmount,
           onTiebreakerResolved: (winnerPlayer, loserPlayer) {
             Navigator.of(context).pop();
+
+            SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
             
             // El ganador de la ruleta recibe los tragos
             setState(() {
@@ -1097,7 +1099,12 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
                           builder: (context, child) {
                             return Transform.scale(
                               scale: _tapAnimation.value,
-                              child: Stack(
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                  top: getResponsiveSize(context, small: 70, medium: 110, large: 130),
+                                  bottom: getResponsiveSize(context, small: 10, medium: 30, large: 40),
+                                ),
+                                child: Stack(
                                 children: [
                                   GameCard(
                                     gameState: _createGameState(),
@@ -1141,6 +1148,7 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
                                   ),
                                   _buildRippleEffects(),
                                 ],
+                              ),
                               ),
                             );
                           },
@@ -1301,7 +1309,7 @@ double getResponsiveSize(BuildContext context, {required double small, required 
   const breakpointMedium = 1700.0; // Móviles medianos/grandes como Nothing Phone
 
   if (width <= breakpointSmall) {
-    return small * 1.2; // Incremento del 20% para mejor visibilidad
+    return small; // Sin incremento extra para evitar problemas de espacio
   } else if (width <= breakpointMedium) {
     return medium * 1.5; // Incremento del 15%
   } else {
