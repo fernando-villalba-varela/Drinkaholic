@@ -959,46 +959,7 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
                     index,
                   ),
                 ),
-                Positioned(
-                  top: padding,
-                  left: padding,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      GestureDetector(
-                        onTap: () => Navigator.of(context).pop(),
-                        child: Container(
-                          margin: const EdgeInsets.all(0),
-                          padding: const EdgeInsets.all(7),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
-                          ),
-                          child: Icon(Icons.arrow_back, color: Colors.white, size: iconSize),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: Colors.white.withOpacity(0.2)),
-                        ),
-                        child: Text(
-                          '${Provider.of<LanguageService>(context).translate('round')} $_currentRound',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: getResponsiveSize(context, small: 14, medium: 16, large: 20),
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.2,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+
                 // Round Counter - top center
 
                 // Round Counter removed from Positioned
@@ -1160,6 +1121,47 @@ class _QuickGameScreenState extends State<QuickGameScreen> with TickerProviderSt
                       ),
                       child: Icon(Icons.group, color: Colors.white, size: iconSize),
                     ),
+                  ),
+                ),
+                // Back Button & Round Counter (moved to end to be on top)
+                Positioned(
+                  top: padding,
+                  left: padding,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).pop(),
+                        child: Container(
+                          margin: const EdgeInsets.all(0),
+                          padding: const EdgeInsets.all(7),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
+                          ),
+                          child: Icon(Icons.arrow_back, color: Colors.white, size: iconSize),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: Colors.white.withOpacity(0.2)),
+                        ),
+                        child: Text(
+                          '${Provider.of<LanguageService>(context).translate('round')} $_currentRound',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: getResponsiveSize(context, small: 14, medium: 16, large: 20),
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],

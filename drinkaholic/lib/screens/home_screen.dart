@@ -213,10 +213,22 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             SizedBox(height: 16.h), // Increased from 8.h to 16.h
                             
                             // Promo image
-                            Image.asset(
-                              'assets/images/promo.png',
-                              width: min(screenWidth * 0.25, 100),
-                              fit: BoxFit.contain,
+                            // Promo images
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  'assets/images/promo.png',
+                                  width: min(screenWidth * 0.25, 90),
+                                  fit: BoxFit.contain,
+                                ),
+                                SizedBox(width: 10.w),
+                                Image.asset(
+                                  'assets/images/promo2.png',
+                                  width: min(screenWidth * 0.25, 90),
+                                  fit: BoxFit.contain,
+                                ),
+                              ],
                             ),
                           ],
                         ),

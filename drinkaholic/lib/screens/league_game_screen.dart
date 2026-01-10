@@ -1026,6 +1026,20 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
 
   @override
   Widget build(BuildContext context) {
+    final iconSize = getResponsiveSize(
+      context,
+      small: 35,
+      medium: 40,
+      large: 50,
+    );
+
+    final padding = getResponsiveSize(
+      context,
+      small: 16.0,
+      medium: 24.0,
+      large: 32.0,
+    );
+
     return SafeArea(
       child: Scaffold(
         body: Stack(
@@ -1054,6 +1068,8 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
                       final hasActiveSelector =
                           _isConditionalQuestion() && !_showingPlayerSelector && !_showingLetterCounter;
                       final isMoreLikelyAndNotSelected = _isMoreLikelyQuestion() && !_showingPlayerSelector;
+
+
                       
                       return GestureDetector(
                         onTapDown: hasActiveSelector
@@ -1132,17 +1148,33 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
                       );
                     },
                   ),
-                  // Back button - top left corner
-                  Positioned(
-                    top: 12,
-                    left: 12,
-                    child: LayoutBuilder(
-                      builder: (context, constraints) {
-                        final screenWidth = MediaQuery.of(context).size.width;
-                        final isSmallScreen = screenWidth < 600;
-                        final backButtonSize = isSmallScreen ? 40.0 : 50.0;
 
-                        return GestureDetector(
+
+                  // Active Challenges button - top right corner
+                  Positioned(
+                    top: padding,
+                    right: padding,
+                    child: GestureDetector(
+                      onTap: _openActiveChallengesModal,
+                      child: Container(
+                        padding: const EdgeInsets.all(7),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
+                        ),
+                        child: Icon(Icons.list_alt, color: Colors.white, size: iconSize),
+                      ),
+                    ),
+                  ),
+                  // Back Button & Round Counter (moved to end to be on top)
+                  Positioned(
+                    top: padding,
+                    left: padding,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        GestureDetector(
                           onTap: () {
                             showDialog(
                               context: context,
@@ -1168,53 +1200,18 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
                             );
                           },
                           child: Container(
-                            width: backButtonSize,
-                            height: backButtonSize,
+                            margin: const EdgeInsets.all(0),
+                            padding: const EdgeInsets.all(7),
                             decoration: BoxDecoration(
                               color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Icon(Icons.arrow_back, color: Colors.white, size: isSmallScreen ? 20 : 24),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-
-                  // Active Challenges button - top right corner
-                  Positioned(
-                    top: 12,
-                    right: 12,
-                    child: LayoutBuilder(
-                      builder: (context, constraints) {
-                        final screenWidth = MediaQuery.of(context).size.width;
-                        final isSmallScreen = screenWidth < 600;
-                        final buttonSize = isSmallScreen ? 40.0 : 50.0;
-                        final iconSize = isSmallScreen ? 20.0 : 25.0;
-
-                        return GestureDetector(
-                          onTap: _openActiveChallengesModal,
-                          child: Container(
-                            width: buttonSize,
-                            height: buttonSize,
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(16),
                               border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
                             ),
-                            child: Icon(Icons.list_alt, color: Colors.white, size: iconSize),
+                            child: Icon(Icons.arrow_back, color: Colors.white, size: iconSize),
                           ),
-                        );
-                      },
-                    ),
-                  ),
-                  // Round Counter - top right corner
-                  Positioned(
-                    top: 12,
-                    right: 12,
-                    child: LayoutBuilder(
-                      builder: (context, constraints) {
-                        return Container(
+                        ),
+                        const SizedBox(width: 12),
+                        Container(
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           decoration: BoxDecoration(
                             color: Colors.black.withOpacity(0.3),
@@ -1225,13 +1222,13 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
                             '${Provider.of<LanguageService>(context).translate('round_label')} $_currentRound',
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 16,
+                              fontSize: getResponsiveSize(context, small: 14, medium: 16, large: 20),
                               fontWeight: FontWeight.bold,
                               letterSpacing: 1.2,
                             ),
                           ),
-                        );
-                      },
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -1294,5 +1291,20 @@ class _LeagueGameScreenState extends State<LeagueGameScreen> with TickerProvider
         ),
       ),
     );
+  }
+}
+
+double getResponsiveSize(BuildContext context, {required double small, required double medium, required double large}) {
+  final width = MediaQuery.of(context).size.width;
+  // Breakpoints ajustados para Nothing Phone (2400x1080)
+  const breakpointSmall = 1000.0; // Móviles pequeños
+  const breakpointMedium = 1700.0; // Móviles medianos/grandes como Nothing Phone
+
+  if (width <= breakpointSmall) {
+    return small * 1.2; // Incremento del 20% para mejor visibilidad
+  } else if (width <= breakpointMedium) {
+    return medium * 1.5; // Incremento del 15%
+  } else {
+    return large * 2;
   }
 }
